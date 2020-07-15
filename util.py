@@ -1,6 +1,7 @@
 import requests
 import base64
 import sqlite3
+import tkinter
 
 
 def sql_conn(sql: str):
@@ -13,7 +14,7 @@ def sql_conn(sql: str):
     return result
 
 
-def ocr():
+def ocr_general_basic():
     # client_id 为官网获取的AK， client_secret 为官网获取的SK
     host = 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=M1w2PuNLDG3yngWaVYuyTgmW&client_secret=Doy4yiuRfH9zeOD3g6viwVg6oDyWwqto'
     response = requests.get(host)
@@ -30,4 +31,15 @@ def ocr():
     headers = {'content-type': 'application/x-www-form-urlencoded'}
     response = requests.post(request_url, data=params, headers=headers)
     if response:
-        print(response.json())
+        # print(response.json())
+        # 返回完整字符串
+        num = response.json()['words_result_num']
+        words = response.json()['words_result']
+        result = ""
+        for i in range(num):
+            result += words[i]['words']
+        return result
+    else:
+        print("OCR Connection Error!")
+
+

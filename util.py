@@ -14,6 +14,10 @@ def sql_conn(sql: str):
     return result
 
 
+def sql_init():
+    pass
+    
+
 def ocr_general_basic():
     # client_id 为官网获取的AK， client_secret 为官网获取的SK
     host = 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=M1w2PuNLDG3yngWaVYuyTgmW&client_secret=Doy4yiuRfH9zeOD3g6viwVg6oDyWwqto'

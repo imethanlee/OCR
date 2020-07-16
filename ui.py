@@ -2,4 +2,5 @@ from util import *
 
 
 class UI:
-    pass
+    def __init__(self):
+        pass

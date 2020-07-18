@@ -1,4 +1,3 @@
 from ui import *
 
-
-print(ocr_general_basic())
+print(ocr_business_license())

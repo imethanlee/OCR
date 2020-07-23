@@ -55,7 +55,7 @@ def sql_init():
     sql_conn(cmd)
 
     cmd = '''CREATE TABLE t_business_card(
-                id INTEGER AUTO_INCREMENT NOT NULL,         -- 主键
+                id INTEGER AUTO_INCREMENT,         -- 主键
                 addr varchar(100) NOT NULL DEFAULT '',      -- 地址
                 fax varchar(100) NOT NULL DEFAULT '',       -- 传真
                 mobile varchar(100) NOT NULL DEFAULT '',    -- 手机
@@ -189,7 +189,7 @@ def sql_insert(ocr_type: OCR, content: dict):
                 company, title, email, transaction_id)
             VALUES ("{}","{}","{}","{}",
                     "{}","{}","{}","{}",
-                    "{}","{}","{}",{},)
+                    "{}","{}","{}",{})
             '''.format(content['addr'],content['fax'],content['mobile'],content['name'],
                        content['pc'],content['url'],content['tel'],content['tel'],
                        content['company'],content['title'],content['email'],content['transaction_id'])
@@ -372,7 +372,8 @@ def ocr_business_card(img_path: str = './test_case/card.jpg'):
     headers = {'content-type': 'application/x-www-form-urlencoded'}
     response = requests.post(request_url, data=params, headers=headers)
     if response:
-        return response.json()['words_result']
+        res = ocr_result_transform(OCR.BUSINESS_CARD, response.json()['words_result'])
+        return res
     else:
         print("OCR Connection Error!")
 
@@ -444,3 +445,22 @@ def ocr_invoice(img_path: str = './test_case/invoice.png'):
         return response.json()['words_result']
     else:
         print("OCR Connection Error!")
+
+
+def ocr_result_transform(ocr_type: OCR, origin: dict):
+    new_dict = {}
+    if ocr_type == OCR.BUSINESS_CARD:
+        new_dict['addr'] = origin['ADDR']
+        new_dict['fax'] = origin['FAX']
+        new_dict['mobile'] = origin['MOBILE']
+        new_dict['name'] = origin['NAME']
+        new_dict['pc'] = origin['PC']
+        new_dict['url'] = origin['URL']
+        new_dict['tel'] = origin['TEL']
+        new_dict['company'] = origin['COMPANY']
+        new_dict['title'] = origin['TITLE']
+        new_dict['email'] = origin['EMAIL']
+        new_dict['transaction_id'] = 0
+        return new_dict
+    else:
+        pass

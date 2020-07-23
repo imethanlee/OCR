@@ -4,7 +4,7 @@ from tkinter import messagebox
 from tkinter.filedialog import askopenfilenames
 from tkinter import ttk
 import math
-import util
+from util import *
 
 # TODO 文件名有空格 备忘 核对功能 如果录入结果不对就手动录入
 ''''''
@@ -72,11 +72,11 @@ def upload():
     for name in namelist:
 
         if comb_value.get() == "普通文本":
-            result = util.ocr_general_basic(name)
+            result = ocr_general_basic(name)
         elif comb_value.get() == "名片":
-            result = util.ocr_business_card(name)
+            result = ocr_business_card(name)
         elif comb_value.get() == "执照":
-            result = util.ocr_business_license(name)
+            result = ocr_business_license(name)
         ''''''
         resultlist.append(result)
 
@@ -106,6 +106,12 @@ def upload():
         # imageLabel.pack()
         count = count + 1
     confirm_window(namelist)
+    for result in resultlist:
+        if comb_value.get() == "名片":
+            sql_insert(OCR.BUSINESS_CARD, result)
+            print(123123)
+
+
     # print(result)
 
 

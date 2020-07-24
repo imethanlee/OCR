@@ -131,6 +131,9 @@ def confirm_single(name, parent):
         imageLabel = Label(pic_wd, image=temp_photo)
         imageLabel.pack()
         pic_wd.mainloop()
+    fns = root.tk.splitlist(name)
+    namelist = getName(fns)
+    name=namelist[0]
 
     cf_wd = Toplevel(parent)
     size = 650
@@ -306,11 +309,11 @@ def upload_trade():
     frame_businesscard = Frame(trade_wd, height=200, width=500, bd=1, relief='groove')
     frame_businesscard.grid(row=0, column=0, columnspan=5)
 
-    businesscard_edit = Button(frame_businesscard, text="编辑结果", width=11, command=lambda :select_path(), relief=GROOVE)
+    businesscard_edit = Button(frame_businesscard, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
     businesscard_edit.grid(row=1, column=1)
 
     businesscard_upload = Button(frame_businesscard, text="上传图片", width=11,
-                                 command=lambda: confirm_single("D:/Desktop/license.jpg", frame_businesscard),
+                                 command=lambda: confirm_single(business_path.get(), frame_businesscard),
                                  relief=GROOVE)
     businesscard_upload.grid(row=1, column=2)
     # ------------------photo---------------
@@ -350,7 +353,7 @@ frame1.grid(row=2, column=1, columnspan=5)'''
 scrollbar.config(command=photo_area.yview)
 scrollbar.grid(row=2, column=5, sticky=S + W + E + N)
 
-single_btn = Button(root, text="上传单项", width=11, command=lambda :select_path(pathname), relief=GROOVE)
+single_btn = Button(root, text="上传单项", width=11, command=lambda: select_path(pathname), relief=GROOVE)
 single_btn.grid(row=0, column=0)
 
 trade_btn = Button(root, text="上传交易", width=11, command=upload_trade, relief=GROOVE)

@@ -105,18 +105,65 @@ def upload():
         # imageLabel.grid(row=int(count/2), column=count+1)  # 自动对齐
         # imageLabel.pack()
         count = count + 1
-    confirm_window(namelist)
+    confirm_window(namelist, root)
     for result in resultlist:
         if comb_value.get() == "名片":
             sql_insert(OCR.BUSINESS_CARD, result)
-            print(123123)
 
 
-    # print(result)
+def confirm_single(name, parent):
 
+    def show_large_pic(name, parent):
+        pic_wd = Toplevel(parent)
+        image = Image.open(name)
+        pic_size = 700
 
-def confirm_window(namelist):
-    cf_wd = Toplevel()
+        if image.size[0] > image.size[1]:
+            size_w = pic_size
+            size_h = int(image.size[1] * pic_size / image.size[0])
+            # img = img.resize((pic_size, int(img.size[1] * size / img.size[0])))
+        else:
+            size_w = int(image.size[0] * pic_size / image.size[1])
+            size_h = pic_size
+            # img = img.resize((int(img.size[0] * size / img.size[1]), size))
+
+        image = image.resize((size_w, size_h))
+        temp_photo = ImageTk.PhotoImage(image)
+        imageLabel = Label(pic_wd, image=temp_photo)
+        imageLabel.pack()
+        pic_wd.mainloop()
+    cf_wd = Toplevel(parent)
+    size = 650
+
+    img_single = Image.open(name)
+    if img_single.size[0] > img_single.size[1]:
+        size_w = size
+        size_h = int(img_single.size[1] * size / img_single.size[0])
+
+    else:
+        size_w = int(img_single.size[0] * size / img_single.size[1])
+        size_h = size
+
+    img_single = img_single.resize((size_w, size_h))
+    photo_single = ImageTk.PhotoImage(img_single)
+    imagelist.append(photo_single)
+    photo_canv = Canvas(cf_wd, bd=1, width=660, height=550, relief=GROOVE, scrollregion=(0, 0, 500, 500))
+    photo_canv.grid(row=1, column=0, columnspan=3)
+    photo_canv.create_image(5, 5, image=imagelist[0], anchor=NW)
+    result = ocr_business_card(name)
+    addr = StringVar()
+    addr.set(result['addr'])
+    fax = StringVar()
+    fax.set(result['fax'])
+
+    business_image = put_image(name, 200)
+    business_image_btn = Button(parent,
+                                command=lambda: show_large_pic(name, parent),
+                                image=business_image)
+    business_image_btn.grid(row=0, column=0, rowspan=2)
+
+def confirm_window(namelist, parent):
+    cf_wd = Toplevel(parent)
     size = 650
     result = StringVar()
     ''''''
@@ -125,11 +172,11 @@ def confirm_window(namelist):
         if img.size[0] > img.size[1]:
             size_w = size
             size_h = int(img.size[1] * size / img.size[0])
-            # img = img.resize((size, int(img.size[1] * size / img.size[0])))
+
         else:
             size_w = int(img.size[0] * size / img.size[1])
             size_h = size
-            # img = img.resize((int(img.size[0] * size / img.size[1]), size))
+
         img = img.resize((size_w, size_h))
         photo = ImageTk.PhotoImage(img)
         imagelist.append(photo)
@@ -228,6 +275,58 @@ def confirm_window(namelist):
     '''
 
 ''''''
+
+
+def put_image(name, size):
+    image = Image.open(name)
+
+    if image.size[0] > image.size[1]:
+        size_w = size
+        size_h = int(image.size[1] * size / image.size[0])
+        # img = img.resize((size, int(img.size[1] * size / img.size[0])))
+    else:
+        size_w = int(image.size[0] * size / image.size[1])
+        size_h = size
+        # img = img.resize((int(img.size[0] * size / img.size[1]), size))
+
+    image = image.resize((size_w, size_h))
+    temp_photo = ImageTk.PhotoImage(image)
+
+    return temp_photo
+
+
+def upload_trade():
+    trade_wd = Toplevel(root)
+    size = 200
+    results = StringVar()
+
+    business_path = StringVar()
+
+    frame_businesscard = Frame(trade_wd, height=200, width=500, bd=1, relief='groove')
+    frame_businesscard.grid(row=0, column=0, columnspan=5)
+
+    businesscard_edit = Button(frame_businesscard, text="编辑结果", width=11, command=select_path, relief=GROOVE)
+    businesscard_edit.grid(row=1, column=1)
+
+    businesscard_upload = Button(frame_businesscard, text="上传图片", width=11,
+                                 command=lambda: confirm_single("D:/Desktop/license.jpg", frame_businesscard),
+                                 relief=GROOVE)
+    businesscard_upload.grid(row=1, column=2)
+    # ------------------photo---------------
+
+    business_entry = Entry(frame_businesscard, textvariable=business_path, width=25)
+    business_entry.grid(row=0, column=1)
+
+
+
+
+
+    businesscard_btn = Button(frame_businesscard, text="选择名片图片", width=11,
+                              command=select_path, relief=GROOVE)
+    businesscard_btn.grid(row=0, column=3)
+    trade_wd.mainloop()
+
+
 root = Tk()
 
 pathname = StringVar()
@@ -254,8 +353,12 @@ frame1.grid(row=2, column=1, columnspan=5)'''
 scrollbar.config(command=photo_area.yview)
 scrollbar.grid(row=2, column=5, sticky=S + W + E + N)
 
-choose_btn = Button(root, text="选择图片", width=11, command=select_path, relief=GROOVE)
-choose_btn.grid(row=0, column=0)
+single_btn = Button(root, text="上传单项", width=11, command=select_path, relief=GROOVE)
+single_btn.grid(row=0, column=0)
+
+trade_btn = Button(root, text="上传交易", width=11, command=upload_trade, relief=GROOVE)
+trade_btn.grid(row=1, column=0)
+
 path_entry = Entry(root, textvariable=pathname, width=25)
 path_entry.grid(row=0, column=1)
 

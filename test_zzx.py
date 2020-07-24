@@ -110,7 +110,7 @@ def upload():
         if comb_value.get() == "名片":
             sql_insert(OCR.BUSINESS_CARD, result)
 
-
+test_list=[]
 def confirm_single(name, parent):
     def show_large_pic(name, parent):
         pic_wd = Toplevel(parent)
@@ -128,9 +128,11 @@ def confirm_single(name, parent):
 
         image = image.resize((size_w, size_h))
         temp_photo = ImageTk.PhotoImage(image)
-        imageLabel = Label(pic_wd, image=temp_photo)
+        #test_list.append(temp_photo)
+        imageLabel = Label(pic_wd, image=test_list[0])
         imageLabel.pack()
         pic_wd.mainloop()
+
     fns = root.tk.splitlist(name)
     namelist = getName(fns)
     name=namelist[0]
@@ -149,10 +151,10 @@ def confirm_single(name, parent):
 
     img_single = img_single.resize((size_w, size_h))
     photo_single = ImageTk.PhotoImage(img_single)
-
+    test_list.append(photo_single)
     photo_canv = Canvas(cf_wd, bd=1, width=660, height=550, relief=GROOVE, scrollregion=(0, 0, 500, 500))
     photo_canv.grid(row=1, column=0, columnspan=3)
-    photo_canv.create_image(5, 5, image=photo_single, anchor=NW)
+    photo_canv.create_image(5, 5, image=test_list[0], anchor=NW)
     result = ocr_business_card(name)
     addr = StringVar()
     addr.set(result['addr'])
@@ -160,9 +162,10 @@ def confirm_single(name, parent):
     fax.set(result['fax'])
 
     business_image = put_image(name, 200)
+    test_list.append(business_image)
     business_image_btn = Button(parent,
                                 command=lambda: show_large_pic(name, parent),
-                                image=business_image)
+                                image=test_list[1])
     business_image_btn.grid(row=0, column=0, rowspan=2)
 
 

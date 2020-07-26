@@ -8,7 +8,22 @@ from util import *
 
 # TODO 文件名有空格 备忘 核对功能 如果录入结果不对就手动录入
 ''''''
-
+def path_to_list(input: str):
+    flag = False
+    lst = []
+    path = ""
+    for char in input:
+        if char == "'" and flag == False:
+            flag = True
+            continue
+        if char == "'" and flag == True:
+            flag = False
+            lst.append(path)
+            path = ""
+            continue
+        if flag:
+            path += char
+    return lst
 
 def func(event):
     print(comb.get())
@@ -63,21 +78,20 @@ def upload():
     resultlist.clear()
     small_imagelist.clear()
 
-    fns = root.tk.splitlist(pathname.get())
+    #fns = root.tk.splitlist(pathname.get())
     # print(repr(fns))
-    num_photo.set(len(fns))
-    namelist = getName(fns)
+    num_photo.set(len(path_to_list(pathname.get())))
+    namelist = path_to_list(pathname.get())
+    #num_photo.set(len(fns))
+    #namelist = getName(fns)
     count = 0
-
     for name in namelist:
-
         if comb_value.get() == "普通文本":
             result = ocr_general_basic(name)
         elif comb_value.get() == "名片":
             result = ocr_business_card(name)
         elif comb_value.get() == "执照":
             result = ocr_business_license(name)
-        ''''''
         resultlist.append(result)
 
         size = 200
@@ -156,6 +170,7 @@ def confirm_single(name, parent):
     photo_canv.grid(row=1, column=0, columnspan=3)
     photo_canv.create_image(5, 5, image=test_list[0], anchor=NW)
     result = ocr_business_card(name)
+
     addr = StringVar()
     addr.set(result['addr'])
     fax = StringVar()
@@ -319,16 +334,21 @@ def upload_trade():
                                  command=lambda: confirm_single(business_path.get(), frame_businesscard),
                                  relief=GROOVE)
     businesscard_upload.grid(row=1, column=2)
-    # ------------------photo---------------
 
     business_entry = Entry(frame_businesscard, textvariable=business_path, width=25)
     business_entry.grid(row=0, column=1)
 
+    business_canv=Canvas(frame_businesscard, bd=1, width=200, height=180)
+    business_canv.grid(row=0, column=0, rowspan=2)
+
     businesscard_btn = Button(frame_businesscard, text="选择名片图片", width=11,
                               command=lambda: select_path(business_path), relief=GROOVE)
     businesscard_btn.grid(row=0, column=3)
+
     trade_wd.mainloop()
 
+def manage():
+    pass
 
 root = Tk()
 
@@ -361,6 +381,9 @@ single_btn.grid(row=0, column=0)
 
 trade_btn = Button(root, text="上传交易", width=11, command=upload_trade, relief=GROOVE)
 trade_btn.grid(row=1, column=0)
+
+trade_btn = Button(root, text="管理信息", width=11, command=manage, relief=GROOVE)
+trade_btn.grid(row=2, column=0)
 
 path_entry = Entry(root, textvariable=pathname, width=25)
 path_entry.grid(row=0, column=1)

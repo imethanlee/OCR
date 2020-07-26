@@ -105,6 +105,26 @@ small_imagelist = []
 resultlist = []
 
 
+# TODO: 新增路径处理函数（已完成）
+def path_to_list(input: str):
+    flag = False
+    lst = []
+    path = ""
+    for char in input:
+        if char == "'" and flag == False:
+            flag = True
+            continue
+        if char == "'" and flag == True:
+            flag = False
+            lst.append(path)
+            path = ""
+            continue
+        if flag:
+            path += char
+    return lst
+
+
+# TODO: 加入路径处理函数（已完成）
 def upload():
     photo_area.delete(ALL)
     imagelist.clear()
@@ -112,9 +132,11 @@ def upload():
     small_imagelist.clear()
 
     fns = root.tk.splitlist(pathname.get())
+
     # print(repr(fns))
-    num_photo.set(len(fns))
-    namelist = getName(fns)
+    num_photo.set(len(path_to_list(pathname.get())))
+    namelist = path_to_list(pathname.get())
+
     count = 0
 
     for name in namelist:
@@ -157,6 +179,7 @@ def upload():
     for result in resultlist:
         if comb_value.get() == "名片":
             sql_insert(OCR.BUSINESS_CARD, result)
+
 
 test_list=[]
 def confirm_single(name, parent):
@@ -217,6 +240,7 @@ def confirm_single(name, parent):
     business_image_btn.grid(row=0, column=0, rowspan=2)
 
 
+# TODO: confirm_single窗口（待修改）
 def confirm_window(namelist, parent):
     cf_wd = Toplevel(parent)
     size = 650

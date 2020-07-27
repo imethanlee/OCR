@@ -36,69 +36,69 @@ def sql_init():
     sql_conn(cmd)
 
     cmd = '''CREATE TABLE t_general_basic(
-                id              INTEGER         PRIMARY KEY AUTOINCREMENT,        -- 主键
-                content         varchar(1000)   NOT NULL DEFAULT '', -- 内容
-                remark          varchar(100)    NOT NULL DEFAULT '',   -- 备注
-                transaction_id  INTEGER         NOT NULL           -- 外键
+                id              INTEGER         PRIMARY KEY AUTOINCREMENT,      -- 主键
+                content         varchar(1000)   NOT NULL DEFAULT '',            -- 内容
+                remark          varchar(100)    NOT NULL DEFAULT '',            -- 备注
+                transaction_id  INTEGER         NOT NULL                        -- 外键
                 )'''
     sql_conn(cmd)
 
     cmd = '''CREATE TABLE t_business_card(
-                id              INTEGER         PRIMARY KEY AUTOINCREMENT,         -- 主键
-                addr            varchar(100)    NOT NULL DEFAULT '',      -- 地址
-                fax             varchar(100)    NOT NULL DEFAULT '',       -- 传真
-                mobile          varchar(100)    NOT NULL DEFAULT '',    -- 手机
-                name            varchar(100)    NOT NULL DEFAULT '',      -- 姓名
+                id              INTEGER         PRIMARY KEY AUTOINCREMENT,  -- 主键
+                addr            varchar(100)    NOT NULL DEFAULT '',        -- 地址
+                fax             varchar(100)    NOT NULL DEFAULT '',        -- 传真
+                mobile          varchar(100)    NOT NULL DEFAULT '',        -- 手机
+                name            varchar(100)    NOT NULL DEFAULT '',        -- 姓名
                 pc              varchar(100)    NOT NULL DEFAULT '',        -- ?
-                url             varchar(100)    NOT NULL DEFAULT '',       -- 网址
-                tel             varchar(100)    NOT NULL DEFAULT '',       -- 固话
-                company         varchar(100)    NOT NULL DEFAULT '',   -- 公司
-                title           varchar(100)    NOT NULL DEFAULT '',     -- 职称
-                email           varchar(100)    NOT NULL DEFAULT '',     -- 电邮
-                transaction_id  INTEGER         NOT NULL            -- 外键
+                url             varchar(100)    NOT NULL DEFAULT '',        -- 网址
+                tel             varchar(100)    NOT NULL DEFAULT '',        -- 固话
+                company         varchar(100)    NOT NULL DEFAULT '',        -- 公司
+                title           varchar(100)    NOT NULL DEFAULT '',        -- 职称
+                email           varchar(100)    NOT NULL DEFAULT '',        -- 电邮
+                transaction_id  INTEGER         NOT NULL                    -- 外键
                 )'''
     sql_conn(cmd)
 
     cmd = '''CREATE TABLE t_bankcard(
-                id                  INTEGER         PRIMARY KEY AUTOINCREMENT,                     -- 主键
-                bank_card_number    varchar(100)   NOT NULL DEFAULT '',     -- 银行卡号
-                valid_date          varchar(100)    NOT NULL DEFAULT '',            -- 过期日
+                id                  INTEGER         PRIMARY KEY AUTOINCREMENT,  -- 主键
+                bank_card_number    varchar(100)   NOT NULL DEFAULT '',         -- 银行卡号
+                valid_date          varchar(100)    NOT NULL DEFAULT '',        -- 过期日
                 bank_card_type      varchar(100)    NOT NULL DEFAULT '',        -- 类型
-                bank_name           varchar(100)    NOT NULL DEFAULT '',             -- 银行名称
-                transaction_id      INTEGER         NOT NULL                        -- 外键
+                bank_name           varchar(100)    NOT NULL DEFAULT '',        -- 银行名称
+                transaction_id      INTEGER         NOT NULL                    -- 外键
                 )'''
     sql_conn(cmd)
 
     cmd = '''CREATE TABLE t_business_license(
-                id                      INTEGER         PRIMARY KEY AUTOINCREMENT,                     -- 主键
-                registered_capital      varchar(100)    NOT NULL DEFAULT '',   -- 注册资本
-                social_credit_number    varchar(100)    NOT NULL DEFAULT '', -- 社会信用代码
-                company_name            varchar(100)    NOT NULL DEFAULT '',          -- 单位名称
-                legal_person            varchar(100)    NOT NULL DEFAULT '',          -- 法人
-                license_id              varchar(100)    NOT NULL DEFAULT '',            -- 证件编号
+                id                      INTEGER         PRIMARY KEY AUTOINCREMENT,  -- 主键
+                registered_capital      varchar(100)    NOT NULL DEFAULT '',        -- 注册资本
+                social_credit_number    varchar(100)    NOT NULL DEFAULT '',        -- 社会信用代码
+                company_name            varchar(100)    NOT NULL DEFAULT '',        -- 单位名称
+                legal_person            varchar(100)    NOT NULL DEFAULT '',        -- 法人
+                license_id              varchar(100)    NOT NULL DEFAULT '',        -- 证件编号
                 organization_form       varchar(100)    NOT NULL DEFAULT '',        -- 组成形式
-                establishment_date      varchar(100)    NOT NULL DEFAULT '',       --成立日期
-                addr                    varchar(100)    NOT NULL DEFAULT '',                     -- 地址
-                business_scope          varchar(100)    NOT NULL DEFAULT '',           -- 经营范围
-                type                    varchar(100)    NOT NULL DEFAULT '',                     -- 类型
-                expiration_date         varchar(100)    NOT NULL DEFAULT '',          -- 有效期
-                transaction_id          INTEGER         NOT NULL                        -- 外键
+                establishment_date      varchar(100)    NOT NULL DEFAULT '',        --成立日期
+                addr                    varchar(100)    NOT NULL DEFAULT '',        -- 地址
+                business_scope          varchar(100)    NOT NULL DEFAULT '',        -- 经营范围
+                type                    varchar(100)    NOT NULL DEFAULT '',        -- 类型
+                expiration_date         varchar(100)    NOT NULL DEFAULT '',        -- 有效期
+                transaction_id          INTEGER         NOT NULL                    -- 外键
                 )'''
     sql_conn(cmd)
 
     cmd = '''CREATE TABLE t_invoice(
                 id                      INTEGER         PRIMARY KEY AUTOINCREMENT,                          -- 主键
-                amount_in_words         varchar(100)    NOT NULL DEFAULT '',           -- 注册资本
-                commodity_price         varchar(100)    NOT NULL DEFAULT '',           -- 社会信用代码
-                note_drawer             varchar(100)    NOT NULL DEFAULT '',               -- 单位名称
-                seller_addr             varchar(100)    NOT NULL DEFAULT '',               -- 法人
-                commodity_num           varchar(100)    NOT NULL DEFAULT '',             -- 证件编号
-                seller_register_num     varchar(100)    NOT NULL DEFAULT '',       -- 组成形式
-                remarks                 varchar(100)    NOT NULL DEFAULT '',                    --成立日期
-                seller_bank             varchar(100)    NOT NULL DEFAULT '',                -- 地址
-                commodity_tax_rate      varchar(100)    NOT NULL DEFAULT '',         -- 经营范围
-                total_tax               varchar(100)    NOT NULL DEFAULT '',                   -- 类型
-                check_code              varchar(100)    NOT NULL DEFAULT '',                  -- 有效期
+                amount_in_words         varchar(100)    NOT NULL DEFAULT '',            -- 
+                commodity_price         varchar(100)    NOT NULL DEFAULT '',            -- 
+                note_drawer             varchar(100)    NOT NULL DEFAULT '',            --
+                seller_addr             varchar(100)    NOT NULL DEFAULT '',            -- 
+                commodity_num           varchar(100)    NOT NULL DEFAULT '',            -- 证件编号
+                seller_register_num     varchar(100)    NOT NULL DEFAULT '',            -- 组成形式
+                remarks                 varchar(100)    NOT NULL DEFAULT '',            --成立日期
+                seller_bank             varchar(100)    NOT NULL DEFAULT '',            -- 地址
+                commodity_tax_rate      varchar(100)    NOT NULL DEFAULT '',            -- 经营范围
+                total_tax               varchar(100)    NOT NULL DEFAULT '',            -- 类型
+                check_code              varchar(100)    NOT NULL DEFAULT '',            -- 有效期
                 invoice_code            varchar(100)    NOT NULL DEFAULT '',
                 invoice_date            varchar(100)    NOT NULL DEFAULT '',
                 purchaser_register_num  varchar(100)    NOT NULL DEFAULT '',
@@ -215,18 +215,22 @@ def sql_delete(ocr_type: OCR, id: int):
         cmd = '''DELETE FROM t_invoice
             WHERE id = {}
         '''.format(id)
+        sql_conn(cmd)
     elif ocr_type == OCR.BANKCARD:
         cmd = '''DELETE FROM t_bankcard
             WHERE id = {}
         '''.format(id)
+        sql_conn(cmd)
     elif ocr_type == OCR.BUSINESS_CARD:
         cmd = '''DELETE FROM t_business_card
             WHERE id = {}
         '''.format(id)
+        sql_conn(cmd)
     elif ocr_type == OCR.BUSINESS_LICENSE:
         cmd = '''DELETE FROM t_business_license
             WHERE id = {}
         '''.format(id)
+        sql_conn(cmd)
     else:
         print("Type Error")
 

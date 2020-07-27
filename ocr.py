@@ -4,7 +4,7 @@ from enum import Enum
 
 
 class OCR(Enum):
-    TRANSACTION = 0
+    # TRANSACTION = 0
     GENERAL_BASIC = 1
     BUSINESS_CARD = 2
     BANKCARD = 3
@@ -47,7 +47,8 @@ def ocr_general_basic(img_path: str = './test_case/example.jpg'):
         result = ""
         for i in range(num):
             result += words[i]['words']
-        return result
+        res = ocr_result_transform(OCR.GENERAL_BASIC, result)
+        return res
     else:
         print("OCR Connection Error!")
 
@@ -94,7 +95,8 @@ def ocr_bankcard(img_path: str = './test_case/bankcard.jpg'):
     headers = {'content-type': 'application/x-www-form-urlencoded'}
     response = requests.post(request_url, data=params, headers=headers)
     if response:
-        return response.json()['result']
+        res = ocr_result_transform(OCR.BANKCARD, response.json()['result'])
+        return res
     else:
         print("OCR Connection Error!")
 
@@ -117,7 +119,8 @@ def ocr_business_license(img_path: str = './test_case/business_license.jpg'):
     headers = {'content-type': 'application/x-www-form-urlencoded'}
     response = requests.post(request_url, data=params, headers=headers)
     if response:
-        return response.json()['words_result']
+        res = ocr_result_transform(OCR.BUSINESS_LICENSE, response.json()['words_result'])
+        return res
     else:
         print("OCR Connection Error!")
 
@@ -140,7 +143,8 @@ def ocr_invoice(img_path: str = './test_case/invoice.png'):
     headers = {'content-type': 'application/x-www-form-urlencoded'}
     response = requests.post(request_url, data=params, headers=headers)
     if response:
-        return response.json()['words_result']
+        res = ocr_result_transform(OCR.INVOICE, response.json()['words_result'])
+        return res
     else:
         print("OCR Connection Error!")
 
@@ -194,17 +198,17 @@ def ocr_result_transform(ocr_type: OCR, origin: dict):
     elif ocr_type == OCR.BANKCARD:
         new = origin
     elif ocr_type == OCR.BUSINESS_LICENSE:
-        new['registered_capital'] = origin['注册资本']
-        new['social_credit_number'] = origin['社会信用代码']
-        new['company_name'] = origin['单位名称']
-        new['legal_person'] = origin['法人']
-        new['license_id'] = origin['证件编号']
-        new['organization_form'] = origin['组成形式']
-        new['establishment_date'] = origin['成立日期']
-        new['addr'] = origin['地址']
-        new['business_scope'] = origin['经营范围']
-        new['type'] = origin['类型']
-        new['expiration_date'] = origin['有效期']
+        new['registered_capital'] = origin['注册资本']['words']
+        new['social_credit_number'] = origin['社会信用代码']['words']
+        new['company_name'] = origin['单位名称']['words']
+        new['legal_person'] = origin['法人']['words']
+        new['license_id'] = origin['证件编号']['words']
+        new['organization_form'] = origin['组成形式']['words']
+        new['establishment_date'] = origin['成立日期']['words']
+        new['addr'] = origin['地址']['words']
+        new['business_scope'] = origin['经营范围']['words']
+        new['type'] = origin['类型']['words']
+        new['expiration_date'] = origin['有效期']['words']
     elif ocr_type == OCR.GENERAL_BASIC:
         new['content'] = origin
         new['remark '] ='???'

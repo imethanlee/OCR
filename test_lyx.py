@@ -182,6 +182,7 @@ def upload():
 
 
 test_list=[]
+# TODO: confirm_single窗口（待修改）
 def confirm_single(name, parent):
     def show_large_pic(name, parent):
         pic_wd = Toplevel(parent)
@@ -206,6 +207,7 @@ def confirm_single(name, parent):
 
     fns = root.tk.splitlist(name)
     namelist = getName(fns)
+    namelist = path_to_list(name)
     name=namelist[0]
 
     cf_wd = Toplevel(parent)
@@ -227,6 +229,7 @@ def confirm_single(name, parent):
     photo_canv.grid(row=1, column=0, columnspan=3)
     photo_canv.create_image(5, 5, image=test_list[0], anchor=NW)
     result = ocr_business_card(name)
+
     addr = StringVar()
     addr.set(result['addr'])
     fax = StringVar()
@@ -240,7 +243,6 @@ def confirm_single(name, parent):
     business_image_btn.grid(row=0, column=0, rowspan=2)
 
 
-# TODO: confirm_single窗口（待修改）
 def confirm_window(namelist, parent):
     cf_wd = Toplevel(parent)
     size = 650

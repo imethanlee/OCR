@@ -126,7 +126,7 @@ def upload():
             sql_insert(OCR.BUSINESS_CARD, result)
 
 test_list=[]
-def confirm_single(name, parent):
+def confirm_single(name, parent, ocr_type: OCR):
     def show_large_pic(name, parent):
         pic_wd = Toplevel(parent)
         image = Image.open(name)
@@ -332,7 +332,7 @@ def upload_trade():
     businesscard_edit.grid(row=1, column=1)
 
     businesscard_upload = Button(frame_businesscard, text="上传图片", width=11,
-                                 command=lambda: confirm_single(business_path.get(), frame_businesscard),
+                                 command=lambda: confirm_single(business_path.get(), frame_businesscard, OCR.BUSINESS_CARD),
                                  relief=GROOVE)
     businesscard_upload.grid(row=1, column=2)
 
@@ -356,7 +356,7 @@ def upload_trade():
     license_edit.grid(row=2, column=1)
 
     license_upload = Button(frame_license, text="上传图片", width=11,
-                                command=lambda: confirm_single(license_path.get(), frame_license),
+                                command=lambda: confirm_single(license_path.get(), frame_license, OCR.BUSINESS_LICENSE),
                                 relief=GROOVE)
     license_upload.grid(row=2, column=2)
 
@@ -380,7 +380,7 @@ def upload_trade():
     general_edit.grid(row=3, column=1)
 
     general_upload = Button(frame_general, text="上传图片", width=11,
-                            command=lambda: confirm_single(general_path.get(), frame_general),
+                            command=lambda: confirm_single(general_path.get(), frame_general, OCR.GENERAL_BASIC),
                             relief=GROOVE)
     general_upload.grid(row=3, column=2)
 
@@ -404,7 +404,7 @@ def upload_trade():
     card_edit.grid(row=1, column=6)
 
     card_upload = Button(frame_card, text="上传图片", width=11,
-                         command=lambda: confirm_single(card_path.get(), frame_card),
+                         command=lambda: confirm_single(card_path.get(), frame_card, OCR.BUSINESS_CARD),
                          relief=GROOVE)
     card_upload.grid(row=1, column=7)
 
@@ -428,7 +428,7 @@ def upload_trade():
     invoice_edit.grid(row=2, column=6)
 
     invoice_upload = Button(frame_invoice, text="上传图片", width=11,
-                            command=lambda: confirm_single(invoice_path.get(), frame_invoice),
+                            command=lambda: confirm_single(invoice_path.get(), frame_invoice, OCR.INVOICE),
                             relief=GROOVE)
     invoice_upload.grid(row=2, column=7)
 

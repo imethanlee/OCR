@@ -8,6 +8,8 @@ from util import *
 
 # TODO 文件名有空格 备忘 核对功能 如果录入结果不对就手动录入
 ''''''
+
+
 def path_to_list(input: str):
     flag = False
     lst = []
@@ -24,6 +26,7 @@ def path_to_list(input: str):
         if flag:
             path += char
     return lst
+
 
 def func(event):
     print(comb.get())
@@ -78,12 +81,12 @@ def upload():
     resultlist.clear()
     small_imagelist.clear()
 
-    #fns = root.tk.splitlist(pathname.get())
+    # fns = root.tk.splitlist(pathname.get())
     # print(repr(fns))
     num_photo.set(len(path_to_list(pathname.get())))
     namelist = path_to_list(pathname.get())
-    #num_photo.set(len(fns))
-    #namelist = getName(fns)
+    # num_photo.set(len(fns))
+    # namelist = getName(fns)
     count = 0
     for name in namelist:
         if comb_value.get() == "普通文本":
@@ -125,10 +128,18 @@ def upload():
         if comb_value.get() == "名片":
             sql_insert(OCR.BUSINESS_CARD, result)
 
-test_list=[]
+
+business_list = []
+card_list = []
+license_list = []
+invoice_list = []
+general_list = []
+
+
 def confirm_single(name, parent, ocr_type: OCR):
     def show_large_pic(name, parent):
         pic_wd = Toplevel(parent)
+        '''
         image = Image.open(name)
         pic_size = 700
 
@@ -143,14 +154,25 @@ def confirm_single(name, parent, ocr_type: OCR):
 
         image = image.resize((size_w, size_h))
         temp_photo = ImageTk.PhotoImage(image)
-        #test_list.append(temp_photo)
-        imageLabel = Label(pic_wd, image=test_list[0])
+        '''
+        # test_list.append(temp_photo)
+        if ocr_type == OCR.BUSINESS_CARD:
+            imageLabel = Label(pic_wd, image=business_list[-2])
+        elif ocr_type == OCR.BANKCARD:
+            imageLabel = Label(pic_wd, image=card_list[-2])
+        elif ocr_type == OCR.BUSINESS_LICENSE:
+            imageLabel = Label(pic_wd, image=license_list[-2])
+        elif ocr_type == OCR.INVOICE:
+            imageLabel = Label(pic_wd, image=invoice_list[-2])
+        elif ocr_type == OCR.GENERAL_BASIC:
+            imageLabel = Label(pic_wd, image=general_list[-2])
         imageLabel.pack()
         pic_wd.mainloop()
 
+
     fns = root.tk.splitlist(name)
     namelist = getName(fns)
-    name=namelist[0]
+    name = namelist[0]
 
     cf_wd = Toplevel(parent)
     size = 650
@@ -166,10 +188,42 @@ def confirm_single(name, parent, ocr_type: OCR):
 
     img_single = img_single.resize((size_w, size_h))
     photo_single = ImageTk.PhotoImage(img_single)
-    test_list.append(photo_single)
+
     photo_canv = Canvas(cf_wd, bd=1, width=660, height=550, relief=GROOVE, scrollregion=(0, 0, 500, 500))
     photo_canv.grid(row=1, column=0, columnspan=3)
-    photo_canv.create_image(5, 5, image=test_list[0], anchor=NW)
+
+    if ocr_type == OCR.BUSINESS_CARD:
+        business_list.append(photo_single)
+        '''business_image_btn = Button(parent,
+                                    command=lambda: show_large_pic(name, parent),
+                                    image=business_list[-1])'''
+        photo_canv.create_image(5, 5, image=business_list[-1], anchor=NW)
+    elif ocr_type == OCR.BANKCARD:
+        card_list.append(photo_single)
+        '''business_image_btn = Button(parent,
+                                    command=lambda: show_large_pic(name, parent),
+                                    image=card_list[-1])'''
+        photo_canv.create_image(5, 5, image=card_list[-1], anchor=NW)
+    elif ocr_type == OCR.BUSINESS_LICENSE:
+        license_list.append(photo_single)
+        '''business_image_btn = Button(parent,
+                                    command=lambda: show_large_pic(name, parent),
+                                    image=license_list[-1])'''
+        photo_canv.create_image(5, 5, image=license_list[-1], anchor=NW)
+    elif ocr_type == OCR.INVOICE:
+        invoice_list.append(photo_single)
+        '''business_image_btn = Button(parent,
+                                    command=lambda: show_large_pic(name, parent),
+                                    image=invoice_list[-1])'''
+        photo_canv.create_image(5, 5, image=invoice_list[-1], anchor=NW)
+    elif ocr_type == OCR.GENERAL_BASIC:
+        general_list.append(photo_single)
+        '''business_image_btn = Button(parent,
+                                    command=lambda: show_large_pic(name, parent),
+                                    image=general_list[-1])'''
+        photo_canv.create_image(5, 5, image=general_list[-1], anchor=NW)
+
+
     result = ocr_business_card(name)
 
     addr = StringVar()
@@ -177,12 +231,41 @@ def confirm_single(name, parent, ocr_type: OCR):
     fax = StringVar()
     fax.set(result['fax'])
 
-    business_image = put_image(name, 200)
-    test_list.append(business_image)
-    business_image_btn = Button(parent,
-                                command=lambda: show_large_pic(name, parent),
-                                image=test_list[1])
-    business_image_btn.grid(row=0, column=0, rowspan=2)
+    temp_image = put_image(name, 200)
+
+    if ocr_type == OCR.BUSINESS_CARD:
+        business_list.append(temp_image)
+
+        business_image_btn = Button(parent,
+                                    command=lambda: show_large_pic(name, parent),
+                                    image=business_list[-1])
+        business_image_btn.grid(row=0, column=0, rowspan=2)
+    elif ocr_type == OCR.BANKCARD:
+        card_list.append(temp_image)
+        business_image_btn = Button(parent,
+                                    command=lambda: show_large_pic(name, parent),
+                                    image=card_list[-1])
+        business_image_btn.grid(row=0, column=0, rowspan=2)
+    elif ocr_type == OCR.BUSINESS_LICENSE:
+        license_list.append(temp_image)
+        business_image_btn = Button(parent,
+                                    command=lambda: show_large_pic(name, parent),
+                                    image=license_list[-1])
+        business_image_btn.grid(row=0, column=0, rowspan=2)
+    elif ocr_type == OCR.INVOICE:
+        invoice_list.append(temp_image)
+        business_image_btn = Button(parent,
+                                    command=lambda: show_large_pic(name, parent),
+                                    image=invoice_list[-1])
+        business_image_btn.grid(row=0, column=0, rowspan=2)
+    elif ocr_type == OCR.GENERAL_BASIC:
+        general_list.append(temp_image)
+        business_image_btn = Button(parent,
+                                    command=lambda: show_large_pic(name, parent),
+                                    image=general_list[-1])
+        business_image_btn.grid(row=0, column=0, rowspan=2)
+
+
 
 
 def confirm_window(namelist, parent):
@@ -332,21 +415,22 @@ def upload_trade():
     businesscard_edit.grid(row=1, column=1)
 
     businesscard_upload = Button(frame_businesscard, text="上传图片", width=11,
-                                 command=lambda: confirm_single(business_path.get(), frame_businesscard, OCR.BUSINESS_CARD),
+                                 command=lambda: confirm_single(business_path.get(), frame_businesscard,
+                                                                OCR.BUSINESS_CARD),
                                  relief=GROOVE)
     businesscard_upload.grid(row=1, column=2)
 
     business_entry = Entry(frame_businesscard, textvariable=business_path, width=25)
     business_entry.grid(row=0, column=1)
 
-    business_canv=Canvas(frame_businesscard, bd=1, width=200, height=180)
+    business_canv = Canvas(frame_businesscard, bd=1, width=200, height=200)
     business_canv.grid(row=0, column=0, rowspan=2)
 
     businesscard_btn = Button(frame_businesscard, text="选择名片图片", width=13,
                               command=lambda: select_path(business_path), relief=GROOVE)
     businesscard_btn.grid(row=0, column=3)
 
-#-----------营业执照
+    # -----------营业执照
     license_path = StringVar()
 
     frame_license = Frame(trade_wd, height=200, width=500, bd=1, relief='groove')
@@ -356,18 +440,18 @@ def upload_trade():
     license_edit.grid(row=2, column=1)
 
     license_upload = Button(frame_license, text="上传图片", width=11,
-                                command=lambda: confirm_single(license_path.get(), frame_license, OCR.BUSINESS_LICENSE),
-                                relief=GROOVE)
+                            command=lambda: confirm_single(license_path.get(), frame_license, OCR.BUSINESS_LICENSE),
+                            relief=GROOVE)
     license_upload.grid(row=2, column=2)
 
     license_entry = Entry(frame_license, textvariable=license_path, width=25)
     license_entry.grid(row=1, column=1)
 
-    license_canv = Canvas(frame_license, bd=1, width=200, height=180)
+    license_canv = Canvas(frame_license, bd=1, width=200, height=200)
     license_canv.grid(row=1, column=0, rowspan=2)
 
     license_btn = Button(frame_license, text="选择营业执照图片", width=13,
-                             command=lambda: select_path(license_path), relief=GROOVE)
+                         command=lambda: select_path(license_path), relief=GROOVE)
     license_btn.grid(row=1, column=3)
 
     # -----------通用文本
@@ -387,7 +471,7 @@ def upload_trade():
     general_entry = Entry(frame_general, textvariable=general_path, width=25)
     general_entry.grid(row=2, column=1)
 
-    general_canv = Canvas(frame_general, bd=1, width=200, height=180)
+    general_canv = Canvas(frame_general, bd=1, width=200, height=200)
     general_canv.grid(row=2, column=0, rowspan=2)
 
     general_btn = Button(frame_general, text="选择其他信息图片", width=13,
@@ -401,22 +485,22 @@ def upload_trade():
     frame_card.grid(row=0, column=5, columnspan=5)
 
     card_edit = Button(frame_card, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
-    card_edit.grid(row=1, column=6)
+    card_edit.grid(row=1, column=1)
 
     card_upload = Button(frame_card, text="上传图片", width=11,
-                         command=lambda: confirm_single(card_path.get(), frame_card, OCR.BUSINESS_CARD),
+                         command=lambda: confirm_single(card_path.get(), frame_card, OCR.BANKCARD),
                          relief=GROOVE)
-    card_upload.grid(row=1, column=7)
+    card_upload.grid(row=1, column=2)
 
     card_entry = Entry(frame_card, textvariable=card_path, width=25)
-    card_entry.grid(row=0, column=6)
+    card_entry.grid(row=0, column=1)
 
-    card_canv = Canvas(frame_card, bd=1, width=200, height=180)
-    card_canv.grid(row=0, column=5, rowspan=2)
+    card_canv = Canvas(frame_card, bd=1, width=200, height=200)
+    card_canv.grid(row=0, column=0, rowspan=2)
 
     card_btn = Button(frame_card, text="选择银行卡图片", width=13,
                       command=lambda: select_path(card_path), relief=GROOVE)
-    card_btn.grid(row=0, column=8)
+    card_btn.grid(row=0, column=3)
 
     # -----------发票
     invoice_path = StringVar()
@@ -425,27 +509,29 @@ def upload_trade():
     frame_invoice.grid(row=1, column=5, columnspan=5)
 
     invoice_edit = Button(frame_invoice, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
-    invoice_edit.grid(row=2, column=6)
+    invoice_edit.grid(row=2, column=1)
 
     invoice_upload = Button(frame_invoice, text="上传图片", width=11,
                             command=lambda: confirm_single(invoice_path.get(), frame_invoice, OCR.INVOICE),
                             relief=GROOVE)
-    invoice_upload.grid(row=2, column=7)
+    invoice_upload.grid(row=2, column=2)
 
     invoice_entry = Entry(frame_invoice, textvariable=invoice_path, width=25)
-    invoice_entry.grid(row=1, column=6)
+    invoice_entry.grid(row=1, column=1)
 
-    invoice_canv = Canvas(frame_invoice, bd=1, width=200, height=180)
-    invoice_canv.grid(row=1, column=5, rowspan=2)
+    invoice_canv = Canvas(frame_invoice, bd=1, width=200, height=200)
+    invoice_canv.grid(row=1, column=0, rowspan=2)
 
     invoice_btn = Button(frame_invoice, text="选择发票图片", width=13,
                          command=lambda: select_path(invoice_path), relief=GROOVE)
-    invoice_btn.grid(row=1, column=8)
+    invoice_btn.grid(row=1, column=3)
 
     trade_wd.mainloop()
 
+
 def manage():
     pass
+
 
 root = Tk()
 

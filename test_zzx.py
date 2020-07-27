@@ -99,6 +99,7 @@ def upload():
 
         if img.size[0] > img.size[1]:
             size_w = size
+
             size_h = int(img.size[1] * size / img.size[0])
             # img = img.resize((size, int(img.size[1] * size / img.size[0])))
         else:
@@ -341,9 +342,105 @@ def upload_trade():
     business_canv=Canvas(frame_businesscard, bd=1, width=200, height=180)
     business_canv.grid(row=0, column=0, rowspan=2)
 
-    businesscard_btn = Button(frame_businesscard, text="选择名片图片", width=11,
+    businesscard_btn = Button(frame_businesscard, text="选择名片图片", width=13,
                               command=lambda: select_path(business_path), relief=GROOVE)
     businesscard_btn.grid(row=0, column=3)
+
+#-----------营业执照
+    license_path = StringVar()
+
+    frame_license = Frame(trade_wd, height=200, width=500, bd=1, relief='groove')
+    frame_license.grid(row=1, column=0, columnspan=5)
+
+    license_edit = Button(frame_license, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
+    license_edit.grid(row=2, column=1)
+
+    license_upload = Button(frame_license, text="上传图片", width=11,
+                                command=lambda: confirm_single(license_path.get(), frame_license),
+                                relief=GROOVE)
+    license_upload.grid(row=2, column=2)
+
+    license_entry = Entry(frame_license, textvariable=license_path, width=25)
+    license_entry.grid(row=1, column=1)
+
+    license_canv = Canvas(frame_license, bd=1, width=200, height=180)
+    license_canv.grid(row=1, column=0, rowspan=2)
+
+    license_btn = Button(frame_license, text="选择营业执照图片", width=13,
+                             command=lambda: select_path(license_path), relief=GROOVE)
+    license_btn.grid(row=1, column=3)
+
+    # -----------通用文本
+    general_path = StringVar()
+
+    frame_general = Frame(trade_wd, height=200, width=500, bd=1, relief='groove')
+    frame_general.grid(row=2, column=0, columnspan=5)
+
+    general_edit = Button(frame_general, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
+    general_edit.grid(row=3, column=1)
+
+    general_upload = Button(frame_general, text="上传图片", width=11,
+                            command=lambda: confirm_single(general_path.get(), frame_general),
+                            relief=GROOVE)
+    general_upload.grid(row=3, column=2)
+
+    general_entry = Entry(frame_general, textvariable=general_path, width=25)
+    general_entry.grid(row=2, column=1)
+
+    general_canv = Canvas(frame_general, bd=1, width=200, height=180)
+    general_canv.grid(row=2, column=0, rowspan=2)
+
+    general_btn = Button(frame_general, text="选择其他信息图片", width=13,
+                         command=lambda: select_path(general_path), relief=GROOVE)
+    general_btn.grid(row=2, column=3)
+
+    # -----------银行卡
+    card_path = StringVar()
+
+    frame_card = Frame(trade_wd, height=200, width=500, bd=1, relief='groove')
+    frame_card.grid(row=0, column=5, columnspan=5)
+
+    card_edit = Button(frame_card, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
+    card_edit.grid(row=1, column=6)
+
+    card_upload = Button(frame_card, text="上传图片", width=11,
+                         command=lambda: confirm_single(card_path.get(), frame_card),
+                         relief=GROOVE)
+    card_upload.grid(row=1, column=7)
+
+    card_entry = Entry(frame_card, textvariable=card_path, width=25)
+    card_entry.grid(row=0, column=6)
+
+    card_canv = Canvas(frame_card, bd=1, width=200, height=180)
+    card_canv.grid(row=0, column=5, rowspan=2)
+
+    card_btn = Button(frame_card, text="选择银行卡图片", width=13,
+                      command=lambda: select_path(card_path), relief=GROOVE)
+    card_btn.grid(row=0, column=8)
+
+    # -----------发票
+    invoice_path = StringVar()
+
+    frame_invoice = Frame(trade_wd, height=200, width=500, bd=1, relief='groove')
+    frame_invoice.grid(row=1, column=5, columnspan=5)
+
+    invoice_edit = Button(frame_invoice, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
+    invoice_edit.grid(row=2, column=6)
+
+    invoice_upload = Button(frame_invoice, text="上传图片", width=11,
+                            command=lambda: confirm_single(invoice_path.get(), frame_invoice),
+                            relief=GROOVE)
+    invoice_upload.grid(row=2, column=7)
+
+    invoice_entry = Entry(frame_invoice, textvariable=invoice_path, width=25)
+    invoice_entry.grid(row=1, column=6)
+
+    invoice_canv = Canvas(frame_invoice, bd=1, width=200, height=180)
+    invoice_canv.grid(row=1, column=5, rowspan=2)
+
+    invoice_btn = Button(frame_invoice, text="选择发票图片", width=13,
+                         command=lambda: select_path(invoice_path), relief=GROOVE)
+    invoice_btn.grid(row=1, column=8)
 
     trade_wd.mainloop()
 

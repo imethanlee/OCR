@@ -104,7 +104,7 @@ def sql_init():
                 purchaser_register_num  varchar(100)    NOT NULL DEFAULT '',
                 invoice_type_org        varchar(100)    NOT NULL DEFAULT '',
                 password                varchar(100)    NOT NULL DEFAULT '',
-                amount_in_figuers       varchar(100)    NOT NULL DEFAULT '',
+                amount_in_figures       varchar(100)    NOT NULL DEFAULT '',
                 purchaser_bank          varchar(100)    NOT NULL DEFAULT '',
                 checker                 varchar(100)    NOT NULL DEFAULT '',
                 totalAmount             varchar(100)    NOT NULL DEFAULT '',

@@ -180,7 +180,7 @@ def ocr_result_transform(ocr_type: OCR, origin: dict):
         new['purchaser_register_num'] = origin['PurchaserRegisterNum']
         new['invoice_type_org'] = origin['InvoiceTypeOrg']
         new['password'] = origin['Password']
-        new['amount_in_figuers'] = origin['AmountInFiguers']
+        new['amount_in_figures'] = origin['AmountInFiguers']
         new['purchaser_bank'] = origin['PurchaserBank']
         new['checker'] = origin['Checker']
         new['totalAmount'] = origin['TotalAmount']

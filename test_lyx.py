@@ -420,8 +420,121 @@ def confirm_single(name, parent, ocr_type: OCR):
         entry_addr.grid(row=5 + offset, column=5, columnspan=4)
         entry_business_scope = Entry(cf_wd, textvariable=v_business_scope, width=52, font=myfont)
         entry_business_scope.grid(row=6 + offset, column=5, columnspan=4)
+
     elif ocr_type == OCR.INVOICE:
-        pass
+        offset = 0
+        result = ocr_invoice(name)
+        print(result)
+        v_invoice_type = StringVar()            # 发票种类
+        v_invoice_type.set(result['invoice_type'])
+        v_invoice_code = StringVar()            # 发票代码
+        v_invoice_code.set(result['invoice_code'])
+        v_invoice_num = StringVar()             # 发票号码
+        v_invoice_num.set(result['invoice_num'])
+        v_invoice_date = StringVar()            # 开票日期
+        v_invoice_date.set(result['invoice_date'])
+        v_purchaser_name = StringVar()          # 购买方名称
+        v_purchaser_name.set(result['purchaser_name'])
+        v_purchaser_register_num = StringVar()  # 购买方纳税人识别号
+        v_purchaser_register_num.set(result['purchaser_register_num'])
+        v_seller_name = StringVar()             # 销售方名称
+        v_seller_name.set(result['seller_name'])
+        v_seller_register_num = StringVar()     # 销售方纳税人识别号
+        v_seller_register_num.set(result['seller_register_num'])
+        v_seller_addr = StringVar()             # 销售方地址电话
+        v_seller_addr.set(result['seller_addr'])
+        v_seller_bank = StringVar()             # 销售方开户行及账号
+        v_seller_bank.set(result['seller_bank'])
+        v_commodity_name = StringVar()          # 货物名称 多行
+        v_commodity_type = StringVar()          # 规格型号 多行
+        v_commodity_num = StringVar()           # 数量 多行
+        v_commodity_price = StringVar()         # 单价 多行
+        v_commodity_amount = StringVar()        # 金额 多行
+        v_commodity_tax_rate = StringVar()      # 税率 多行
+        v_commodity_tax = StringVar()           # 税额 多行
+        v_amount_in_figures = StringVar()       # 价格合计
+        v_amount_in_figures.set(result['amount_in_figures'])
+
+        text_invoice_type = Label(cf_wd, text="发票种类:", font=myfont)
+        text_invoice_type.grid(row=0 + offset, column=4)
+        text_invoice_code = Label(cf_wd, text="发票代码:", font=myfont)
+        text_invoice_code.grid(row=0 + offset, column=6)
+        text_invoice_num = Label(cf_wd, text="发票号码:", font=myfont)
+        text_invoice_num.grid(row=1 + offset, column=4)
+        text_invoice_date = Label(cf_wd, text="开票日期:", font=myfont)
+        text_invoice_date.grid(row=1 + offset, column=6)
+        text_purchaser = Label(cf_wd, text="购买方信息:", font=myfont)
+        text_purchaser.grid(row=2 + offset, column=4)
+        text_purchaser_name = Label(cf_wd, text="名称:", font=myfont)
+        text_purchaser_name.grid(row=3 + offset, column=4)
+        text_purchaser_register_num = Label(cf_wd, text="纳税人\n识别号:", font=myfont)
+        text_purchaser_register_num.grid(row=3 + offset, column=6)
+        text_seller = Label(cf_wd, text="销售方信息:", font=myfont)
+        text_seller.grid(row=4 + offset, column=4)
+        text_seller_name = Label(cf_wd, text="名称:", width=10, font=myfont)
+        text_seller_name.grid(row=5 + offset, column=4)
+        text_seller_register_num = Label(cf_wd, text="纳税人\n识别号:", width=10, font=myfont)
+        text_seller_register_num.grid(row=5 + offset, column=6)
+        text_seller_addr = Label(cf_wd, text="地址:", width=10, font=myfont)
+        text_seller_addr.grid(row=6 + offset, column=4)
+        text_seller_bank = Label(cf_wd, text="银行:", width=10, font=myfont)
+        text_seller_bank.grid(row=6 + offset, column=6)
+        text_amount_in_figures = Label(cf_wd, text="价格合计(元):", font=myfont)
+        text_amount_in_figures.grid(row=10 + offset, column=4)
+
+        entry_invoice_type = Entry(cf_wd, textvariable=v_invoice_type, font=myfont)
+        entry_invoice_type.grid(row=0 + offset, column=5)
+        entry_invoice_code = Entry(cf_wd, textvariable=v_invoice_code, font=myfont)
+        entry_invoice_code.grid(row=0 + offset, column=7)
+        entry_invoice_num = Entry(cf_wd, textvariable=v_invoice_num, font=myfont)
+        entry_invoice_num.grid(row=1 + offset, column=5)
+        entry_invoice_date = Entry(cf_wd, textvariable=v_invoice_date, font=myfont)
+        entry_invoice_date.grid(row=1 + offset, column=7)
+        entry_purchaser_name = Entry(cf_wd, textvariable=v_purchaser_name, font=myfont)
+        entry_purchaser_name.grid(row=3 + offset, column=5)
+        entry_purchaser_register_num = Entry(cf_wd, textvariable=v_purchaser_register_num, font=myfont)
+        entry_purchaser_register_num.grid(row=3 + offset, column=7)
+        entry_seller_name = Entry(cf_wd, textvariable=v_seller_name, font=myfont)
+        entry_seller_name.grid(row=5 + offset, column=5)
+        entry_seller_register_num = Entry(cf_wd, textvariable=v_seller_register_num, font=myfont)
+        entry_seller_register_num.grid(row=5 + offset, column=7)
+        entry_seller_addr = Entry(cf_wd, textvariable=v_seller_addr, font=myfont)
+        entry_seller_addr.grid(row=6 + offset, column=5)
+        entry_seller_bank = Entry(cf_wd, textvariable=v_seller_bank, font=myfont)
+        entry_seller_bank.grid(row=6 + offset, column=7)
+
+        tree = ttk.Treeview(cf_wd, show = "headings", columns=('货物名称','规格型号', '数量', '单价', '金额', '税率', '税额')
+                            , selectmode=BROWSE, height=5)
+        tree.heading("货物名称", text="货物名称")
+        tree.column("货物名称", minwidth=0, width=100, stretch=NO)
+        tree.heading("规格型号", text="规格型号")
+        tree.column("规格型号", minwidth=0, width=100, stretch=NO)
+        tree.heading("数量", text="数量")
+        tree.column("数量", minwidth=0, width=50, stretch=NO)
+        tree.heading("单价", text="单价")
+        tree.column("单价", minwidth=0, width=100, stretch=NO)
+        tree.heading("金额", text="金额")
+        tree.column("金额", minwidth=0, width=100, stretch=NO)
+        tree.heading("税率", text="税率")
+        tree.column("税率", minwidth=0, width=50, stretch=NO)
+        tree.heading("税额", text="税额")
+        tree.column("税额", minwidth=0, width=100, stretch=NO)
+
+        print(result['commodity_name'][0]['word'])
+
+        for i in range(len(result['commodity_name'])):
+            tree.insert('', i, values=(result['commodity_name'][i]['word'],
+                                       result['commodity_type'][i]['word'],
+                                       result['commodity_num'][i]['word'],
+                                       result['commodity_price'][i]['word'],
+                                       result['commodity_amount'][i]['word'],
+                                       result['commodity_tax_rate'][i]['word'],
+                                       result['commodity_tax'][i]['word'],))
+        tree.grid(row=7 + offset, column=4, columnspan=4)
+
+        entry_amount_in_figures = Entry(cf_wd, textvariable=v_amount_in_figures, font=myfont)
+        entry_amount_in_figures.grid(row=10 + offset, column=5)
+
     elif ocr_type == OCR.GENERAL_BASIC:
         offset = 0
         result = ocr_general_basic(name)
@@ -439,7 +552,6 @@ def confirm_single(name, parent, ocr_type: OCR):
         entry_content.grid(row=1 + offset, column=5, columnspan=4)
 
         new_content = entry_content.get('0.0', 'end')
-        print(new_content)
 
 
     temp_image = put_image(name, 200)

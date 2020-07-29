@@ -1,3 +1,50 @@
+# from util import *
+# import cv2
+
+
+# print(ocr_invoice())
+
+
+'''
+global img
+global point1, point2
+
+
+def on_mouse(event, x, y, flags, param):
+    global img, point1, point2
+    img2 = img.copy()
+    if event == cv2.EVENT_LBUTTONDOWN:  # 左键点击
+        point1 = (x, y)
+        cv2.circle(img2, point1, 10, (0, 255, 0), 5)
+        cv2.imshow('image', img2)
+    elif event == cv2.EVENT_MOUSEMOVE and (flags & cv2.EVENT_FLAG_LBUTTON):  # 按住左键拖曳
+        cv2.rectangle(img2, point1, (x, y), (255, 0, 0), 5)
+        cv2.imshow('image', img2)
+    elif event == cv2.EVENT_LBUTTONUP:  # 左键释放
+        point2 = (x, y)
+        cv2.rectangle(img2, point1, point2, (0, 0, 255), 5)
+        cv2.imshow('image', img2)
+        min_x = min(point1[0], point2[0])
+        min_y = min(point1[1], point2[1])
+        width = abs(point1[0] - point2[0])
+        height = abs(point1[1] - point2[1])
+        cut_img = img[min_y:min_y + height, min_x:min_x + width]
+        cv2.imwrite('example.jpg', cut_img)
+
+
+def main():
+    global img
+    img = cv2.imread('./test_case/bankcard.jpg')
+    cv2.namedWindow('image')
+    cv2.setMouseCallback('image', on_mouse)
+    cv2.imshow('image', img)
+    cv2.waitKey(0)
+
+
+main()
+
+'''
+
 from tkinter import *
 from PIL import Image, ImageTk
 from tkinter import messagebox
@@ -136,6 +183,9 @@ invoice_list = []
 general_list = []
 
 
+ocr_final_result = {}
+
+
 def confirm_single(name, parent, ocr_type: OCR):
     def show_large_pic(name, parent):
         pic_wd = Toplevel(parent)
@@ -171,7 +221,7 @@ def confirm_single(name, parent, ocr_type: OCR):
 
 
     fns = root.tk.splitlist(name)
-    namelist = getName(fns)
+    namelist = path_to_list(name)
     name = namelist[0]
 
     cf_wd = Toplevel(parent)
@@ -190,7 +240,7 @@ def confirm_single(name, parent, ocr_type: OCR):
     photo_single = ImageTk.PhotoImage(img_single)
 
     photo_canv = Canvas(cf_wd, bd=1, width=660, height=550, relief=GROOVE, scrollregion=(0, 0, 500, 500))
-    photo_canv.grid(row=1, column=0, columnspan=3)
+    photo_canv.grid(row=0, column=0, columnspan=3, rowspan=40)
 
     if ocr_type == OCR.BUSINESS_CARD:
         business_list.append(photo_single)
@@ -223,13 +273,394 @@ def confirm_single(name, parent, ocr_type: OCR):
                                     image=general_list[-1])'''
         photo_canv.create_image(5, 5, image=general_list[-1], anchor=NW)
 
+    if ocr_type == OCR.BUSINESS_CARD:
+        offset = 13
+        result = ocr_business_card(name)
+        v_name = StringVar()
+        v_name.set(result['name'])
+        v_title = StringVar()
+        v_title.set(result['title'])
+        v_company = StringVar()
+        v_company.set(result['company'])
+        v_addr = StringVar()
+        v_addr.set(result['addr'])
+        v_mobile = StringVar()
+        v_mobile.set(result['mobile'])
+        v_fax = StringVar()
+        v_fax.set(result['fax'])
+        v_tel = StringVar()
+        v_tel.set(result['tel'])
+        v_email = StringVar()
+        v_email.set(result['email'])
+        v_url = StringVar()
+        v_url.set(result['url'])
 
-    result = ocr_business_card(name)
+        text_name = Label(cf_wd, text="姓名:", width=10, font=myfont)
+        text_name.grid(row=0 + offset, column=4)
+        text_title = Label(cf_wd, text="职位:", width=10, font=myfont)
+        text_title.grid(row=0 + offset, column=7)
+        text_company = Label(cf_wd, text="公司:", width=10, font=myfont)
+        text_company.grid(row=1 + offset, column=4)
+        text_addr = Label(cf_wd, text="地址:", width=10, font=myfont)
+        text_addr.grid(row=2 + offset, column=4)
+        text_mobile = Label(cf_wd, text="手机:", width=10, font=myfont)
+        text_mobile.grid(row=3 + offset, column=4)
+        text_fax = Label(cf_wd, text="传真:", width=10, font=myfont)
+        text_fax.grid(row=3 + offset, column=7)
+        text_tel = Label(cf_wd, text="固话:", width=10, font=myfont)
+        text_tel.grid(row=4 + offset, column=4)
+        text_email = Label(cf_wd, text="E-mail:", width=10, font=myfont)
+        text_email.grid(row=4 + offset, column=7)
+        text_url = Label(cf_wd, text="网址:", width=10, font=myfont)
+        text_url.grid(row=5 + offset, column=4)
 
-    addr = StringVar()
-    addr.set(result['addr'])
-    fax = StringVar()
-    fax.set(result['fax'])
+        entry_name = Entry(cf_wd, textvariable=v_name, font=myfont)
+        entry_name.grid(row=0 + offset, column=5)
+        entry_title = Entry(cf_wd, textvariable=v_title, font=myfont)
+        entry_title.grid(row=0 + offset, column=8)
+        entry_company = Entry(cf_wd, textvariable=v_company, width=52, font=myfont)
+        entry_company.grid(row=1 + offset, column=5, columnspan=4)
+        entry_addr = Entry(cf_wd, textvariable=v_addr, width=52, font=myfont)
+        entry_addr.grid(row=2 + offset, column=5, columnspan=4)
+        entry_mobile = Entry(cf_wd, textvariable=v_mobile, font=myfont)
+        entry_mobile.grid(row=3 + offset, column=5)
+        entry_fax = Entry(cf_wd, textvariable=v_fax, font=myfont)
+        entry_fax.grid(row=3 + offset, column=8)
+        entry_tel = Entry(cf_wd, textvariable=v_tel, font=myfont)
+        entry_tel.grid(row=4 + offset, column=5)
+        entry_email = Entry(cf_wd, textvariable=v_email, font=myfont)
+        entry_email.grid(row=4 + offset, column=8)
+        entry_url = Entry(cf_wd, textvariable=v_url, width=52, font=myfont)
+        entry_url.grid(row=5 + offset, column=5, columnspan=4)
+
+        def confirm_business_card():
+            item = 'business_card'
+            ocr_final_result[item] = {}
+            ocr_final_result[item]['name'] = entry_name.get()
+            ocr_final_result[item]['title'] = entry_title.get()
+            ocr_final_result[item]['company'] = entry_company.get()
+            ocr_final_result[item]['addr'] = entry_addr.get()
+            ocr_final_result[item]['mobile'] = entry_mobile.get()
+            ocr_final_result[item]['fax'] = entry_fax.get()
+            ocr_final_result[item]['tel'] = entry_tel.get()
+            ocr_final_result[item]['email'] = entry_email.get()
+            ocr_final_result[item]['url'] = entry_url.get()
+            ocr_final_result[item]['pc'] = ""
+
+            cf_wd.destroy()
+
+        btn_confirm = Button(cf_wd, text="确认信息", command=lambda: confirm_business_card(), relief=GROOVE, font=myfont)
+        btn_confirm.grid(row=40, column=5)
+
+    elif ocr_type == OCR.BANKCARD:
+        offset = 14
+        result = ocr_bankcard(name)
+        v_bank_card_number = StringVar()
+        v_bank_card_number.set(result['bank_card_number'])
+        v_bank_name = StringVar()
+        v_bank_name.set(result['bank_name'])
+        v_bank_card_type = StringVar()
+        v_bank_card_type.set(result['bank_card_type'])
+        v_valid_date = StringVar()
+        v_valid_date.set(result['valid_date'])
+
+        text_bank_card_number = Label(cf_wd, text="银行卡号:", width=10, font=myfont)
+        text_bank_card_number.grid(row=0 + offset, column=4)
+        text_bank_name = Label(cf_wd, text="银行名称:", width=10, font=myfont)
+        text_bank_name.grid(row=1 + offset, column=4)
+        text_bank_card_type = Label(cf_wd, text="卡类型:", width=10, font=myfont)
+        text_bank_card_type.grid(row=2 + offset, column=4)
+        text_valid_date = Label(cf_wd, text="有效期:", width=10, font=myfont)
+        text_valid_date.grid(row=3 + offset, column=4)
+
+        entry_bank_card_number = Entry(cf_wd, textvariable=v_bank_card_number, width=30, font=myfont)
+        entry_bank_card_number.grid(row=0 + offset, column=5, columnspan=4)
+        entry_bank_name = Entry(cf_wd, textvariable=v_bank_name, width=30, font=myfont)
+        entry_bank_name.grid(row=1 + offset, column=5, columnspan=4)
+        entry_bank_card_type = Entry(cf_wd, textvariable=v_bank_card_type, width=30, font=myfont)
+        entry_bank_card_type.grid(row=2 + offset, column=5, columnspan=4)
+        entry_valid_date = Entry(cf_wd, textvariable=v_valid_date, width=30, font=myfont)
+        entry_valid_date.grid(row=3 + offset, column=5, columnspan=4)
+
+        def confirm_bankcard():
+            item = 'bankcard'
+            ocr_final_result[item] = {}
+            ocr_final_result[item]['bank_card_number'] = entry_bank_card_number.get()
+            ocr_final_result[item]['bank_name'] = entry_bank_name.get()
+            ocr_final_result[item]['bank_card_type'] = entry_bank_card_type.get()
+            ocr_final_result[item]['valid_date'] = entry_valid_date.get()
+
+            cf_wd.destroy()
+
+        btn_confirm = Button(cf_wd, text="确认信息", command=lambda: confirm_bankcard(), relief=GROOVE, font=myfont)
+        btn_confirm.grid(row=40, column=5)
+
+    elif ocr_type == OCR.BUSINESS_LICENSE:
+        offset = 0
+        result = ocr_business_license(name)
+        v_company_name = StringVar()
+        v_company_name.set(result['company_name'])
+        v_legal_person = StringVar()
+        v_legal_person.set(result['legal_person'])
+        v_license_id = StringVar()
+        v_license_id.set(result['license_id'])
+        v_social_credit_number = StringVar()
+        v_social_credit_number.set(result['social_credit_number'])
+        v_establishment_date = StringVar()
+        v_establishment_date.set(result['establishment_date'])
+        v_expiration_date = StringVar()
+        v_expiration_date.set(result['expiration_date'])
+        v_registered_capital = StringVar()
+        v_registered_capital.set(result['registered_capital'])
+        v_addr = StringVar()
+        v_addr.set(result['addr'])
+        v_business_scope = StringVar()
+        v_business_scope.set(result['business_scope'])
+
+        text_company_name = Label(cf_wd, text="公司名称:", width=10, font=myfont)
+        text_company_name.grid(row=0 + offset, column=4)
+        text_legal_person = Label(cf_wd, text="法人:", width=10, font=myfont)
+        text_legal_person.grid(row=1 + offset, column=4)
+        text_license_id = Label(cf_wd, text="证书号:", width=10, font=myfont)
+        text_license_id.grid(row=1 + offset, column=6)
+        text_social_credit_number = Label(cf_wd, text="信用代码:", width=10, font=myfont)
+        text_social_credit_number.grid(row=2 + offset, column=4)
+        text_establishment_date = Label(cf_wd, text="成立日期:", width=10, font=myfont)
+        text_establishment_date.grid(row=3 + offset, column=4)
+        text_expiration_date = Label(cf_wd, text="有效期:", width=10, font=myfont)
+        text_expiration_date.grid(row=3 + offset, column=6)
+        text_registered_capital = Label(cf_wd, text="注册资本:", width=10, font=myfont)
+        text_registered_capital.grid(row=4 + offset, column=4)
+        text_addr = Label(cf_wd, text="地址:", width=10, font=myfont)
+        text_addr.grid(row=5 + offset, column=4)
+        text_business_scope = Label(cf_wd, text="经营范围:", width=10, font=myfont)
+        text_business_scope.grid(row=6 + offset, column=4)
+
+        entry_company_name = Entry(cf_wd, textvariable=v_company_name, width=52, font=myfont)
+        entry_company_name.grid(row=0 + offset, column=5, columnspan=4)
+        entry_legal_person = Entry(cf_wd, textvariable=v_legal_person, font=myfont)
+        entry_legal_person.grid(row=1 + offset, column=5)
+        entry_license_id = Entry(cf_wd, textvariable=v_license_id, font=myfont)
+        entry_license_id.grid(row=1 + offset, column=7)
+        entry_social_credit_number = Entry(cf_wd, textvariable=v_social_credit_number, width=52, font=myfont)
+        entry_social_credit_number.grid(row=2 + offset, column=5, columnspan=4)
+        entry_establishment_date = Entry(cf_wd, textvariable=v_establishment_date, font=myfont)
+        entry_establishment_date.grid(row=3 + offset, column=5)
+        entry_expiration_date = Entry(cf_wd, textvariable=v_expiration_date, font=myfont)
+        entry_expiration_date.grid(row=3 + offset, column=7)
+        entry_registered_capital = Entry(cf_wd, textvariable=v_registered_capital, width=52, font=myfont)
+        entry_registered_capital.grid(row=4 + offset, column=5, columnspan=4)
+        entry_addr = Entry(cf_wd, textvariable=v_addr, width=52, font=myfont)
+        entry_addr.grid(row=5 + offset, column=5, columnspan=4)
+        entry_business_scope = Entry(cf_wd, textvariable=v_business_scope, width=52, font=myfont)
+        entry_business_scope.grid(row=6 + offset, column=5, columnspan=4)
+
+        def confirm_business_license():
+            item = 'business_license'
+            ocr_final_result[item] = {}
+            ocr_final_result[item]['company_name'] = entry_company_name.get()
+            ocr_final_result[item]['legal_person'] = entry_legal_person.get()
+            ocr_final_result[item]['license_id'] = entry_license_id.get()
+            ocr_final_result[item]['social_credit_number'] = entry_social_credit_number.get()
+            ocr_final_result[item]['establishment_date'] = entry_establishment_date.get()
+            ocr_final_result[item]['expiration_date'] = entry_expiration_date.get()
+            ocr_final_result[item]['registered_capital'] = entry_registered_capital.get()
+            ocr_final_result[item]['addr'] = entry_addr.get()
+            ocr_final_result[item]['business_scope'] = entry_business_scope.get()
+            ocr_final_result[item]['organization_form'] = ""
+            ocr_final_result[item]['type'] = ""
+
+            cf_wd.destroy()
+
+        btn_confirm = Button(cf_wd, text="确认信息", command=lambda: confirm_business_license(), relief=GROOVE, font=myfont)
+        btn_confirm.grid(row=40, column=5)
+
+    elif ocr_type == OCR.INVOICE:
+        offset = 0
+        result = ocr_invoice(name)
+        v_invoice_type = StringVar()            # 发票种类
+        v_invoice_type.set(result['invoice_type'])
+        v_invoice_code = StringVar()            # 发票代码
+        v_invoice_code.set(result['invoice_code'])
+        v_invoice_num = StringVar()             # 发票号码
+        v_invoice_num.set(result['invoice_num'])
+        v_invoice_date = StringVar()            # 开票日期
+        v_invoice_date.set(result['invoice_date'])
+        v_purchaser_name = StringVar()          # 购买方名称
+        v_purchaser_name.set(result['purchaser_name'])
+        v_purchaser_register_num = StringVar()  # 购买方纳税人识别号
+        v_purchaser_register_num.set(result['purchaser_register_num'])
+        v_seller_name = StringVar()             # 销售方名称
+        v_seller_name.set(result['seller_name'])
+        v_seller_register_num = StringVar()     # 销售方纳税人识别号
+        v_seller_register_num.set(result['seller_register_num'])
+        v_seller_addr = StringVar()             # 销售方地址电话
+        v_seller_addr.set(result['seller_addr'])
+        v_seller_bank = StringVar()             # 销售方开户行及账号
+        v_seller_bank.set(result['seller_bank'])
+        '''
+        v_commodity_name = StringVar()          # 货物名称 多行
+        v_commodity_type = StringVar()          # 规格型号 多行
+        v_commodity_num = StringVar()           # 数量 多行
+        v_commodity_price = StringVar()         # 单价 多行
+        v_commodity_amount = StringVar()        # 金额 多行
+        v_commodity_tax_rate = StringVar()      # 税率 多行
+        v_commodity_tax = StringVar()           # 税额 多行
+        '''
+        v_amount_in_figures = StringVar()       # 价格合计
+        v_amount_in_figures.set(result['amount_in_figures'])
+
+        text_invoice_type = Label(cf_wd, text="发票种类:", font=myfont)
+        text_invoice_type.grid(row=0 + offset, column=4)
+        text_invoice_code = Label(cf_wd, text="发票代码:", font=myfont)
+        text_invoice_code.grid(row=0 + offset, column=6)
+        text_invoice_num = Label(cf_wd, text="发票号码:", font=myfont)
+        text_invoice_num.grid(row=1 + offset, column=4)
+        text_invoice_date = Label(cf_wd, text="开票日期:", font=myfont)
+        text_invoice_date.grid(row=1 + offset, column=6)
+        text_purchaser = Label(cf_wd, text="购买方信息:", font=myfont)
+        text_purchaser.grid(row=2 + offset, column=4)
+        text_purchaser_name = Label(cf_wd, text="名称:", font=myfont)
+        text_purchaser_name.grid(row=3 + offset, column=4)
+        text_purchaser_register_num = Label(cf_wd, text="纳税人\n识别号:", font=myfont)
+        text_purchaser_register_num.grid(row=3 + offset, column=6)
+        text_seller = Label(cf_wd, text="销售方信息:", font=myfont)
+        text_seller.grid(row=4 + offset, column=4)
+        text_seller_name = Label(cf_wd, text="名称:", width=10, font=myfont)
+        text_seller_name.grid(row=5 + offset, column=4)
+        text_seller_register_num = Label(cf_wd, text="纳税人\n识别号:", width=10, font=myfont)
+        text_seller_register_num.grid(row=5 + offset, column=6)
+        text_seller_addr = Label(cf_wd, text="地址:", width=10, font=myfont)
+        text_seller_addr.grid(row=6 + offset, column=4)
+        text_seller_bank = Label(cf_wd, text="银行:", width=10, font=myfont)
+        text_seller_bank.grid(row=6 + offset, column=6)
+        text_amount_in_figures = Label(cf_wd, text="价格合计(元):", font=myfont)
+        text_amount_in_figures.grid(row=10 + offset, column=4)
+
+        entry_invoice_type = Entry(cf_wd, textvariable=v_invoice_type, font=myfont)
+        entry_invoice_type.grid(row=0 + offset, column=5)
+        entry_invoice_code = Entry(cf_wd, textvariable=v_invoice_code, font=myfont)
+        entry_invoice_code.grid(row=0 + offset, column=7)
+        entry_invoice_num = Entry(cf_wd, textvariable=v_invoice_num, font=myfont)
+        entry_invoice_num.grid(row=1 + offset, column=5)
+        entry_invoice_date = Entry(cf_wd, textvariable=v_invoice_date, font=myfont)
+        entry_invoice_date.grid(row=1 + offset, column=7)
+        entry_purchaser_name = Entry(cf_wd, textvariable=v_purchaser_name, font=myfont)
+        entry_purchaser_name.grid(row=3 + offset, column=5)
+        entry_purchaser_register_num = Entry(cf_wd, textvariable=v_purchaser_register_num, font=myfont)
+        entry_purchaser_register_num.grid(row=3 + offset, column=7)
+        entry_seller_name = Entry(cf_wd, textvariable=v_seller_name, font=myfont)
+        entry_seller_name.grid(row=5 + offset, column=5)
+        entry_seller_register_num = Entry(cf_wd, textvariable=v_seller_register_num, font=myfont)
+        entry_seller_register_num.grid(row=5 + offset, column=7)
+        entry_seller_addr = Entry(cf_wd, textvariable=v_seller_addr, font=myfont)
+        entry_seller_addr.grid(row=6 + offset, column=5)
+        entry_seller_bank = Entry(cf_wd, textvariable=v_seller_bank, font=myfont)
+        entry_seller_bank.grid(row=6 + offset, column=7)
+
+        tree = ttk.Treeview(cf_wd,
+                            show="headings",
+                            columns=('commodity_name',
+                                     'commodity_type',
+                                     'commodity_num',
+                                     'commodity_price',
+                                     'commodity_amount',
+                                     'commodity_tax_rate',
+                                     'commodity_tax')
+                            , selectmode=BROWSE, height=5)
+        tree.heading("commodity_name", text="货物名称")
+        tree.column("commodity_name", minwidth=0, width=100, stretch=NO)
+        tree.heading("commodity_type", text="规格型号")
+        tree.column("commodity_type", minwidth=0, width=100, stretch=NO)
+        tree.heading("commodity_num", text="数量")
+        tree.column("commodity_num", minwidth=0, width=50, stretch=NO)
+        tree.heading("commodity_price", text="单价")
+        tree.column("commodity_price", minwidth=0, width=100, stretch=NO)
+        tree.heading("commodity_amount", text="金额")
+        tree.column("commodity_amount", minwidth=0, width=100, stretch=NO)
+        tree.heading("commodity_tax_rate", text="税率")
+        tree.column("commodity_tax_rate", minwidth=0, width=50, stretch=NO)
+        tree.heading("commodity_tax", text="税额")
+        tree.column("commodity_tax", minwidth=0, width=100, stretch=NO)
+
+        for i in range(len(result['commodity_name'])):
+            tree.insert('', i, values=(result['commodity_name'][i]['word'],
+                                       result['commodity_type'][i]['word'],
+                                       result['commodity_num'][i]['word'],
+                                       result['commodity_price'][i]['word'],
+                                       result['commodity_amount'][i]['word'],
+                                       result['commodity_tax_rate'][i]['word'],
+                                       result['commodity_tax'][i]['word'],))
+        tree.grid(row=7 + offset, column=4, columnspan=4)
+
+        entry_amount_in_figures = Entry(cf_wd, textvariable=v_amount_in_figures, font=myfont)
+        entry_amount_in_figures.grid(row=10 + offset, column=5)
+
+        def confirm_invoice():
+            item = 'invoice'
+            ocr_final_result[item] = {}
+            ocr_final_result[item]['invoice_type'] = entry_invoice_type.get()
+            ocr_final_result[item]['invoice_code'] = entry_invoice_code.get()
+            ocr_final_result[item]['invoice_num'] = entry_invoice_num.get()
+            ocr_final_result[item]['invoice_date'] = entry_invoice_date.get()
+            ocr_final_result[item]['purchaser_name'] = entry_purchaser_name.get()
+            ocr_final_result[item]['purchaser_register_num'] = entry_purchaser_register_num.get()
+            ocr_final_result[item]['seller_name'] = entry_seller_name.get()
+            ocr_final_result[item]['seller_register_num'] = entry_seller_register_num.get()
+            ocr_final_result[item]['seller_addr'] = entry_seller_addr.get()
+            ocr_final_result[item]['seller_bank'] = entry_seller_bank.get()
+            ocr_final_result[item]['amount_in_figures'] = entry_amount_in_figures.get()
+
+            ocr_final_result[item]['commodity'] = {}
+            ocr_final_result[item]['commodity']['name'] = []
+            ocr_final_result[item]['commodity']['type'] = []
+            ocr_final_result[item]['commodity']['num'] = []
+            ocr_final_result[item]['commodity']['price'] = []
+            ocr_final_result[item]['commodity']['amount'] = []
+            ocr_final_result[item]['commodity']['tax_rate'] = []
+            ocr_final_result[item]['commodity']['tax'] = []
+
+            for children in tree.get_children():
+                info = tree.item(children, 'values')
+                ocr_final_result[item]['commodity']['name'].append(info[0])
+                ocr_final_result[item]['commodity']['type'].append(info[1])
+                ocr_final_result[item]['commodity']['num'].append(info[2])
+                ocr_final_result[item]['commodity']['price'].append(info[3])
+                ocr_final_result[item]['commodity']['amount'].append(info[4])
+                ocr_final_result[item]['commodity']['tax_rate'].append(info[5])
+                ocr_final_result[item]['commodity']['tax'].append(info[6])
+
+            cf_wd.destroy()
+
+        btn_confirm = Button(cf_wd, text="确认信息", command=lambda: confirm_invoice(), relief=GROOVE, font=myfont)
+        btn_confirm.grid(row=40, column=5)
+
+    elif ocr_type == OCR.GENERAL_BASIC:
+        offset = 0
+        result = ocr_general_basic(name)
+        v_remark = StringVar()
+        content = result['content']
+        text_remark = Label(cf_wd, text="备注:", width=10, font=myfont)
+        text_remark.grid(row=0 + offset, column=4)
+        text_content = Label(cf_wd, text="内容:", width=10, font=myfont)
+        text_content.grid(row=1 + offset, column=4)
+
+        entry_remark = Entry(cf_wd, textvariable=v_remark, width=40, font=myfont)
+        entry_remark.grid(row=0 + offset, column=5, columnspan=4)
+        entry_content = Text(cf_wd, width=40, height=17, font=myfont)
+        entry_content.insert('end', content)
+        entry_content.grid(row=1 + offset, column=5, columnspan=4)
+
+        def confirm_general_basic():
+            item = 'general_basic'
+            ocr_final_result[item] = {}
+            ocr_final_result[item]['remark'] = entry_remark.get()
+            ocr_final_result[item]['content'] = entry_content.get('0.0', 'end')
+            print(entry_content.get('0.0', 'end'))
+            cf_wd.destroy()
+
+        btn_confirm = Button(cf_wd, text="确认信息", command=lambda: confirm_general_basic(), relief=GROOVE, font=myfont)
+        btn_confirm.grid(row=40, column=5)
 
     temp_image = put_image(name, 200)
 
@@ -264,8 +695,6 @@ def confirm_single(name, parent, ocr_type: OCR):
                                     command=lambda: show_large_pic(name, parent),
                                     image=general_list[-1])
         business_image_btn.grid(row=0, column=0, rowspan=2)
-
-
 
 
 def confirm_window(namelist, parent):
@@ -351,38 +780,6 @@ def confirm_window(namelist, parent):
     cf_wd.mainloop()
 
 
-'''
-    count = 0
-    for picName in fns:
-        if count == 0:
-            picName = picName[1:]
-            # print("start",picName)
-        if count == len(fns) - 1:
-            picName = picName[:-1]
-            # print("end",picName)
-        if count == len(fns) - 1 and len(fns) != 1:
-            if comb_value.get() == "普通文本":
-                result = util.ocr_general_basic(picName[1:-1])
-            elif comb_value.get() == "名片":
-                result = util.ocr_business_card(picName[1:-1])
-            elif comb_value.get() == "执照":
-                result = util.ocr_business_license(picName[1:-1])
-            print(result)
-            # TODO store result into system
-        else:
-            if comb_value.get() == "普通文本":
-                result = util.ocr_general_basic(picName[1:-2])
-            elif comb_value.get() == "名片":
-                result = util.ocr_business_card(picName[1:-2])
-            elif comb_value.get() == "执照":
-                result = util.ocr_business_license(picName[1:-2])
-            print(result)
-        count = count + 1
-    '''
-
-''''''
-
-
 def put_image(name, size):
     image = Image.open(name)
 
@@ -437,22 +834,22 @@ def upload_trade():
     frame_license.grid(row=1, column=0, columnspan=5)
 
     license_edit = Button(frame_license, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
-    license_edit.grid(row=2, column=1)
+    license_edit.grid(row=1, column=1)
 
     license_upload = Button(frame_license, text="上传图片", width=11,
                             command=lambda: confirm_single(license_path.get(), frame_license, OCR.BUSINESS_LICENSE),
                             relief=GROOVE)
-    license_upload.grid(row=2, column=2)
+    license_upload.grid(row=1, column=2)
 
     license_entry = Entry(frame_license, textvariable=license_path, width=25)
-    license_entry.grid(row=1, column=1)
+    license_entry.grid(row=0, column=1)
 
     license_canv = Canvas(frame_license, bd=1, width=200, height=200)
-    license_canv.grid(row=1, column=0, rowspan=2)
+    license_canv.grid(row=0, column=0, rowspan=2)
 
     license_btn = Button(frame_license, text="选择营业执照图片", width=13,
                          command=lambda: select_path(license_path), relief=GROOVE)
-    license_btn.grid(row=1, column=3)
+    license_btn.grid(row=0, column=3)
 
     # -----------通用文本
     general_path = StringVar()
@@ -461,22 +858,22 @@ def upload_trade():
     frame_general.grid(row=2, column=0, columnspan=5)
 
     general_edit = Button(frame_general, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
-    general_edit.grid(row=3, column=1)
+    general_edit.grid(row=1, column=1)
 
     general_upload = Button(frame_general, text="上传图片", width=11,
                             command=lambda: confirm_single(general_path.get(), frame_general, OCR.GENERAL_BASIC),
                             relief=GROOVE)
-    general_upload.grid(row=3, column=2)
+    general_upload.grid(row=1, column=2)
 
     general_entry = Entry(frame_general, textvariable=general_path, width=25)
-    general_entry.grid(row=2, column=1)
+    general_entry.grid(row=0, column=1)
 
     general_canv = Canvas(frame_general, bd=1, width=200, height=200)
-    general_canv.grid(row=2, column=0, rowspan=2)
+    general_canv.grid(row=0, column=0, rowspan=2)
 
     general_btn = Button(frame_general, text="选择其他信息图片", width=13,
                          command=lambda: select_path(general_path), relief=GROOVE)
-    general_btn.grid(row=2, column=3)
+    general_btn.grid(row=0, column=3)
 
     # -----------银行卡
     card_path = StringVar()
@@ -509,28 +906,148 @@ def upload_trade():
     frame_invoice.grid(row=1, column=5, columnspan=5)
 
     invoice_edit = Button(frame_invoice, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
-    invoice_edit.grid(row=2, column=1)
+    invoice_edit.grid(row=1, column=1)
 
     invoice_upload = Button(frame_invoice, text="上传图片", width=11,
                             command=lambda: confirm_single(invoice_path.get(), frame_invoice, OCR.INVOICE),
                             relief=GROOVE)
-    invoice_upload.grid(row=2, column=2)
+    invoice_upload.grid(row=1, column=2)
 
     invoice_entry = Entry(frame_invoice, textvariable=invoice_path, width=25)
-    invoice_entry.grid(row=1, column=1)
+    invoice_entry.grid(row=0, column=1)
 
     invoice_canv = Canvas(frame_invoice, bd=1, width=200, height=200)
-    invoice_canv.grid(row=1, column=0, rowspan=2)
+    invoice_canv.grid(row=0, column=0, rowspan=2)
 
     invoice_btn = Button(frame_invoice, text="选择发票图片", width=13,
                          command=lambda: select_path(invoice_path), relief=GROOVE)
-    invoice_btn.grid(row=1, column=3)
+    invoice_btn.grid(row=0, column=3)
+
+    # TODO: 确认存入以及交易名称
+    v_transaction_name = StringVar()
+
+    frame_confirm = Frame(trade_wd, bd=1, height=200, width=5000, relief=FLAT)
+    frame_confirm.grid(row=2, column=5, columnspan=5, rowspan=5)
+
+    label_transaction_name = Label(frame_confirm, text="交易名称:")
+    label_transaction_name.grid(row=3,column=2)
+
+    entry_transaction_name = Entry(frame_confirm, width=25, textvariable=v_transaction_name)
+    entry_transaction_name.grid(row=3, column=3)
+
+    def store_confirm():
+        if entry_transaction_name.get() != "":
+            # 交易
+            trans_content = {'name': entry_transaction_name.get()}
+            sql_insert(OCR.TRANSACTION, trans_content)
+            transaction_id = sql_conn('''SELECT max(id) FROM t_transaction''')[0][0]
+            print(transaction_id)
+            # 五项信息
+            if ocr_final_result.__contains__('business_card'):
+                ocr_final_result['business_card']['transaction_id'] = transaction_id
+                sql_insert(OCR.BUSINESS_CARD, ocr_final_result['business_card'])
+            if ocr_final_result.__contains__('bankcard'):
+                ocr_final_result['bankcard']['transaction_id'] = transaction_id
+                sql_insert(OCR.BANKCARD, ocr_final_result['bankcard'])
+            if ocr_final_result.__contains__('business_license'):
+                ocr_final_result['business_license']['transaction_id'] = transaction_id
+                sql_insert(OCR.BUSINESS_LICENSE, ocr_final_result['business_license'])
+            if ocr_final_result.__contains__('invoice'):
+                ocr_final_result['invoice']['transaction_id'] = transaction_id
+                sql_insert(OCR.INVOICE, ocr_final_result['invoice'])
+            if ocr_final_result.__contains__('general_basic'):
+                ocr_final_result['general_basic']['transaction_id'] = transaction_id
+                sql_insert(OCR.GENERAL_BASIC, ocr_final_result['general_basic'])
+            ocr_final_result.clear()
+
+            trade_wd.destroy()
+        else:
+            print("Transaction name CANNOT be empty")
+
+
+    btn_confirm = Button(frame_confirm, text="确认存入", width=13,
+                         command=lambda: store_confirm(), relief=GROOVE)
+    btn_confirm.grid(row=4, column=3)
 
     trade_wd.mainloop()
 
 
+def search(manage_comb_value, result_tree):
+    if manage_comb_value.get() == "交易":
+        result_tree.column('1', width=200, anchor='center')
+        result_tree.heading('1', text='交易名称')
+    elif manage_comb_value.get() == "其他信息":
+        result_tree.column('1', width=200, anchor='center')
+        result_tree.heading('1', text='内容')
+
+    elif manage_comb_value.get() == "执照":
+        width = 100
+        result_tree.column('1', width=width, anchor='center')
+        result_tree.column('2', width=width, anchor='center')
+        result_tree.column('3', width=width, anchor='center')
+        result_tree.column('4', width=width, anchor='center')
+        result_tree.column('5', width=width, anchor='center')
+        result_tree.column('6', width=width, anchor='center')
+        result_tree.column('7', width=width, anchor='center')
+        result_tree.column('8', width=width, anchor='center')
+        result_tree.column('9', width=width, anchor='center')
+
+        result_tree.heading('1', text='公司名称')
+        result_tree.heading('2', text='法人')
+        result_tree.heading('3', text='证书号')
+        result_tree.heading('4', text='信用代码')
+        result_tree.heading('5', text='成立日期')
+        result_tree.heading('6', text='有效期')
+        result_tree.heading('7', text='注册资本')
+        result_tree.heading('8', text='地址')
+        result_tree.heading('9', text='经营范围')
+    elif manage_comb_value.get() == "名片":
+        width = 100
+        result_tree.column('1', width=width, anchor='center')
+        result_tree.column('2', width=width, anchor='center')
+        result_tree.column('3', width=width, anchor='center')
+        result_tree.column('4', width=width, anchor='center')
+        result_tree.column('5', width=width, anchor='center')
+        result_tree.column('6', width=width, anchor='center')
+        result_tree.column('7', width=width, anchor='center')
+        result_tree.column('8', width=width, anchor='center')
+        result_tree.column('9', width=width, anchor='center')
+
+        result_tree.heading('1', text='姓名')
+        result_tree.heading('2', text='职位')
+        result_tree.heading('3', text='公司')
+        result_tree.heading('4', text='地址')
+        result_tree.heading('5', text='手机')
+        result_tree.heading('6', text='固话')
+        result_tree.heading('7', text='传真')
+        result_tree.heading('8', text='Email')
+        result_tree.heading('9', text='网址')
+
+
+        # sql_conn()
+    result_tree.grid(row=1, rowspan=10, column=1, columnspan=6)
+
+
 def manage():
-    pass
+    manage_wd = Toplevel(root)
+    manage_comb_value = StringVar()  # 窗体自带的文本，新建一个值
+    manage_comb = ttk.Combobox(manage_wd, textvariable=manage_comb_value, state='readonly')  # 初始化
+    result_tree = ttk.Treeview(manage_wd, columns=['1', '2', '3', '4', '5', '6', '7', '8', '9'], show='headings')
+    search_btn = Button(manage_wd, text="搜索", width=11, command=lambda: search(manage_comb_value, result_tree),
+                        relief=GROOVE)
+    search_btn.grid(row=0, column=5)
+
+    type_lable = Label(manage_wd, text="类型", width=8)
+    type_lable.grid(row=0, column=1)
+
+    manage_comb["values"] = ("普通文本", "名片", "执照",'交易')
+    manage_comb.current(0)
+
+    manage_comb.bind("<<ComboboxSelected>>", func)
+
+    manage_comb.grid(row=0, column=2)
+
+    manage_wd.mainloop()
 
 
 root = Tk()
@@ -575,28 +1092,3 @@ upload_btn = Button(root, text="上传图片", command=upload, relief=GROOVE)
 upload_btn.grid(row=4, column=1)
 
 root.mainloop()
-
-'''
-
-ButtonList = IntVar()  # IntVar 是tkinter的一个类，可以管理单选按钮
-r1 = Radiobutton(root, variable=ButtonList, value=0, text="普通文本")
-r2 = Radiobutton(root, variable=ButtonList, value=1, text="名片")
-r3 = Radiobutton(root, variable=ButtonList, value=2, text="执照")
-# variable=从属的“管理类” value=索引/ID
-ButtonList.set(0)
-r1.grid(row=2, column=0)
-r2.grid(row=2, column=1)
-r3.grid(row=2, column=2)
-'''
-
-'''
-
-
-def test():
-    messagebox.showinfo('提示', 'test')
-
-
-f_btn = Button(root, width=7,height=3,text="选择图片", command=test).grid(row=0,column=0,columnspan=2)
-s_btn = Button(root, width=7,height=3,text="选择图片", command=test).grid(row=1,column=0,columnspan=1)
-t_btn = Button(root, width=7,height=1,text="选择图片", command=test).grid(row=1,column=1,columnspan=1)
-'''

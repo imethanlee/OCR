@@ -225,7 +225,7 @@ def confirm_single(name, parent, ocr_type: OCR):
     name = namelist[0]
 
     cf_wd = Toplevel(parent)
-    size = 650
+    size = 600
 
     img_single = Image.open(name)
     if img_single.size[0] > img_single.size[1]:
@@ -239,7 +239,7 @@ def confirm_single(name, parent, ocr_type: OCR):
     img_single = img_single.resize((size_w, size_h))
     photo_single = ImageTk.PhotoImage(img_single)
 
-    photo_canv = Canvas(cf_wd, bd=1, width=660, height=550, relief=GROOVE, scrollregion=(0, 0, 500, 500))
+    photo_canv = Canvas(cf_wd, bd=1, width=610, height=610, relief=GROOVE, scrollregion=(0, 0, 500, 500))
     photo_canv.grid(row=0, column=0, columnspan=3, rowspan=40)
 
     if ocr_type == OCR.BUSINESS_CARD:

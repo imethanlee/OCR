@@ -8,6 +8,8 @@ def sql_conn(sql: str):
     cursor = db.cursor()
     cursor.execute(sql)
     result = cursor.fetchall()
+    # desc = cursor.description # 获取字段的描述，默认获取数据库字段名称，重新定义时通过AS关键重新命名即可
+    # data_dict = [dict(zip([col[0] for col in desc], row)) for row in cursor.fetchall()]  # 列表表达式把数据组装起来
     db.commit()
     db.close()
     return result
@@ -26,100 +28,118 @@ def sql_init():
     sql_conn(cmd)
     cmd = '''DROP TABLE IF EXISTS t_business_license'''
     sql_conn(cmd)
+    cmd = '''DROP TABLE IF EXISTS t_invoice_commodity'''
+    sql_conn(cmd)
     cmd = '''DROP TABLE IF EXISTS t_invoice'''
     sql_conn(cmd)
 
     cmd = '''CREATE TABLE t_transaction(
-                id          INTEGER         PRIMARY KEY AUTOINCREMENT        -- 主键
-                name        varchar(100)    NOT NULL DEFAULT '/'
+                id              INTEGER         PRIMARY KEY AUTOINCREMENT,          -- 主键
+                name            VARCHAR(100)    NOT NULL DEFAULT '/',               -- 名称
+                create_time     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP  -- 创建时间
                 )'''
     sql_conn(cmd)
 
     cmd = '''CREATE TABLE t_general_basic(
                 id              INTEGER         PRIMARY KEY AUTOINCREMENT,      -- 主键
-                content         varchar(1000)   NOT NULL DEFAULT '',            -- 内容
-                remark          varchar(100)    NOT NULL DEFAULT '',            -- 备注
+                content         VARCHAR(5000)   NOT NULL DEFAULT '',            -- 内容
+                remark          VARCHAR(100)    NOT NULL DEFAULT '',            -- 备注
                 transaction_id  INTEGER         NOT NULL                        -- 外键
                 )'''
     sql_conn(cmd)
 
     cmd = '''CREATE TABLE t_business_card(
                 id              INTEGER         PRIMARY KEY AUTOINCREMENT,  -- 主键
-                addr            varchar(100)    NOT NULL DEFAULT '',        -- 地址
-                fax             varchar(100)    NOT NULL DEFAULT '',        -- 传真
-                mobile          varchar(100)    NOT NULL DEFAULT '',        -- 手机
-                name            varchar(100)    NOT NULL DEFAULT '',        -- 姓名
-                pc              varchar(100)    NOT NULL DEFAULT '',        -- ?
-                url             varchar(100)    NOT NULL DEFAULT '',        -- 网址
-                tel             varchar(100)    NOT NULL DEFAULT '',        -- 固话
-                company         varchar(100)    NOT NULL DEFAULT '',        -- 公司
-                title           varchar(100)    NOT NULL DEFAULT '',        -- 职称
-                email           varchar(100)    NOT NULL DEFAULT '',        -- 电邮
+                addr            VARCHAR(100)    NOT NULL DEFAULT '',        -- 地址
+                fax             VARCHAR(100)    NOT NULL DEFAULT '',        -- 传真
+                mobile          VARCHAR(100)    NOT NULL DEFAULT '',        -- 手机
+                name            VARCHAR(100)    NOT NULL DEFAULT '',        -- 姓名
+                pc              VARCHAR(100)    NOT NULL DEFAULT '',        -- ?
+                url             VARCHAR(100)    NOT NULL DEFAULT '',        -- 网址
+                tel             VARCHAR(100)    NOT NULL DEFAULT '',        -- 固话
+                company         VARCHAR(100)    NOT NULL DEFAULT '',        -- 公司
+                title           VARCHAR(100)    NOT NULL DEFAULT '',        -- 职称
+                email           VARCHAR(100)    NOT NULL DEFAULT '',        -- 电邮
                 transaction_id  INTEGER         NOT NULL                    -- 外键
                 )'''
     sql_conn(cmd)
 
     cmd = '''CREATE TABLE t_bankcard(
                 id                  INTEGER         PRIMARY KEY AUTOINCREMENT,  -- 主键
-                bank_card_number    varchar(100)   NOT NULL DEFAULT '',         -- 银行卡号
-                valid_date          varchar(100)    NOT NULL DEFAULT '',        -- 过期日
-                bank_card_type      varchar(100)    NOT NULL DEFAULT '',        -- 类型
-                bank_name           varchar(100)    NOT NULL DEFAULT '',        -- 银行名称
+                bank_card_number    VARCHAR(100)   NOT NULL DEFAULT '',         -- 银行卡号
+                valid_date          VARCHAR(100)    NOT NULL DEFAULT '',        -- 过期日
+                bank_card_type      VARCHAR(100)    NOT NULL DEFAULT '',        -- 类型
+                bank_name           VARCHAR(100)    NOT NULL DEFAULT '',        -- 银行名称
                 transaction_id      INTEGER         NOT NULL                    -- 外键
                 )'''
     sql_conn(cmd)
 
     cmd = '''CREATE TABLE t_business_license(
                 id                      INTEGER         PRIMARY KEY AUTOINCREMENT,  -- 主键
-                registered_capital      varchar(100)    NOT NULL DEFAULT '',        -- 注册资本
-                social_credit_number    varchar(100)    NOT NULL DEFAULT '',        -- 社会信用代码
-                company_name            varchar(100)    NOT NULL DEFAULT '',        -- 单位名称
-                legal_person            varchar(100)    NOT NULL DEFAULT '',        -- 法人
-                license_id              varchar(100)    NOT NULL DEFAULT '',        -- 证件编号
-                organization_form       varchar(100)    NOT NULL DEFAULT '',        -- 组成形式
-                establishment_date      varchar(100)    NOT NULL DEFAULT '',        --成立日期
-                addr                    varchar(100)    NOT NULL DEFAULT '',        -- 地址
-                business_scope          varchar(100)    NOT NULL DEFAULT '',        -- 经营范围
-                type                    varchar(100)    NOT NULL DEFAULT '',        -- 类型
-                expiration_date         varchar(100)    NOT NULL DEFAULT '',        -- 有效期
+                registered_capital      VARCHAR(100)    NOT NULL DEFAULT '',        -- 注册资本
+                social_credit_number    VARCHAR(100)    NOT NULL DEFAULT '',        -- 社会信用代码
+                company_name            VARCHAR(100)    NOT NULL DEFAULT '',        -- 单位名称
+                legal_person            VARCHAR(100)    NOT NULL DEFAULT '',        -- 法人
+                license_id              VARCHAR(100)    NOT NULL DEFAULT '',        -- 证件编号
+                organization_form       VARCHAR(100)    NOT NULL DEFAULT '',        -- 组成形式
+                establishment_date      VARCHAR(100)    NOT NULL DEFAULT '',        --成立日期
+                addr                    VARCHAR(100)    NOT NULL DEFAULT '',        -- 地址
+                business_scope          VARCHAR(100)    NOT NULL DEFAULT '',        -- 经营范围
+                type                    VARCHAR(100)    NOT NULL DEFAULT '',        -- 类型
+                expiration_date         VARCHAR(100)    NOT NULL DEFAULT '',        -- 有效期
                 transaction_id          INTEGER         NOT NULL                    -- 外键
                 )'''
     sql_conn(cmd)
 
     cmd = '''CREATE TABLE t_invoice(
-                id                      INTEGER         PRIMARY KEY AUTOINCREMENT,                          -- 主键
-                amount_in_words         varchar(100)    NOT NULL DEFAULT '',            -- 
-                commodity_price         varchar(100)    NOT NULL DEFAULT '',            -- 
-                note_drawer             varchar(100)    NOT NULL DEFAULT '',            --
-                seller_addr             varchar(100)    NOT NULL DEFAULT '',            -- 
-                commodity_num           varchar(100)    NOT NULL DEFAULT '',            -- 证件编号
-                seller_register_num     varchar(100)    NOT NULL DEFAULT '',            -- 组成形式
-                remarks                 varchar(100)    NOT NULL DEFAULT '',            --成立日期
-                seller_bank             varchar(100)    NOT NULL DEFAULT '',            -- 地址
-                commodity_tax_rate      varchar(100)    NOT NULL DEFAULT '',            -- 经营范围
-                total_tax               varchar(100)    NOT NULL DEFAULT '',            -- 类型
-                check_code              varchar(100)    NOT NULL DEFAULT '',            -- 有效期
-                invoice_code            varchar(100)    NOT NULL DEFAULT '',
-                invoice_date            varchar(100)    NOT NULL DEFAULT '',
-                purchaser_register_num  varchar(100)    NOT NULL DEFAULT '',
-                invoice_type_org        varchar(100)    NOT NULL DEFAULT '',
-                password                varchar(100)    NOT NULL DEFAULT '',
-                amount_in_figures       varchar(100)    NOT NULL DEFAULT '',
-                purchaser_bank          varchar(100)    NOT NULL DEFAULT '',
-                checker                 varchar(100)    NOT NULL DEFAULT '',
-                totalAmount             varchar(100)    NOT NULL DEFAULT '',
-                commodity_amount        varchar(100)    NOT NULL DEFAULT '',
-                purchaser_name          varchar(100)    NOT NULL DEFAULT '',
-                commodity_type          varchar(100)    NOT NULL DEFAULT '',
-                invoice_type            varchar(100)    NOT NULL DEFAULT '',
-                purchaser_addr          varchar(100)    NOT NULL DEFAULT '',
-                commodity_tax           varchar(100)    NOT NULL DEFAULT '',
-                commodity_unit          varchar(100)    NOT NULL DEFAULT '',
-                payee                   varchar(100)    NOT NULL DEFAULT '',
-                commodity_name          varchar(100)    NOT NULL DEFAULT '',
-                seller_name             varchar(100)    NOT NULL DEFAULT '',
-                invoice_num             varchar(100)    NOT NULL DEFAULT '',
+                id                      INTEGER         PRIMARY KEY AUTOINCREMENT,
+                invoice_type            VARCHAR(100)    NOT NULL DEFAULT '',
+                invoice_code            VARCHAR(100)    NOT NULL DEFAULT '',
+                invoice_num             VARCHAR(100)    NOT NULL DEFAULT '',
+                invoice_date            VARCHAR(100)    NOT NULL DEFAULT '',
+                purchaser_name          VARCHAR(100)    NOT NULL DEFAULT '',
+                purchaser_register_num  VARCHAR(100)    NOT NULL DEFAULT '',
+                seller_name             VARCHAR(100)    NOT NULL DEFAULT '',
+                seller_register_num     VARCHAR(100)    NOT NULL DEFAULT '',
+                seller_addr             VARCHAR(100)    NOT NULL DEFAULT '',
+                seller_bank             VARCHAR(100)    NOT NULL DEFAULT '',
+                amount_in_figures       VARCHAR(100)    NOT NULL DEFAULT '',
+                
+                -- amount_in_words         VARCHAR(100)    NOT NULL DEFAULT '',           
+                -- commodity_price         VARCHAR(100)    NOT NULL DEFAULT '',        
+                -- note_drawer             VARCHAR(100)    NOT NULL DEFAULT '',           
+                -- commodity_num           VARCHAR(100)    NOT NULL DEFAULT '',         
+                -- remarks                 VARCHAR(100)    NOT NULL DEFAULT '',          
+                -- commodity_tax_rate      VARCHAR(100)    NOT NULL DEFAULT '',         
+                -- total_tax               VARCHAR(100)    NOT NULL DEFAULT '',            
+                -- check_code              VARCHAR(100)    NOT NULL DEFAULT '',           
+                -- invoice_type_org        VARCHAR(100)    NOT NULL DEFAULT '',
+                -- password                VARCHAR(100)    NOT NULL DEFAULT '',
+                -- purchaser_bank          VARCHAR(100)    NOT NULL DEFAULT '',
+                -- checker                 VARCHAR(100)    NOT NULL DEFAULT '',
+                -- totalAmount             VARCHAR(100)    NOT NULL DEFAULT '',
+                -- commodity_amount        VARCHAR(100)    NOT NULL DEFAULT '',  
+                -- commodity_type          VARCHAR(100)    NOT NULL DEFAULT '',
+                -- purchaser_addr          VARCHAR(100)    NOT NULL DEFAULT '',
+                -- commodity_tax           VARCHAR(100)    NOT NULL DEFAULT '',
+                -- commodity_unit          VARCHAR(100)    NOT NULL DEFAULT '',
+                -- payee                   VARCHAR(100)    NOT NULL DEFAULT '',
+                -- commodity_name          VARCHAR(100)    NOT NULL DEFAULT '',
+                
                 transaction_id          INTEGER         NOT NULL                        -- 外键
+                )'''
+    sql_conn(cmd)
+
+    cmd = '''CREATE TABLE t_invoice_commodity(
+                invoice_id          INTEGER,
+                commodity_name      VARCHAR(100)     NOT NULL DEFAULT '',
+                commodity_type      VARCHAR(100)     NOT NULL DEFAULT '',
+                commodity_num       VARCHAR(100)     NOT NULL DEFAULT '',
+                commodity_price     VARCHAR(100)     NOT NULL DEFAULT '',
+                commodity_amount    VARCHAR(100)     NOT NULL DEFAULT '',
+                commodity_tax_rate  VARCHAR(100)     NOT NULL DEFAULT '',
+                commodity_tax       VARCHAR(100)     NOT NULL DEFAULT '',
+                FOREIGN KEY (invoice_id) REFERENCES t_invoice(id)
                 )'''
     sql_conn(cmd)
 
@@ -127,41 +147,54 @@ def sql_init():
 # 增
 def sql_insert(ocr_type: OCR, content: dict):
     if ocr_type == OCR.TRANSACTION:
-        cmd = '''INSERT INTO t_transaction ()
-        '''
+        cmd = '''INSERT INTO t_transaction 
+                (name)
+            VALUES ("{}")
+        '''.format(content['name'])
+        sql_conn(cmd)
     elif ocr_type == OCR.GENERAL_BASIC:
         cmd = '''INSERT INTO t_general_basic 
                 (content, remark, transaction_id) 
             VALUES ("{}","{}",{}) 
         '''.format(content['content'], content['remark'], content['transaction_id'])
         sql_conn(cmd)
+
     elif ocr_type == OCR.INVOICE:
         cmd = '''INSERT INTO t_invoice 
-                (amount_in_words, commodity_price, note_drawer, seller_addr,
-                commodity_num, seller_register_num, remarks, seller_bank,
-                commodity_tax_rate, total_tax, check_code, invoice_code, 
-                invoice_date, purchaser_register_num, invoice_type_org, password,
-                amount_in_figuers, purchaser_bank, checker, totalAmount, 
-                commodity_amount, purchaser_name, commodity_type, invoice_type
-                purchaser_addr, commodity_tax, commodity_unit, payee,
-                commodity_name, seller_name, invoice_num, transaction_id) 
+                (invoice_type, invoice_code, invoice_num, invoice_date,
+                 purchaser_name, purchaser_register_num, 
+                 seller_name, seller_register_num, seller_addr,seller_bank,
+                 amount_in_figures, 
+                 transaction_id) 
             VALUES ("{}","{}","{}","{}",
+                    "{}","{}",
                     "{}","{}","{}","{}",
-                    "{}","{}","{}","{}",
-                    "{}","{}","{}","{}",
-                    "{}","{}","{}","{}",
-                    "{}","{}","{}","{}",
-                    "{}","{}","{}","{}",
-                    "{}","{}","{}",{},) 
-                '''.format(content['amount_in_words'], content['commodity_price'], content['note_drawer'], content['seller_addr'],
-                           content['commodity_num'], content['seller_register_num'], content['remarks'], content['seller_bank'],
-                           content['commodity_tax_rate'], content['total_tax'], content['check_code'], content['invoice_code'],
-                           content['invoice_date'], content['purchaser_register_num'], content['invoice_type_org'], content['password'],
-                           content['amount_in_figuers'], content['purchaser_bank'], content['checker'], content['totalAmount'],
-                           content['commodity_amount'], content['purchaser_name'], content['commodity_type'], content['invoice_type'],
-                           content['purchaser_addr'], content['commodity_tax'], content['commodity_unit'], content['payee'],
-                           content['commodity_name'], content['seller_name'], content['invoice_num'], content['transaction_id'],)
+                    "{}",
+                     {}) 
+                '''.format(content['invoice_type'], content['invoice_code'], content['invoice_num'], content['invoice_date'],
+                           content['purchaser_name'], content['purchaser_register_num'],
+                           content['seller_name'], content['seller_register_num'], content['seller_addr'], content['seller_bank'],
+                           content['amount_in_figures'],
+                           content['transaction_id'])
         sql_conn(cmd)
+        invoice_id = sql_conn('''SELECT max(id) FROM t_invoice''')[0][0]
+        for i in range(len(content['commodity']['name'])):
+            cmd = '''INSERT INTO t_invoice_commodity
+                    (invoice_id, commodity_name, 
+                    commodity_type, commodity_num,
+                    commodity_price, commodity_amount,
+                    commodity_tax_rate, commodity_tax
+                    )
+            VALUES ("{}","{}",
+                    "{}","{}",
+                    "{}","{}",
+                    "{}","{}") 
+                '''.format(invoice_id, content['commodity']['name'][i],
+                           content['commodity']['type'][i], content['commodity']['name'][i],
+                           content['commodity']['price'][i], content['commodity']['amount'][i],
+                           content['commodity']['tax_rate'][i], content['commodity']['tax'][i])
+            sql_conn(cmd)
+
     elif ocr_type == OCR.BANKCARD:
         cmd = '''INSERT INTO t_bankcard
                 (bank_card_number, valid_date, bank_card_type, bank_name,
@@ -171,18 +204,20 @@ def sql_insert(ocr_type: OCR, content: dict):
             '''.format(content['bank_card_number'], content['valid_date'], content['bank_card_type'],content['bank_name'],
                        content['transaction_id'])
         sql_conn(cmd)
+
     elif ocr_type == OCR.BUSINESS_CARD:
         cmd = '''INSERT INTO t_business_card 
-                (addr, fax, mobile, name, 
-                pc, url, tel, tel,
+                (addr, fax, mobile, name,
+                pc, url, tel,
                 company, title, email, transaction_id)
             VALUES ("{}","{}","{}","{}",
-                    "{}","{}","{}","{}",
+                    "{}","{}","{}",
                     "{}","{}","{}",{})
-            '''.format(content['addr'],content['fax'],content['mobile'],content['name'],
-                       content['pc'],content['url'],content['tel'],content['tel'],
-                       content['company'],content['title'],content['email'],content['transaction_id'])
+            '''.format(content['addr'], content['fax'], content['mobile'], content['name'],
+                       content['pc'], content['url'], content['tel'],
+                       content['company'], content['title'], content['email'], content['transaction_id'])
         sql_conn(cmd)
+
     elif ocr_type == OCR.BUSINESS_LICENSE:
         cmd = '''INSERT INTO t_business_license
                 (registered_capital, social_credit_number, company_name, legal_person,
@@ -195,6 +230,7 @@ def sql_insert(ocr_type: OCR, content: dict):
                        content['license_id'],content['organization_form'],content['establishment_date'],content['addr'],
                        content['business_scope'],content['type'],content['expiration_date'],content['transaction_id'])
         sql_conn(cmd)
+
     else:
         print("Type Error")
 
@@ -254,23 +290,23 @@ def sql_modify(ocr_type: OCR, id: int, content: dict):
         sql_conn(cmd)
     elif ocr_type == OCR.INVOICE:
         cmd = '''UPDATE t_invoice SET
-                amount_in_words = "{}", commodity_price = "{}", note_drawer = "{}", seller_addr = "{}",
-                commodity_num = "{}", seller_register_num = "{}", remarks = "{}", seller_bank = "{}",
-                commodity_tax_rate = "{}", total_tax = "{}", check_code = "{}", invoice_code = "{}", 
+                amount_in_words = "{}", note_drawer = "{}", seller_addr = "{}",
+                seller_register_num = "{}", remarks = "{}", seller_bank = "{}",
+                total_tax = "{}", check_code = "{}", invoice_code = "{}", 
                 invoice_date = "{}", purchaser_register_num = "{}", invoice_type_org = "{}", password = "{}",
                 amount_in_figuers = "{}", purchaser_bank = "{}", checker = "{}", totalAmount = "{}", 
-                commodity_amount = "{}", purchaser_name = "{}", commodity_type = "{}", invoice_type = "{}"
-                purchaser_addr = "{}", commodity_tax = "{}", commodity_unit = "{}", payee = "{}",
-                commodity_name = "{}", seller_name = "{}", invoice_num = "{}", transaction_id = {}
+                purchaser_name = "{}", invoice_type = "{}"
+                purchaser_addr = "{}", payee = "{}",
+                seller_name = "{}", invoice_num = "{}", transaction_id = {}
             WHERE id = {}}
-                '''.format(content['amount_in_words'], content['commodity_price'], content['note_drawer'], content['seller_addr'],
-                           content['commodity_num'], content['seller_register_num'], content['remarks'], content['seller_bank'],
-                           content['commodity_tax_rate'], content['total_tax'], content['check_code'], content['invoice_code'],
+                '''.format(content['amount_in_words'], content['note_drawer'], content['seller_addr'],
+                           content['seller_register_num'], content['remarks'], content['seller_bank'],
+                           content['total_tax'], content['check_code'], content['invoice_code'],
                            content['invoice_date'], content['purchaser_register_num'], content['invoice_type_org'], content['password'],
                            content['amount_in_figuers'], content['purchaser_bank'], content['checker'], content['totalAmount'],
-                           content['commodity_amount'], content['purchaser_name'], content['commodity_type'], content['invoice_type'],
-                           content['purchaser_addr'], content['commodity_tax'], content['commodity_unit'], content['payee'],
-                           content['commodity_name'], content['seller_name'], content['invoice_num'], content['transaction_id'],
+                           content['purchaser_name'], content['invoice_type'],
+                           content['purchaser_addr'], content['payee'],
+                           content['seller_name'], content['invoice_num'], content['transaction_id'],
                            id)
         sql_conn(cmd)
     elif ocr_type == OCR.BANKCARD:

@@ -183,6 +183,8 @@ license_list = []
 invoice_list = []
 general_list = []
 
+ocr_final_result = {}
+
 
 def confirm_single(name, parent, ocr_type: OCR):
     def show_large_pic(name, parent):
@@ -331,6 +333,25 @@ def confirm_single(name, parent, ocr_type: OCR):
         entry_url = Entry(cf_wd, textvariable=v_url, width=52, font=myfont)
         entry_url.grid(row=5 + offset, column=5, columnspan=4)
 
+        def confirm_business_card():
+            item = 'business_card'
+            ocr_final_result[item] = {}
+            ocr_final_result[item]['name'] = entry_name.get()
+            ocr_final_result[item]['title'] = entry_title.get()
+            ocr_final_result[item]['company'] = entry_company.get()
+            ocr_final_result[item]['addr'] = entry_addr.get()
+            ocr_final_result[item]['mobile'] = entry_mobile.get()
+            ocr_final_result[item]['fax'] = entry_fax.get()
+            ocr_final_result[item]['tel'] = entry_tel.get()
+            ocr_final_result[item]['email'] = entry_email.get()
+            ocr_final_result[item]['url'] = entry_url.get()
+            ocr_final_result[item]['pc'] = ""
+
+            cf_wd.destroy()
+
+        btn_confirm = Button(cf_wd, text="确认信息", command=lambda: confirm_business_card(), relief=GROOVE, font=myfont)
+        btn_confirm.grid(row=40, column=5)
+
     elif ocr_type == OCR.BANKCARD:
         offset = 14
         result = ocr_bankcard(name)
@@ -360,6 +381,19 @@ def confirm_single(name, parent, ocr_type: OCR):
         entry_bank_card_type.grid(row=2 + offset, column=5, columnspan=4)
         entry_valid_date = Entry(cf_wd, textvariable=v_valid_date, width=30, font=myfont)
         entry_valid_date.grid(row=3 + offset, column=5, columnspan=4)
+
+        def confirm_bankcard():
+            item = 'bankcard'
+            ocr_final_result[item] = {}
+            ocr_final_result[item]['bank_card_number'] = entry_bank_card_number.get()
+            ocr_final_result[item]['bank_name'] = entry_bank_name.get()
+            ocr_final_result[item]['bank_card_type'] = entry_bank_card_type.get()
+            ocr_final_result[item]['valid_date'] = entry_valid_date.get()
+
+            cf_wd.destroy()
+
+        btn_confirm = Button(cf_wd, text="确认信息", command=lambda: confirm_bankcard(), relief=GROOVE, font=myfont)
+        btn_confirm.grid(row=40, column=5)
 
     elif ocr_type == OCR.BUSINESS_LICENSE:
         offset = 0
@@ -421,10 +455,29 @@ def confirm_single(name, parent, ocr_type: OCR):
         entry_business_scope = Entry(cf_wd, textvariable=v_business_scope, width=52, font=myfont)
         entry_business_scope.grid(row=6 + offset, column=5, columnspan=4)
 
+        def confirm_business_license():
+            item = 'business_license'
+            ocr_final_result[item] = {}
+            ocr_final_result[item]['company_name'] = entry_company_name.get()
+            ocr_final_result[item]['legal_person'] = entry_legal_person.get()
+            ocr_final_result[item]['license_id'] = entry_license_id.get()
+            ocr_final_result[item]['social_credit_number'] = entry_social_credit_number.get()
+            ocr_final_result[item]['establishment_date'] = entry_establishment_date.get()
+            ocr_final_result[item]['expiration_date'] = entry_expiration_date.get()
+            ocr_final_result[item]['registered_capital'] = entry_registered_capital.get()
+            ocr_final_result[item]['addr'] = entry_addr.get()
+            ocr_final_result[item]['business_scope'] = entry_business_scope.get()
+            ocr_final_result[item]['organization_form'] = ""
+            ocr_final_result[item]['type'] = ""
+
+            cf_wd.destroy()
+
+        btn_confirm = Button(cf_wd, text="确认信息", command=lambda: confirm_business_license(), relief=GROOVE, font=myfont)
+        btn_confirm.grid(row=40, column=5)
+
     elif ocr_type == OCR.INVOICE:
         offset = 0
         result = ocr_invoice(name)
-        print(result)
         v_invoice_type = StringVar()            # 发票种类
         v_invoice_type.set(result['invoice_type'])
         v_invoice_code = StringVar()            # 发票代码
@@ -445,6 +498,7 @@ def confirm_single(name, parent, ocr_type: OCR):
         v_seller_addr.set(result['seller_addr'])
         v_seller_bank = StringVar()             # 销售方开户行及账号
         v_seller_bank.set(result['seller_bank'])
+        '''
         v_commodity_name = StringVar()          # 货物名称 多行
         v_commodity_type = StringVar()          # 规格型号 多行
         v_commodity_num = StringVar()           # 数量 多行
@@ -452,6 +506,7 @@ def confirm_single(name, parent, ocr_type: OCR):
         v_commodity_amount = StringVar()        # 金额 多行
         v_commodity_tax_rate = StringVar()      # 税率 多行
         v_commodity_tax = StringVar()           # 税额 多行
+        '''
         v_amount_in_figures = StringVar()       # 价格合计
         v_amount_in_figures.set(result['amount_in_figures'])
 
@@ -503,24 +558,30 @@ def confirm_single(name, parent, ocr_type: OCR):
         entry_seller_bank = Entry(cf_wd, textvariable=v_seller_bank, font=myfont)
         entry_seller_bank.grid(row=6 + offset, column=7)
 
-        tree = ttk.Treeview(cf_wd, show = "headings", columns=('货物名称','规格型号', '数量', '单价', '金额', '税率', '税额')
+        tree = ttk.Treeview(cf_wd,
+                            show="headings",
+                            columns=('commodity_name',
+                                     'commodity_type',
+                                     'commodity_num',
+                                     'commodity_price',
+                                     'commodity_amount',
+                                     'commodity_tax_rate',
+                                     'commodity_tax')
                             , selectmode=BROWSE, height=5)
-        tree.heading("货物名称", text="货物名称")
-        tree.column("货物名称", minwidth=0, width=100, stretch=NO)
-        tree.heading("规格型号", text="规格型号")
-        tree.column("规格型号", minwidth=0, width=100, stretch=NO)
-        tree.heading("数量", text="数量")
-        tree.column("数量", minwidth=0, width=50, stretch=NO)
-        tree.heading("单价", text="单价")
-        tree.column("单价", minwidth=0, width=100, stretch=NO)
-        tree.heading("金额", text="金额")
-        tree.column("金额", minwidth=0, width=100, stretch=NO)
-        tree.heading("税率", text="税率")
-        tree.column("税率", minwidth=0, width=50, stretch=NO)
-        tree.heading("税额", text="税额")
-        tree.column("税额", minwidth=0, width=100, stretch=NO)
-
-        print(result['commodity_name'][0]['word'])
+        tree.heading("commodity_name", text="货物名称")
+        tree.column("commodity_name", minwidth=0, width=100, stretch=NO)
+        tree.heading("commodity_type", text="规格型号")
+        tree.column("commodity_type", minwidth=0, width=100, stretch=NO)
+        tree.heading("commodity_num", text="数量")
+        tree.column("commodity_num", minwidth=0, width=50, stretch=NO)
+        tree.heading("commodity_price", text="单价")
+        tree.column("commodity_price", minwidth=0, width=100, stretch=NO)
+        tree.heading("commodity_amount", text="金额")
+        tree.column("commodity_amount", minwidth=0, width=100, stretch=NO)
+        tree.heading("commodity_tax_rate", text="税率")
+        tree.column("commodity_tax_rate", minwidth=0, width=50, stretch=NO)
+        tree.heading("commodity_tax", text="税额")
+        tree.column("commodity_tax", minwidth=0, width=100, stretch=NO)
 
         for i in range(len(result['commodity_name'])):
             tree.insert('', i, values=(result['commodity_name'][i]['word'],
@@ -535,6 +596,45 @@ def confirm_single(name, parent, ocr_type: OCR):
         entry_amount_in_figures = Entry(cf_wd, textvariable=v_amount_in_figures, font=myfont)
         entry_amount_in_figures.grid(row=10 + offset, column=5)
 
+        def confirm_invoice():
+            item = 'invoice'
+            ocr_final_result[item] = {}
+            ocr_final_result[item]['invoice_type'] = entry_invoice_type.get()
+            ocr_final_result[item]['invoice_code'] = entry_invoice_code.get()
+            ocr_final_result[item]['invoice_num'] = entry_invoice_num.get()
+            ocr_final_result[item]['invoice_date'] = entry_invoice_date.get()
+            ocr_final_result[item]['purchaser_name'] = entry_purchaser_name.get()
+            ocr_final_result[item]['purchaser_register_num'] = entry_purchaser_register_num.get()
+            ocr_final_result[item]['seller_name'] = entry_seller_name.get()
+            ocr_final_result[item]['seller_register_num'] = entry_seller_register_num.get()
+            ocr_final_result[item]['seller_addr'] = entry_seller_addr.get()
+            ocr_final_result[item]['seller_bank'] = entry_seller_bank.get()
+            ocr_final_result[item]['amount_in_figures'] = entry_amount_in_figures.get()
+
+            ocr_final_result[item]['commodity'] = {}
+            ocr_final_result[item]['commodity']['name'] = []
+            ocr_final_result[item]['commodity']['type'] = []
+            ocr_final_result[item]['commodity']['num'] = []
+            ocr_final_result[item]['commodity']['price'] = []
+            ocr_final_result[item]['commodity']['amount'] = []
+            ocr_final_result[item]['commodity']['tax_rate'] = []
+            ocr_final_result[item]['commodity']['tax'] = []
+
+            for children in tree.get_children():
+                info = tree.item(children, 'values')
+                ocr_final_result[item]['commodity']['name'].append(info[0])
+                ocr_final_result[item]['commodity']['type'].append(info[1])
+                ocr_final_result[item]['commodity']['num'].append(info[2])
+                ocr_final_result[item]['commodity']['price'].append(info[3])
+                ocr_final_result[item]['commodity']['amount'].append(info[4])
+                ocr_final_result[item]['commodity']['tax_rate'].append(info[5])
+                ocr_final_result[item]['commodity']['tax'].append(info[6])
+
+            cf_wd.destroy()
+
+        btn_confirm = Button(cf_wd, text="确认信息", command=lambda: confirm_invoice(), relief=GROOVE, font=myfont)
+        btn_confirm.grid(row=40, column=5)
+
     elif ocr_type == OCR.GENERAL_BASIC:
         offset = 0
         result = ocr_general_basic(name)
@@ -547,12 +647,20 @@ def confirm_single(name, parent, ocr_type: OCR):
 
         entry_remark = Entry(cf_wd, textvariable=v_remark, width=40, font=myfont)
         entry_remark.grid(row=0 + offset, column=5, columnspan=4)
-        entry_content = Text(cf_wd, width=40, font=myfont)
+        entry_content = Text(cf_wd, width=40, height=17, font=myfont)
         entry_content.insert('end', content)
         entry_content.grid(row=1 + offset, column=5, columnspan=4)
 
-        new_content = entry_content.get('0.0', 'end')
+        def confirm_general_basic():
+            item = 'general_basic'
+            ocr_final_result[item] = {}
+            ocr_final_result[item]['remark'] = entry_remark.get()
+            ocr_final_result[item]['content'] = entry_content.get('0.0', 'end')
+            print(entry_content.get('0.0', 'end'))
+            cf_wd.destroy()
 
+        btn_confirm = Button(cf_wd, text="确认信息", command=lambda: confirm_general_basic(), relief=GROOVE, font=myfont)
+        btn_confirm.grid(row=40, column=5)
 
     temp_image = put_image(name, 200)
 
@@ -816,6 +924,52 @@ def upload_trade():
     invoice_btn = Button(frame_invoice, text="选择发票图片", width=13,
                          command=lambda: select_path(invoice_path), relief=GROOVE)
     invoice_btn.grid(row=1, column=3)
+
+    # TODO: 确认存入以及交易名称
+    v_transaction_name = StringVar()
+
+    frame_confirm = Frame(trade_wd, bd=1, height=200, width=5000, relief=FLAT)
+    frame_confirm.grid(row=2, column=5, columnspan=5, rowspan=5)
+
+    label_transaction_name = Label(frame_confirm, text="交易名称:")
+    label_transaction_name.grid(row=3,column=2)
+
+    entry_transaction_name = Entry(frame_confirm, width=25, textvariable=v_transaction_name)
+    entry_transaction_name.grid(row=3, column=3)
+
+    def store_confirm():
+        if entry_transaction_name.get() != "":
+            # 交易
+            trans_content = {'name': entry_transaction_name.get()}
+            sql_insert(OCR.TRANSACTION, trans_content)
+            transaction_id = sql_conn('''SELECT max(id) FROM t_transaction''')[0][0]
+            print(transaction_id)
+            # 五项信息
+            if ocr_final_result.__contains__('business_card'):
+                ocr_final_result['business_card']['transaction_id'] = transaction_id
+                sql_insert(OCR.BUSINESS_CARD, ocr_final_result['business_card'])
+            if ocr_final_result.__contains__('bankcard'):
+                ocr_final_result['bankcard']['transaction_id'] = transaction_id
+                sql_insert(OCR.BANKCARD, ocr_final_result['bankcard'])
+            if ocr_final_result.__contains__('business_license'):
+                ocr_final_result['business_license']['transaction_id'] = transaction_id
+                sql_insert(OCR.BUSINESS_LICENSE, ocr_final_result['business_license'])
+            if ocr_final_result.__contains__('invoice'):
+                ocr_final_result['invoice']['transaction_id'] = transaction_id
+                sql_insert(OCR.INVOICE, ocr_final_result['invoice'])
+            if ocr_final_result.__contains__('general_basic'):
+                ocr_final_result['general_basic']['transaction_id'] = transaction_id
+                sql_insert(OCR.GENERAL_BASIC, ocr_final_result['general_basic'])
+            ocr_final_result.clear()
+
+            trade_wd.destroy()
+        else:
+            print("Transaction name CANNOT be empty")
+
+
+    btn_confirm = Button(frame_confirm, text="确认存入", width=13,
+                         command=lambda: store_confirm(), relief=GROOVE)
+    btn_confirm.grid(row=4, column=3)
 
     trade_wd.mainloop()
 

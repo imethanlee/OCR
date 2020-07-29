@@ -4,7 +4,7 @@ from enum import Enum
 
 
 class OCR(Enum):
-    # TRANSACTION = 0
+    TRANSACTION = 0
     GENERAL_BASIC = 1
     BUSINESS_CARD = 2
     BANKCARD = 3
@@ -197,6 +197,12 @@ def ocr_result_transform(ocr_type: OCR, origin: dict):
         new['invoice_num'] = origin['InvoiceNum']
     elif ocr_type == OCR.BANKCARD:
         new = origin
+        if new['bank_card_type'] == 0:
+            new['bank_card_type'] = "不能识别"
+        elif new['bank_card_type'] == 1:
+            new['bank_card_type'] = "借记卡"
+        elif new['bank_card_type'] == 2:
+            new['bank_card_type'] = "信用卡"
     elif ocr_type == OCR.BUSINESS_LICENSE:
         new['registered_capital'] = origin['注册资本']['words']
         new['social_credit_number'] = origin['社会信用代码']['words']

@@ -467,8 +467,8 @@ def confirm_single(name, parent, ocr_type: OCR):
             ocr_final_result[item]['registered_capital'] = entry_registered_capital.get()
             ocr_final_result[item]['addr'] = entry_addr.get()
             ocr_final_result[item]['business_scope'] = entry_business_scope.get()
-            ocr_final_result[item]['organization_form'] = ""
-            ocr_final_result[item]['type'] = ""
+            # ocr_final_result[item]['organization_form'] = ""
+            # ocr_final_result[item]['type'] = ""
 
             cf_wd.destroy()
 
@@ -836,22 +836,22 @@ def upload_trade():
     frame_license.grid(row=1, column=0, columnspan=5)
 
     license_edit = Button(frame_license, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
-    license_edit.grid(row=2, column=1)
+    license_edit.grid(row=1, column=1)
 
     license_upload = Button(frame_license, text="上传图片", width=11,
                             command=lambda: confirm_single(license_path.get(), frame_license, OCR.BUSINESS_LICENSE),
                             relief=GROOVE)
-    license_upload.grid(row=2, column=2)
+    license_upload.grid(row=1, column=2)
 
     license_entry = Entry(frame_license, textvariable=license_path, width=25)
-    license_entry.grid(row=1, column=1)
+    license_entry.grid(row=0, column=1)
 
     license_canv = Canvas(frame_license, bd=1, width=200, height=200)
-    license_canv.grid(row=1, column=0, rowspan=2)
+    license_canv.grid(row=0, column=0, rowspan=2)
 
     license_btn = Button(frame_license, text="选择营业执照图片", width=13,
                          command=lambda: select_path(license_path), relief=GROOVE)
-    license_btn.grid(row=1, column=3)
+    license_btn.grid(row=0, column=3)
 
     # -----------通用文本
     general_path = StringVar()
@@ -860,22 +860,22 @@ def upload_trade():
     frame_general.grid(row=2, column=0, columnspan=5)
 
     general_edit = Button(frame_general, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
-    general_edit.grid(row=3, column=1)
+    general_edit.grid(row=1, column=1)
 
     general_upload = Button(frame_general, text="上传图片", width=11,
                             command=lambda: confirm_single(general_path.get(), frame_general, OCR.GENERAL_BASIC),
                             relief=GROOVE)
-    general_upload.grid(row=3, column=2)
+    general_upload.grid(row=1, column=2)
 
     general_entry = Entry(frame_general, textvariable=general_path, width=25)
-    general_entry.grid(row=2, column=1)
+    general_entry.grid(row=0, column=1)
 
     general_canv = Canvas(frame_general, bd=1, width=200, height=200)
-    general_canv.grid(row=2, column=0, rowspan=2)
+    general_canv.grid(row=0, column=0, rowspan=2)
 
     general_btn = Button(frame_general, text="选择其他信息图片", width=13,
                          command=lambda: select_path(general_path), relief=GROOVE)
-    general_btn.grid(row=2, column=3)
+    general_btn.grid(row=0, column=3)
 
     # -----------银行卡
     card_path = StringVar()
@@ -908,22 +908,22 @@ def upload_trade():
     frame_invoice.grid(row=1, column=5, columnspan=5)
 
     invoice_edit = Button(frame_invoice, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
-    invoice_edit.grid(row=2, column=1)
+    invoice_edit.grid(row=1, column=1)
 
     invoice_upload = Button(frame_invoice, text="上传图片", width=11,
                             command=lambda: confirm_single(invoice_path.get(), frame_invoice, OCR.INVOICE),
                             relief=GROOVE)
-    invoice_upload.grid(row=2, column=2)
+    invoice_upload.grid(row=1, column=2)
 
     invoice_entry = Entry(frame_invoice, textvariable=invoice_path, width=25)
-    invoice_entry.grid(row=1, column=1)
+    invoice_entry.grid(row=0, column=1)
 
     invoice_canv = Canvas(frame_invoice, bd=1, width=200, height=200)
-    invoice_canv.grid(row=1, column=0, rowspan=2)
+    invoice_canv.grid(row=0, column=0, rowspan=2)
 
     invoice_btn = Button(frame_invoice, text="选择发票图片", width=13,
                          command=lambda: select_path(invoice_path), relief=GROOVE)
-    invoice_btn.grid(row=1, column=3)
+    invoice_btn.grid(row=0, column=3)
 
     # TODO: 确认存入以及交易名称
     v_transaction_name = StringVar()

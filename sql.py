@@ -8,8 +8,6 @@ def sql_conn(sql: str):
     cursor = db.cursor()
     cursor.execute(sql)
     result = cursor.fetchall()
-    # desc = cursor.description # 获取字段的描述，默认获取数据库字段名称，重新定义时通过AS关键重新命名即可
-    # data_dict = [dict(zip([col[0] for col in desc], row)) for row in cursor.fetchall()]  # 列表表达式把数据组装起来
     db.commit()
     db.close()
     return result
@@ -44,22 +42,24 @@ def sql_init():
                 id              INTEGER         PRIMARY KEY AUTOINCREMENT,      -- 主键
                 content         VARCHAR(5000)   NOT NULL DEFAULT '',            -- 内容
                 remark          VARCHAR(100)    NOT NULL DEFAULT '',            -- 备注
-                transaction_id  INTEGER         NOT NULL                        -- 外键
+                transaction_id  INTEGER         NOT NULL,                       -- 外键
+                picture         LONGBOLB        NOT NULL DEFAULT ''
                 )'''
     sql_conn(cmd)
 
     cmd = '''CREATE TABLE t_business_card(
                 id              INTEGER         PRIMARY KEY AUTOINCREMENT,  -- 主键
-                addr            VARCHAR(100)    NOT NULL DEFAULT '',        -- 地址
-                fax             VARCHAR(100)    NOT NULL DEFAULT '',        -- 传真
-                mobile          VARCHAR(100)    NOT NULL DEFAULT '',        -- 手机
                 name            VARCHAR(100)    NOT NULL DEFAULT '',        -- 姓名
-                pc              VARCHAR(100)    NOT NULL DEFAULT '',        -- ?
-                url             VARCHAR(100)    NOT NULL DEFAULT '',        -- 网址
-                tel             VARCHAR(100)    NOT NULL DEFAULT '',        -- 固话
-                company         VARCHAR(100)    NOT NULL DEFAULT '',        -- 公司
                 title           VARCHAR(100)    NOT NULL DEFAULT '',        -- 职称
+                company         VARCHAR(100)    NOT NULL DEFAULT '',        -- 公司
+                addr            VARCHAR(100)    NOT NULL DEFAULT '',        -- 地址
+                mobile          VARCHAR(100)    NOT NULL DEFAULT '',        -- 手机
+                fax             VARCHAR(100)    NOT NULL DEFAULT '',        -- 传真
+                tel             VARCHAR(100)    NOT NULL DEFAULT '',        -- 固话
                 email           VARCHAR(100)    NOT NULL DEFAULT '',        -- 电邮
+                -- pc              VARCHAR(100)    NOT NULL DEFAULT '',        -- ?
+                url             VARCHAR(100)    NOT NULL DEFAULT '',        -- 网址
+                picture         LONGBOLB        NOT NULL DEFAULT '',
                 transaction_id  INTEGER         NOT NULL                    -- 外键
                 )'''
     sql_conn(cmd)
@@ -67,26 +67,28 @@ def sql_init():
     cmd = '''CREATE TABLE t_bankcard(
                 id                  INTEGER         PRIMARY KEY AUTOINCREMENT,  -- 主键
                 bank_card_number    VARCHAR(100)   NOT NULL DEFAULT '',         -- 银行卡号
-                valid_date          VARCHAR(100)    NOT NULL DEFAULT '',        -- 过期日
-                bank_card_type      VARCHAR(100)    NOT NULL DEFAULT '',        -- 类型
                 bank_name           VARCHAR(100)    NOT NULL DEFAULT '',        -- 银行名称
+                bank_card_type      VARCHAR(100)    NOT NULL DEFAULT '',        -- 类型
+                valid_date          VARCHAR(100)    NOT NULL DEFAULT '',        -- 过期日
+                picture             LONGBOLB        NOT NULL DEFAULT '',
                 transaction_id      INTEGER         NOT NULL                    -- 外键
                 )'''
     sql_conn(cmd)
 
     cmd = '''CREATE TABLE t_business_license(
                 id                      INTEGER         PRIMARY KEY AUTOINCREMENT,  -- 主键
-                registered_capital      VARCHAR(100)    NOT NULL DEFAULT '',        -- 注册资本
-                social_credit_number    VARCHAR(100)    NOT NULL DEFAULT '',        -- 社会信用代码
                 company_name            VARCHAR(100)    NOT NULL DEFAULT '',        -- 单位名称
                 legal_person            VARCHAR(100)    NOT NULL DEFAULT '',        -- 法人
                 license_id              VARCHAR(100)    NOT NULL DEFAULT '',        -- 证件编号
-                organization_form       VARCHAR(100)    NOT NULL DEFAULT '',        -- 组成形式
-                establishment_date      VARCHAR(100)    NOT NULL DEFAULT '',        --成立日期
+                social_credit_number    VARCHAR(100)    NOT NULL DEFAULT '',        -- 社会信用代码
+                establishment_date      VARCHAR(100)    NOT NULL DEFAULT '',        -- 成立日期
+                expiration_date         VARCHAR(100)    NOT NULL DEFAULT '',        -- 有效期
+                registered_capital      VARCHAR(100)    NOT NULL DEFAULT '',        -- 注册资本
                 addr                    VARCHAR(100)    NOT NULL DEFAULT '',        -- 地址
                 business_scope          VARCHAR(100)    NOT NULL DEFAULT '',        -- 经营范围
-                type                    VARCHAR(100)    NOT NULL DEFAULT '',        -- 类型
-                expiration_date         VARCHAR(100)    NOT NULL DEFAULT '',        -- 有效期
+                -- type                    VARCHAR(100)    NOT NULL DEFAULT '',        -- 类型
+                -- organization_form       VARCHAR(100)    NOT NULL DEFAULT '',        -- 组成形式
+                picture                 LONGBOLB        NOT NULL DEFAULT '',
                 transaction_id          INTEGER         NOT NULL                    -- 外键
                 )'''
     sql_conn(cmd)
@@ -125,7 +127,7 @@ def sql_init():
                 -- commodity_unit          VARCHAR(100)    NOT NULL DEFAULT '',
                 -- payee                   VARCHAR(100)    NOT NULL DEFAULT '',
                 -- commodity_name          VARCHAR(100)    NOT NULL DEFAULT '',
-                
+                picture                 LONGBOLB        NOT NULL DEFAULT '',
                 transaction_id          INTEGER         NOT NULL                        -- 外键
                 )'''
     sql_conn(cmd)
@@ -152,6 +154,7 @@ def sql_insert(ocr_type: OCR, content: dict):
             VALUES ("{}")
         '''.format(content['name'])
         sql_conn(cmd)
+
     elif ocr_type == OCR.GENERAL_BASIC:
         cmd = '''INSERT INTO t_general_basic 
                 (content, remark, transaction_id) 
@@ -208,27 +211,27 @@ def sql_insert(ocr_type: OCR, content: dict):
     elif ocr_type == OCR.BUSINESS_CARD:
         cmd = '''INSERT INTO t_business_card 
                 (addr, fax, mobile, name,
-                pc, url, tel,
+                url, tel,
                 company, title, email, transaction_id)
             VALUES ("{}","{}","{}","{}",
-                    "{}","{}","{}",
+                    "{}","{}",
                     "{}","{}","{}",{})
             '''.format(content['addr'], content['fax'], content['mobile'], content['name'],
-                       content['pc'], content['url'], content['tel'],
+                       content['url'], content['tel'],
                        content['company'], content['title'], content['email'], content['transaction_id'])
         sql_conn(cmd)
 
     elif ocr_type == OCR.BUSINESS_LICENSE:
         cmd = '''INSERT INTO t_business_license
                 (registered_capital, social_credit_number, company_name, legal_person,
-                license_id, organization_form, establishment_date, addr, 
-                business_scope, type, expiration_date, transaction_id)
+                license_id, establishment_date, addr, 
+                business_scope, expiration_date, transaction_id)
             VALUES ("{}","{}","{}","{}",
-                    "{}","{}","{}","{}",
-                    "{}","{}","{}",{})
+                    "{}","{}","{}",
+                    "{}","{}",{})
             '''.format(content['registered_capital'],content['social_credit_number'],content['company_name'],content['legal_person'],
-                       content['license_id'],content['organization_form'],content['establishment_date'],content['addr'],
-                       content['business_scope'],content['type'],content['expiration_date'],content['transaction_id'])
+                       content['license_id'],content['establishment_date'],content['addr'],
+                       content['business_scope'],content['expiration_date'],content['transaction_id'])
         sql_conn(cmd)
 
     else:
@@ -252,6 +255,10 @@ def sql_delete(ocr_type: OCR, id: int):
             WHERE id = {}
         '''.format(id)
         sql_conn(cmd)
+        cmd = '''DELETE FROM t_invoice_commodity
+                WHERE invoice_id = {}
+                '''.format(id)
+        sql_conn(cmd)
     elif ocr_type == OCR.BANKCARD:
         cmd = '''DELETE FROM t_bankcard
             WHERE id = {}
@@ -272,8 +279,50 @@ def sql_delete(ocr_type: OCR, id: int):
 
 
 # 查
-def sql_query():
-    pass
+def sql_query(ocr_type: OCR, content: str):
+    if ocr_type == OCR.TRANSACTION:
+        cmd = '''SELECT * FROM t_transaction WHERE 
+                id LIKE '%{}%' OR 
+                name LIKE '%{}%' OR 
+                create_time LIKE '%{}%'
+                '''.format(content, content, content)
+        data = sql_conn(cmd)
+        res = {
+            'id': [],
+            'name': [],
+            'create_time': []}
+        for row in data:
+            res['id'].append(row[0])
+            res['name'].append(row[1])
+            res['create_time'].append(row[2])
+        return res
+    elif ocr_type == OCR.GENERAL_BASIC:
+        cmd = '''SELECT * FROM t_general_basic WHERE 
+                        id LIKE '%{}%' OR 
+                        content LIKE '%{}%' OR 
+                        remark LIKE '%{}%' OR
+                        transaction_id LIKE '%{}%'
+                        '''.format(content, content, content, content)
+        data = sql_conn(cmd)
+        res = {
+            'id': [],
+            'content': [],
+            'remark': [],
+            'transaction_id': []}
+        for row in data:
+            res['id'].append(row[0])
+            res['content'].append(row[1])
+            res['remark'].append(row[2])
+            res['transaction_id'].append(row[3])
+        return res
+    elif ocr_type == OCR.BUSINESS_CARD:
+        pass
+    elif ocr_type == OCR.BANKCARD:
+        pass
+    elif ocr_type == OCR.BUSINESS_LICENSE:
+        pass
+    elif ocr_type == OCR.INVOICE:
+        pass
 
 
 # 改

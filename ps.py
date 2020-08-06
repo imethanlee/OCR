@@ -1,4 +1,5 @@
 import cv2
+# from util import *
 
 
 class PS:
@@ -30,7 +31,7 @@ class PS:
             height = abs(self.point1[1] - self.point2[1])
             cut_img = self.rotated_img[min_y:min_y + height, min_x:min_x + width]
             cv2.imwrite("default.jpg", cut_img)
-            cv2.imwrite(self.file_name, cut_img)
+            # cv2.imwrite(self.file_name, cut_img)
         elif event == cv2.EVENT_RBUTTONDOWN:
             self.origin_x = x
         elif event == cv2.EVENT_MOUSEMOVE and (flags & cv2.EVENT_FLAG_RBUTTON):
@@ -56,8 +57,8 @@ class PS:
         return 0.15 * (old - new)
 
 
-ps = PS("./test_case/example.jpg")
-ps.run()
+# ps = PS("./test_case/example.jpg")
+# ps.run()
 
-
+# print(sql_query(OCR.BUSINESS_LICENSE, "4105"))
 

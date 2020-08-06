@@ -404,7 +404,7 @@ def sql_query(ocr_type: OCR, content: str):
                                 registered_capital LIKE '%{}%' OR 
                                 addr LIKE '%{}%' OR 
                                 business_scope LIKE '%{}%' OR 
-                                transaction_id LIKE '%{}%' OR 
+                                transaction_id LIKE '%{}%'
                                 '''.format(content, content, content, content,
                                            content, content, content, content,
                                            content, content, content)
@@ -425,7 +425,7 @@ def sql_query(ocr_type: OCR, content: str):
         }
         for row in data:
             res['id'].append(row[0])
-            res['name'].append(row[1])
+            res['company_name'].append(row[1])
             res['legal_person'].append(row[2])
             res['license_id'].append(row[3])
             res['social_credit_number'].append(row[4])

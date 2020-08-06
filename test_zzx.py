@@ -53,7 +53,6 @@ from tkinter import ttk
 import math
 from util import *
 
-
 ''''''
 
 
@@ -170,8 +169,8 @@ def upload(photo_area, pathname, num_photo, comb_value):
         # imageLabel.grid(row=int(count/2), column=count+1)  # 自动对齐
         # imageLabel.pack()
         count = count + 1
-    confirm_window(num_photo,namelist, root)
-    #TODO 完成上传单项
+    confirm_window(num_photo, namelist, root)
+    # TODO 完成上传单项
     for result in resultlist:
         if comb_value.get() == "名片":
             sql_insert(OCR.BUSINESS_CARD, result)
@@ -1063,12 +1062,21 @@ def search(parent, manage_comb_value, result_tree, str):
     result_tree.grid(row=1, rowspan=10, column=1, columnspan=6)
 
 
+# TODO 上传空图片
+def tree_click(tree):
+    detail_wd = Toplevel()
+    for item in tree.selection():
+        item_text = tree.item(item, "values")
+
+
+
 def manage():
     manage_wd = Toplevel(root)
     search_str = StringVar()
     manage_comb_value = StringVar()  # 窗体自带的文本，新建一个值
     manage_comb = ttk.Combobox(manage_wd, textvariable=manage_comb_value, state='readonly')  # 初始化
     result_tree = ttk.Treeview(manage_wd, columns=['1', '2', '3', '4', '5', '6', '7', '8', '9'], show='headings')
+    result_tree.bind('<Double-1>', lambda event: tree_click(result_tree))
 
     search_btn = Button(manage_wd, text="搜索", width=11,
                         command=lambda: search(manage_wd, manage_comb_value, result_tree, search_str.get()),
@@ -1099,7 +1107,7 @@ def upload_single():
     comb = ttk.Combobox(single_wd, textvariable=comb_value, state='readonly')  # 初始化
     comb["values"] = ("普通文本", "名片", "执照")
     comb.current(0)
-    upload_single_btn = Button(single_wd, text="选择图片", width=11, command=lambda :select_path(pathname), relief=GROOVE)
+    upload_single_btn = Button(single_wd, text="选择图片", width=11, command=lambda: select_path(pathname), relief=GROOVE)
     upload_single_btn.grid(row=0, column=0)
     # comb.bind("<<ComboboxSelected>>", func(manage_comb_value, result_tree))
     comb.grid(row=0, column=2)
@@ -1118,18 +1126,17 @@ def upload_single():
     scrollbar.config(command=photo_area.yview)
     scrollbar.grid(row=2, column=5, sticky=S + W + E + N)
 
-
-
     path_entry = Entry(single_wd, textvariable=pathname, width=25)
     path_entry.grid(row=0, column=1)
-    upload_btn = Button(single_wd, text="上传图片", command=lambda: upload(photo_area, pathname, num_photo, comb_value), relief=GROOVE)
+    upload_btn = Button(single_wd, text="上传图片", command=lambda: upload(photo_area, pathname, num_photo, comb_value),
+                        relief=GROOVE)
     upload_btn.grid(row=4, column=1)
 
 
 root = Tk()
-ui_list=[]
-#TODO 补充canvas 放背景图
-#下左
+ui_list = []
+# TODO 补充canvas 放背景图
+# 下左
 button_image = Image.open("管理长.jpg")
 button_image = button_image.resize((240, 200))
 button_photo = ImageTk.PhotoImage(button_image)
@@ -1137,15 +1144,15 @@ ui_list.append(button_photo)
 trade_btn = Button(root, image=ui_list[0], command=manage, relief=GROOVE)
 trade_btn.grid(row=1, column=1)
 
-#下左
+# 下左
 button_image = Image.open("交易长.jpg")
 button_image = button_image.resize((240, 200))
 button_photo = ImageTk.PhotoImage(button_image)
 ui_list.append(button_photo)
-trade_btn = Button(root, image=ui_list[1],command=upload_trade, relief=GROOVE)
+trade_btn = Button(root, image=ui_list[1], command=upload_trade, relief=GROOVE)
 trade_btn.grid(row=1, column=0)
 
-#上左
+# 上左
 button_image = Image.open("单项长2.jpg")
 button_image = button_image.resize((240, 200))
 button_photo = ImageTk.PhotoImage(button_image)
@@ -1153,11 +1160,11 @@ ui_list.append(button_photo)
 single_btn = Button(root, image=ui_list[2], command=upload_single, relief=GROOVE)
 single_btn.grid(row=0, column=0)
 
-size_w=300
-size_h=260
-root.grid_columnconfigure(0,minsize=size_w)
-root.grid_rowconfigure(0,minsize=size_h)
-root.grid_columnconfigure(1,minsize=size_w)
-root.grid_rowconfigure(1,minsize=size_h)
+size_w = 300
+size_h = 260
+root.grid_columnconfigure(0, minsize=size_w)
+root.grid_rowconfigure(0, minsize=size_h)
+root.grid_columnconfigure(1, minsize=size_w)
+root.grid_rowconfigure(1, minsize=size_h)
 root["background"] = '#c06f98'
 root.mainloop()

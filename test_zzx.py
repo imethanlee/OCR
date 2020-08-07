@@ -44,7 +44,7 @@ def main():
 main()
 
 '''
-
+import re
 from tkinter import *
 from PIL import Image, ImageTk
 from tkinter import messagebox
@@ -76,6 +76,57 @@ def path_to_list(input: str):
 
 def func(parent, value, tree):
     search(parent, value, tree, '')
+
+
+def id_match(sid):
+    id_format = "(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}[0-9Xx]$)"
+    reg = re.compile(id_format)
+    if re.match(reg, sid):
+        return re.match(reg, sid)
+    return None
+
+
+def date_match(date):
+    date_format = "((((19|20)\d{2})[-.](0?[13578]|1[02])[-.](0?[1-9]|[12]\d|3[01]))|(((19|20)\d{2})[-.](0?[469]|11)[-.](0?[1-9]|[12]\d|30))|(((19|20)\d{2})[-.]0?2[-.](0?[1-9]|1\d|2[0-8])))"
+    reg = re.compile(date_format)
+    if re.match(reg, date):
+        return re.match(reg, date)
+    return None
+
+
+def phone_match(phone):
+    phone_format = "(13\d|14[579]|15[^4\D]|17[^49\D]|18\d)\d{8}"
+    reg = re.compile(phone_format)
+    if re.match(reg, phone):
+        return re.match(reg, phone)
+    return None
+
+
+def name_match(name):
+    name_format = "^[\u4e00-\u9fa5]+(·[\u4e00-\u9fa5]+)*$"
+    reg = re.compile(name_format)
+    if re.search(reg, name):
+        return re.search(reg, name)
+    return None
+
+
+def handwriting_match(tokens):
+    handwriting_result = {'name': None, 'phone': None, 'id': None, 'date': None, 'others': ''}
+    for token in tokens:
+        if handwriting_result['name'] is None and (not name_match(token) is None):
+            handwriting_result['name'] = name_match(token)
+            continue
+        elif handwriting_result['phone'] is None and not phone_match(token) is None:
+            handwriting_result['phone'] = phone_match(token)
+            continue
+        elif handwriting_result['id'] is None and not id_match(token) is None:
+            handwriting_result['id'] = id_match(token)
+            continue
+        elif handwriting_result['date'] is None and not date_match(token) is None:
+            handwriting_result['date'] = date_match(token)
+        else:
+            handwriting_result['others'] = handwriting_result['others'] + token
+    return handwriting_result
 
 
 def read_file(image_path):
@@ -131,16 +182,25 @@ def upload(photo_area, pathname, num_photo, comb_value):
     # print(repr(fns))
     num_photo.set(len(path_to_list(pathname.get())))
     namelist = path_to_list(pathname.get())
-    # num_photo.set(len(fns))
+    if num_photo.get() == 0:
+        warning_box = messagebox.showwarning("提示", "图片不为空！")
+        return
+        # num_photo.set(len(fns))
     # namelist = getName(fns)
+
+    # TODO 先确认再存入
     count = 0
     for name in namelist:
         if comb_value.get() == "普通文本":
             result = ocr_general_basic(name)
         elif comb_value.get() == "名片":
             result = ocr_business_card(name)
-        elif comb_value.get() == "执照":
+        elif comb_value.get() == "营业执照":
             result = ocr_business_license(name)
+        elif comb_value.get() == "银行卡":
+            result = ocr_bankcard(name)
+        elif comb_value.get() == "发票":
+            result = ocr_invoice(name)
         resultlist.append(result)
 
         size = 200
@@ -170,10 +230,18 @@ def upload(photo_area, pathname, num_photo, comb_value):
         # imageLabel.pack()
         count = count + 1
     confirm_window(num_photo, namelist, root)
-    # TODO 完成上传单项
+
     for result in resultlist:
         if comb_value.get() == "名片":
             sql_insert(OCR.BUSINESS_CARD, result)
+        elif comb_value.get() == "银行卡":
+            sql_insert(OCR.BANKCARD, result)
+        elif comb_value.get() == "发票":
+            sql_insert(OCR.INVOICE, result)
+        elif comb_value.get() == "营业执照":
+            sql_insert(OCR.BUSINESS_LICENSE, result)
+        elif comb_value.get() == "其他信息":
+            sql_insert(OCR.GENERAL_BASIC, result)
 
 
 business_list = []
@@ -1069,7 +1137,6 @@ def tree_click(tree):
         item_text = tree.item(item, "values")
 
 
-
 def manage():
     manage_wd = Toplevel(root)
     search_str = StringVar()
@@ -1105,7 +1172,7 @@ def upload_single():
 
     comb_value = StringVar()  # 窗体自带的文本，新建一个值
     comb = ttk.Combobox(single_wd, textvariable=comb_value, state='readonly')  # 初始化
-    comb["values"] = ("普通文本", "名片", "执照")
+    comb["values"] = ("普通文本", "名片", "营业执照", "银行卡", "发票")
     comb.current(0)
     upload_single_btn = Button(single_wd, text="选择图片", width=11, command=lambda: select_path(pathname), relief=GROOVE)
     upload_single_btn.grid(row=0, column=0)
@@ -1134,37 +1201,48 @@ def upload_single():
 
 
 root = Tk()
+#root.overrideredirect(True)
 ui_list = []
-# TODO 补充canvas 放背景图
-# 下左
+test_string = "周子昕 15902348495 500109199804060423 2020.08.07 这是地址"
+split_list = test_string.split(' ')
+
+main_canv = Canvas(root, bd=1, width=1000, height=640)
+main_canv.pack()
+bg_image = Image.open("bg.jpg")
+bg = ImageTk.PhotoImage(bg_image)
+main_canv.create_image(0, 0, image=bg, anchor=NW)
+
+
+# 下右
 button_image = Image.open("管理长.jpg")
 button_image = button_image.resize((240, 200))
 button_photo = ImageTk.PhotoImage(button_image)
 ui_list.append(button_photo)
-trade_btn = Button(root, image=ui_list[0], command=manage, relief=GROOVE)
-trade_btn.grid(row=1, column=1)
+manage_btn = Button(main_canv, image=ui_list[0], command=manage, relief=FLAT)
+manage_btn.place(relx=0.5, rely=0.55)
 
 # 下左
 button_image = Image.open("交易长.jpg")
 button_image = button_image.resize((240, 200))
 button_photo = ImageTk.PhotoImage(button_image)
 ui_list.append(button_photo)
-trade_btn = Button(root, image=ui_list[1], command=upload_trade, relief=GROOVE)
-trade_btn.grid(row=1, column=0)
+trade_btn = Button(main_canv, image=ui_list[1], command=upload_trade, relief=FLAT)
+trade_btn.place(relx=0.245, rely=0.55)
 
 # 上左
 button_image = Image.open("单项长2.jpg")
 button_image = button_image.resize((240, 200))
 button_photo = ImageTk.PhotoImage(button_image)
 ui_list.append(button_photo)
-single_btn = Button(root, image=ui_list[2], command=upload_single, relief=GROOVE)
-single_btn.grid(row=0, column=0)
-
+single_btn = Button(main_canv, image=ui_list[2], command=upload_single, relief=FLAT)
+single_btn.place(relx=0.245, rely=0.218)
+'''
 size_w = 300
 size_h = 260
-root.grid_columnconfigure(0, minsize=size_w)
-root.grid_rowconfigure(0, minsize=size_h)
-root.grid_columnconfigure(1, minsize=size_w)
-root.grid_rowconfigure(1, minsize=size_h)
-root["background"] = '#c06f98'
+main_canv.grid_columnconfigure(0, minsize=size_w)
+main_canv.grid_rowconfigure(0, minsize=size_h)
+main_canv.grid_columnconfigure(1, minsize=size_w)
+main_canv.grid_rowconfigure(1, minsize=size_h)
+#main_canv["background"] = '#c06f98'
+'''
 root.mainloop()

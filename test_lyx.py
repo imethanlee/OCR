@@ -7,7 +7,12 @@ from tkinter.filedialog import askopenfilenames
 from tkinter import ttk
 import math
 
-# TODO: 1.裁剪旋转功能合并（基本完成） 2. 保存图片 3. 修改与删除 4. 上传单项的entry 5. 编辑结果
+# TODO:
+#  1. 裁剪旋转功能合并（基本完成）
+#  2. 保存图片 (已完成，需要临时文件来显示)
+#  3. 修改与删除
+#  4. 上传单项的entry
+#  5. 编辑结果（正在完成）
 
 
 def path_to_list(input: str):
@@ -238,7 +243,7 @@ general_list = []
 ocr_final_result = {}
 
 
-def confirm_single(name, parent, ocr_type: OCR):
+def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
     # TODO: show_large_pic 已删除
 
     fns = root.tk.splitlist(name)
@@ -296,25 +301,38 @@ def confirm_single(name, parent, ocr_type: OCR):
 
     if ocr_type == OCR.BUSINESS_CARD:
         offset = 13
-        result = ocr_business_card(name)
         v_name = StringVar()
-        v_name.set(result['name'])
         v_title = StringVar()
-        v_title.set(result['title'])
         v_company = StringVar()
-        v_company.set(result['company'])
         v_addr = StringVar()
-        v_addr.set(result['addr'])
         v_mobile = StringVar()
-        v_mobile.set(result['mobile'])
         v_fax = StringVar()
-        v_fax.set(result['fax'])
         v_tel = StringVar()
-        v_tel.set(result['tel'])
         v_email = StringVar()
-        v_email.set(result['email'])
         v_url = StringVar()
-        v_url.set(result['url'])
+
+        if flag == "":
+            result = ocr_business_card(name)
+            v_name.set(result['name'])
+            v_title.set(result['title'])
+            v_company.set(result['company'])
+            v_addr.set(result['addr'])
+            v_mobile.set(result['mobile'])
+            v_fax.set(result['fax'])
+            v_tel.set(result['tel'])
+            v_email.set(result['email'])
+            v_url.set(result['url'])
+        elif flag == "EDIT" and ocr_final_result.__contains__('business_card'):
+            item = 'business_card'
+            v_name.set(ocr_final_result[item]['name'])
+            v_title.set(ocr_final_result[item]['title'])
+            v_company.set(ocr_final_result[item]['company'])
+            v_addr.set(ocr_final_result[item]['addr'])
+            v_mobile.set(ocr_final_result[item]['mobile'])
+            v_fax.set(ocr_final_result[item]['fax'])
+            v_tel.set(ocr_final_result[item]['tel'])
+            v_email.set(ocr_final_result[item]['email'])
+            v_url.set(ocr_final_result[item]['url'])
 
         text_name = Label(cf_wd, text="姓名:", width=10, font=myfont)
         text_name.grid(row=0 + offset, column=4)
@@ -376,15 +394,24 @@ def confirm_single(name, parent, ocr_type: OCR):
 
     elif ocr_type == OCR.BANKCARD:
         offset = 14
-        result = ocr_bankcard(name)
+
         v_bank_card_number = StringVar()
-        v_bank_card_number.set(result['bank_card_number'])
         v_bank_name = StringVar()
-        v_bank_name.set(result['bank_name'])
         v_bank_card_type = StringVar()
-        v_bank_card_type.set(result['bank_card_type'])
         v_valid_date = StringVar()
-        v_valid_date.set(result['valid_date'])
+
+        if flag == "":
+            result = ocr_bankcard(name)
+            v_bank_card_number.set(result['bank_card_number'])
+            v_bank_name.set(result['bank_name'])
+            v_bank_card_type.set(result['bank_card_type'])
+            v_valid_date.set(result['valid_date'])
+        elif flag == "EDIT" and ocr_final_result.__contains__('bankcard'):
+            item = 'bankcard'
+            v_bank_card_number.set(ocr_final_result[item]['bank_card_number'])
+            v_bank_name.set(ocr_final_result[item]['bank_name'])
+            v_bank_card_type.set(ocr_final_result[item]['bank_card_type'])
+            v_valid_date.set(ocr_final_result[item]['valid_date'])
 
         text_bank_card_number = Label(cf_wd, text="银行卡号:", width=10, font=myfont)
         text_bank_card_number.grid(row=0 + offset, column=4)
@@ -421,25 +448,39 @@ def confirm_single(name, parent, ocr_type: OCR):
 
     elif ocr_type == OCR.BUSINESS_LICENSE:
         offset = 0
-        result = ocr_business_license(name)
+
         v_company_name = StringVar()
-        v_company_name.set(result['company_name'])
         v_legal_person = StringVar()
-        v_legal_person.set(result['legal_person'])
         v_license_id = StringVar()
-        v_license_id.set(result['license_id'])
         v_social_credit_number = StringVar()
-        v_social_credit_number.set(result['social_credit_number'])
         v_establishment_date = StringVar()
-        v_establishment_date.set(result['establishment_date'])
         v_expiration_date = StringVar()
-        v_expiration_date.set(result['expiration_date'])
         v_registered_capital = StringVar()
-        v_registered_capital.set(result['registered_capital'])
         v_addr = StringVar()
-        v_addr.set(result['addr'])
         v_business_scope = StringVar()
-        v_business_scope.set(result['business_scope'])
+
+        if flag == "":
+            result = ocr_business_license(name)
+            v_company_name.set(result['company_name'])
+            v_legal_person.set(result['legal_person'])
+            v_license_id.set(result['license_id'])
+            v_social_credit_number.set(result['social_credit_number'])
+            v_establishment_date.set(result['establishment_date'])
+            v_expiration_date.set(result['expiration_date'])
+            v_registered_capital.set(result['registered_capital'])
+            v_addr.set(result['addr'])
+            v_business_scope.set(result['business_scope'])
+        elif flag == "EDIT" and ocr_final_result.__contains__('business_license'):
+            item = 'business_license'
+            v_company_name.set(ocr_final_result[item]['company_name'])
+            v_legal_person.set(ocr_final_result[item]['legal_person'])
+            v_license_id.set(ocr_final_result[item]['license_id'])
+            v_social_credit_number.set(ocr_final_result[item]['social_credit_number'])
+            v_establishment_date.set(ocr_final_result[item]['establishment_date'])
+            v_expiration_date.set(ocr_final_result[item]['expiration_date'])
+            v_registered_capital.set(ocr_final_result[item]['registered_capital'])
+            v_addr.set(ocr_final_result[item]['addr'])
+            v_business_scope.set(ocr_final_result[item]['business_scope'])
 
         text_company_name = Label(cf_wd, text="公司名称:", width=10, font=myfont)
         text_company_name.grid(row=0 + offset, column=4)
@@ -501,38 +542,18 @@ def confirm_single(name, parent, ocr_type: OCR):
 
     elif ocr_type == OCR.INVOICE:
         offset = 0
-        result = ocr_invoice(name)
+
         v_invoice_type = StringVar()  # 发票种类
-        v_invoice_type.set(result['invoice_type'])
         v_invoice_code = StringVar()  # 发票代码
-        v_invoice_code.set(result['invoice_code'])
         v_invoice_num = StringVar()  # 发票号码
-        v_invoice_num.set(result['invoice_num'])
         v_invoice_date = StringVar()  # 开票日期
-        v_invoice_date.set(result['invoice_date'])
         v_purchaser_name = StringVar()  # 购买方名称
-        v_purchaser_name.set(result['purchaser_name'])
         v_purchaser_register_num = StringVar()  # 购买方纳税人识别号
-        v_purchaser_register_num.set(result['purchaser_register_num'])
         v_seller_name = StringVar()  # 销售方名称
-        v_seller_name.set(result['seller_name'])
         v_seller_register_num = StringVar()  # 销售方纳税人识别号
-        v_seller_register_num.set(result['seller_register_num'])
         v_seller_addr = StringVar()  # 销售方地址电话
-        v_seller_addr.set(result['seller_addr'])
         v_seller_bank = StringVar()  # 销售方开户行及账号
-        v_seller_bank.set(result['seller_bank'])
-        '''
-        v_commodity_name = StringVar()          # 货物名称 多行
-        v_commodity_type = StringVar()          # 规格型号 多行
-        v_commodity_num = StringVar()           # 数量 多行
-        v_commodity_price = StringVar()         # 单价 多行
-        v_commodity_amount = StringVar()        # 金额 多行
-        v_commodity_tax_rate = StringVar()      # 税率 多行
-        v_commodity_tax = StringVar()           # 税额 多行
-        '''
         v_amount_in_figures = StringVar()  # 价格合计
-        v_amount_in_figures.set(result['amount_in_figures'])
 
         text_invoice_type = Label(cf_wd, text="发票种类:", font=myfont)
         text_invoice_type.grid(row=0 + offset, column=4)
@@ -607,14 +628,50 @@ def confirm_single(name, parent, ocr_type: OCR):
         tree.heading("commodity_tax", text="税额")
         tree.column("commodity_tax", minwidth=0, width=100, stretch=NO)
 
-        for i in range(len(result['commodity_name'])):
-            tree.insert('', i, values=(result['commodity_name'][i]['word'],
-                                       result['commodity_type'][i]['word'],
-                                       result['commodity_num'][i]['word'],
-                                       result['commodity_price'][i]['word'],
-                                       result['commodity_amount'][i]['word'],
-                                       result['commodity_tax_rate'][i]['word'],
-                                       result['commodity_tax'][i]['word'],))
+        # 此处做判断
+        if flag == "":
+            result = ocr_invoice(name)
+            v_invoice_type.set(result['invoice_type'])
+            v_invoice_code.set(result['invoice_code'])
+            v_invoice_num.set(result['invoice_num'])
+            v_invoice_date.set(result['invoice_date'])
+            v_purchaser_name.set(result['purchaser_name'])
+            v_purchaser_register_num.set(result['purchaser_register_num'])
+            v_seller_name.set(result['seller_name'])
+            v_seller_register_num.set(result['seller_register_num'])
+            v_seller_addr.set(result['seller_addr'])
+            v_seller_bank.set(result['seller_bank'])
+            v_amount_in_figures.set(result['amount_in_figures'])
+            for i in range(len(result['commodity_name'])):
+                tree.insert('', i, values=(result['commodity_name'][i]['word'],
+                                           result['commodity_type'][i]['word'],
+                                           result['commodity_num'][i]['word'],
+                                           result['commodity_price'][i]['word'],
+                                           result['commodity_amount'][i]['word'],
+                                           result['commodity_tax_rate'][i]['word'],
+                                           result['commodity_tax'][i]['word'],))
+        elif flag == "EDIT" and ocr_final_result.__contains__('invoice'):
+            item = 'invoice'
+            v_invoice_type.set(ocr_final_result[item]['invoice_type'])
+            v_invoice_code.set(ocr_final_result[item]['invoice_code'])
+            v_invoice_num.set(ocr_final_result[item]['invoice_num'])
+            v_invoice_date.set(ocr_final_result[item]['invoice_date'])
+            v_purchaser_name.set(ocr_final_result[item]['purchaser_name'])
+            v_purchaser_register_num.set(ocr_final_result[item]['purchaser_register_num'])
+            v_seller_name.set(ocr_final_result[item]['seller_name'])
+            v_seller_register_num.set(ocr_final_result[item]['seller_register_num'])
+            v_seller_addr.set(ocr_final_result[item]['seller_addr'])
+            v_seller_bank.set(ocr_final_result[item]['seller_bank'])
+            v_amount_in_figures.set(ocr_final_result[item]['amount_in_figures'])
+            for i in range(len(ocr_final_result[item]['commodity']['name'])):
+                tree.insert('', i, values=(ocr_final_result[item]['commodity']['name'],
+                                           ocr_final_result[item]['commodity']['type'],
+                                           ocr_final_result[item]['commodity']['num'],
+                                           ocr_final_result[item]['commodity']['price'],
+                                           ocr_final_result[item]['commodity']['amount'],
+                                           ocr_final_result[item]['commodity']['tax_rate'],
+                                           ocr_final_result[item]['commodity']['tax']))
+
         tree.grid(row=7 + offset, column=4, columnspan=4)
 
         entry_amount_in_figures = Entry(cf_wd, textvariable=v_amount_in_figures, font=myfont)
@@ -663,9 +720,18 @@ def confirm_single(name, parent, ocr_type: OCR):
 
     elif ocr_type == OCR.GENERAL_BASIC:
         offset = 0
-        result = ocr_general_basic(name)
+
         v_remark = StringVar()
-        content = result['content']
+        content = None
+
+        if flag == "":
+            result = ocr_general_basic(name)
+            content = result['content']
+        elif flag == "EDIT" and ocr_final_result.__contains__('general_basic'):
+            item = 'general_basic'
+            v_remark.set(ocr_final_result[item]['remark'])
+            content = ocr_final_result[item]['content']
+
         text_remark = Label(cf_wd, text="备注:", width=10, font=myfont)
         text_remark.grid(row=0 + offset, column=4)
         text_content = Label(cf_wd, text="内容:", width=10, font=myfont)
@@ -836,7 +902,9 @@ def upload_trade():
     frame_businesscard = Frame(trade_wd, bg='#f8ffff', height=208, width=635, bd=1, relief='groove')
     frame_businesscard.grid(row=0, column=0, columnspan=5)
 
-    businesscard_edit = Button(frame_businesscard, bg='white', image=button_list[1], command=lambda: select_path(),
+    businesscard_edit = Button(frame_businesscard, bg='white', image=button_list[1],
+                               command=lambda: confirm_single(business_path.get(), frame_businesscard,
+                                                              OCR.BUSINESS_CARD, "EDIT"),
                                relief=FLAT)
     businesscard_edit.place(relx=0.34, rely=0.65)
 
@@ -865,7 +933,9 @@ def upload_trade():
     frame_license = Frame(trade_wd, bg='#f8ffff', height=208, width=635, bd=1, relief='groove')
     frame_license.grid(row=1, column=0, columnspan=5)
 
-    license_edit = Button(frame_license, bg='#f8ffff', image=button_list[1], command=lambda: select_path(), relief=FLAT)
+    license_edit = Button(frame_license, bg='#f8ffff', image=button_list[1],
+                          command=lambda: confirm_single(license_path.get(), frame_license, OCR.BUSINESS_LICENSE, "EDIT"),
+                          relief=FLAT)
     license_edit.place(relx=0.34, rely=0.65)
 
     license_upload = Button(frame_license, image=button_list[0], bg='#f8ffff',
@@ -891,7 +961,9 @@ def upload_trade():
     frame_general = Frame(trade_wd, bg='#f8ffff', height=208, width=635, bd=1, relief='groove')
     frame_general.grid(row=2, column=0, columnspan=5)
 
-    general_edit = Button(frame_general, bg='#f8ffff', image=button_list[1], command=lambda: select_path(), relief=FLAT)
+    general_edit = Button(frame_general, bg='#f8ffff', image=button_list[1],
+                          command=lambda: confirm_single(general_path.get(), frame_general, OCR.GENERAL_BASIC, "EDIT"),
+                          relief=FLAT)
     general_edit.place(relx=0.34, rely=0.65)
 
     general_upload = Button(frame_general, bg='#f8ffff', image=button_list[0],
@@ -918,7 +990,9 @@ def upload_trade():
     frame_card = Frame(trade_wd, bg='#f8ffff', height=208, width=635, bd=1, relief='groove')
     frame_card.grid(row=0, column=5, columnspan=5)
 
-    card_edit = Button(frame_card, bg='#f8ffff', image=button_list[1], command=lambda: select_path(), relief=FLAT)
+    card_edit = Button(frame_card, bg='#f8ffff', image=button_list[1],
+                       command=lambda: confirm_single(card_path.get(), frame_card, OCR.BANKCARD, "EDIT"),
+                       relief=FLAT)
     card_edit.place(relx=0.34, rely=0.65)
 
     card_upload = Button(frame_card, bg='#f8ffff', image=button_list[0],
@@ -945,7 +1019,9 @@ def upload_trade():
     frame_invoice = Frame(trade_wd, bg='#f8ffff', height=208, width=635, bd=1, relief='groove')
     frame_invoice.grid(row=1, column=5, columnspan=5)
 
-    invoice_edit = Button(frame_invoice, bg='#f8ffff', image=button_list[1], command=lambda: select_path(), relief=FLAT)
+    invoice_edit = Button(frame_invoice, bg='#f8ffff', image=button_list[1],
+                          command=lambda: confirm_single(invoice_path.get(), frame_invoice, OCR.INVOICE, "EDIT"),
+                          relief=FLAT)
     invoice_edit.place(relx=0.34, rely=0.65)
 
     invoice_upload = Button(frame_invoice, bg='#f8ffff', image=button_list[0],
@@ -1011,7 +1087,7 @@ def upload_trade():
             trans_content = {'name': entry_transaction_name.get()}
             sql_insert(OCR.TRANSACTION, trans_content)
             transaction_id = sql_conn('''SELECT max(id) FROM t_transaction''')[0][0]
-            print(transaction_id)
+
             # 五项信息
             if ocr_final_result.__contains__('business_card'):
                 ocr_final_result['business_card']['transaction_id'] = transaction_id

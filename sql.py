@@ -42,6 +42,10 @@ def sql_init():
                 id              INTEGER         PRIMARY KEY AUTOINCREMENT,      -- 主键
                 content         VARCHAR(5000)   NOT NULL DEFAULT '',            -- 内容
                 remark          VARCHAR(100)    NOT NULL DEFAULT '',            -- 备注
+                id_num          VARCHAR(100)    NOT NULL DEFAULT '',            -- 身份证
+                date            VARCHAR(100)    NOT NULL DEFAULT '',            -- 日期
+                phone           VARCHAR(100)    NOT NULL DEFAULT '',            -- 电话
+                name            VARCHAR(100)    NOT NULL DEFAULT '',            -- 姓名
                 transaction_id  INTEGER         NOT NULL,                       -- 外键
                 picture         LONGBOLB        NOT NULL DEFAULT ''
                 )'''
@@ -157,9 +161,15 @@ def sql_insert(ocr_type: OCR, content: dict):
 
     elif ocr_type == OCR.GENERAL_BASIC:
         cmd = '''INSERT INTO t_general_basic 
-                (content, remark, transaction_id) 
-            VALUES ("{}","{}",{}) 
-        '''.format(content['content'], content['remark'], content['transaction_id'])
+                (content, remark, picture, transaction_id) 
+            VALUES ("{}","{}","{}",{}) 
+        '''.format(content['content'], content['remark'], content['picture'],content['transaction_id'])
+        # cmd = '''INSERT INTO t_general_basic
+        #                 (content, remark, picture, id_num，
+        #                 date, phone, name, transaction_id)
+        #             VALUES ("{}","{}","{}",{})
+        #         '''.format(content['content'], content['remark'], content['picture'], content['id_num'],
+        #                    content['date'], content['phone'],content['name'], content['transaction_id'])
         sql_conn(cmd)
 
     elif ocr_type == OCR.INVOICE:
@@ -167,17 +177,17 @@ def sql_insert(ocr_type: OCR, content: dict):
                 (invoice_type, invoice_code, invoice_num, invoice_date,
                  purchaser_name, purchaser_register_num, 
                  seller_name, seller_register_num, seller_addr,seller_bank,
-                 amount_in_figures, 
-                 transaction_id) 
+                 amount_in_figures, picture,
+                 transaction_id)
             VALUES ("{}","{}","{}","{}",
                     "{}","{}",
                     "{}","{}","{}","{}",
-                    "{}",
+                    "{}","{}",
                      {}) 
                 '''.format(content['invoice_type'], content['invoice_code'], content['invoice_num'], content['invoice_date'],
                            content['purchaser_name'], content['purchaser_register_num'],
                            content['seller_name'], content['seller_register_num'], content['seller_addr'], content['seller_bank'],
-                           content['amount_in_figures'],
+                           content['amount_in_figures'], content['picture'],
                            content['transaction_id'])
         sql_conn(cmd)
         invoice_id = sql_conn('''SELECT max(id) FROM t_invoice''')[0][0]
@@ -201,36 +211,36 @@ def sql_insert(ocr_type: OCR, content: dict):
     elif ocr_type == OCR.BANKCARD:
         cmd = '''INSERT INTO t_bankcard
                 (bank_card_number, valid_date, bank_card_type, bank_name,
-                 transaction_id) 
+                 picture, transaction_id) 
             VALUES ("{}","{}","{}","{}",
-                    "{}")
+                    "{}",""{}")
             '''.format(content['bank_card_number'], content['valid_date'], content['bank_card_type'],content['bank_name'],
-                       content['transaction_id'])
+                       content['picture'], content['transaction_id'])
         sql_conn(cmd)
 
     elif ocr_type == OCR.BUSINESS_CARD:
         cmd = '''INSERT INTO t_business_card 
                 (addr, fax, mobile, name,
-                url, tel,
+                url, tel, picture,
                 company, title, email, transaction_id)
             VALUES ("{}","{}","{}","{}",
-                    "{}","{}",
+                    "{}","{}","{}"
                     "{}","{}","{}",{})
             '''.format(content['addr'], content['fax'], content['mobile'], content['name'],
-                       content['url'], content['tel'],
+                       content['url'], content['tel'], content['picture'],
                        content['company'], content['title'], content['email'], content['transaction_id'])
         sql_conn(cmd)
 
     elif ocr_type == OCR.BUSINESS_LICENSE:
         cmd = '''INSERT INTO t_business_license
                 (registered_capital, social_credit_number, company_name, legal_person,
-                license_id, establishment_date, addr, 
+                license_id, establishment_date, addr, picture,
                 business_scope, expiration_date, transaction_id)
             VALUES ("{}","{}","{}","{}",
-                    "{}","{}","{}",
+                    "{}","{}","{}","{}",
                     "{}","{}",{})
             '''.format(content['registered_capital'],content['social_credit_number'],content['company_name'],content['legal_person'],
-                       content['license_id'],content['establishment_date'],content['addr'],
+                       content['license_id'],content['establishment_date'],content['addr'], content['picture'],
                        content['business_scope'],content['expiration_date'],content['transaction_id'])
         sql_conn(cmd)
 
@@ -316,6 +326,39 @@ def sql_query(ocr_type: OCR, content: str):
             res['content'].append(row[1])
             res['remark'].append(row[2])
             res['transaction_id'].append(row[3])
+
+        # cmd = '''SELECT * FROM t_general_basic WHERE
+        #                         id LIKE '%{}%' OR
+        #                         content LIKE '%{}%' OR
+        #                         remark LIKE '%{}%' OR
+        #                         id_num LIKE '%{}%' OR
+        #                         date LIKE '%{}%' OR
+        #                         phone LIKE '%{}%' OR
+        #                         name LIKE '%{}%' OR
+        #                         transaction_id LIKE '%{}%'
+        #                         '''.format(content, content, content, content,
+        #                                    content, content, content, content)
+        # data = sql_conn(cmd)
+        # res = {
+        #     'id': [],
+        #     'content': [],
+        #     'remark': [],
+        #     'id_num': [],
+        #     'date': [],
+        #     'phone': [],
+        #     'name': [],
+        #     'transaction_id': [],
+        #     'picture': [],
+        # }
+        # for row in data:
+        #     res['id'].append(row[0])
+        #     res['content'].append(row[1])
+        #     res['remark'].append(row[2])
+        #     res['id_num'].append(row[3])
+        #     res['date'].append(row[4])
+        #     res['phone'].append(row[5])
+        #     res['name'].append(row[6])
+        #     res['transaction_id'].append(row[7])
         return res
     elif ocr_type == OCR.BUSINESS_CARD:
         cmd = '''SELECT * FROM t_business_card WHERE 
@@ -526,6 +569,28 @@ def sql_extract(ocr_type: OCR, id: int):
                 'picture': row[4],
             }
             return res
+
+        # cmd = '''SELECT * FROM t_general_basic WHERE
+        #                         id = {}
+        #                         '''.format(id)
+        # data = sql_conn(cmd)
+        # if len(data[0]) == 0:
+        #     print("Extract Error!")
+        #     return None
+        # else:
+        #     row = data[0]
+        #     res = {
+        #         'id': row[0],
+        #         'content': row[1],
+        #         'remark': row[2],
+        #         'id_num': row[3],
+        #         'date': row[4],
+        #         'phone': row[5],
+        #         'name': row[6],
+        #         'transaction_id': row[7],
+        #         'picture': row[8],
+        #     }
+        #     return res
     elif ocr_type == OCR.BUSINESS_CARD:
         cmd = '''SELECT * FROM t_business_card WHERE 
                         id = {}
@@ -664,6 +729,23 @@ def sql_modify(ocr_type: OCR, id: int, content: dict):
         '''.format(content['content'],
                    content['remark'],
                    content['transaction_id'], id)
+        # cmd = '''UPDATE t_general_basic SET
+        #                 content = "{}",
+        #                 remark = "{}",
+        #                 id_num = "{}",
+        #                 date = "{}",
+        #                 phone = "{}",
+        #                 name = "{}",
+        #                 transaction_id = {}
+        #             WHERE id = {}
+        #         '''.format(content['content'],
+        #                    content['remark'],
+        #                    content['id_num'],
+        #                    content['date'],
+        #                    content['phone'],
+        #                    content['name'],
+        #                    content['transaction_id'],
+        #                    id)
         sql_conn(cmd)
     elif ocr_type == OCR.INVOICE:
         cmd = '''UPDATE t_invoice SET                     

@@ -1,4 +1,3 @@
-
 import re
 from tkinter import *
 from util import *
@@ -8,7 +7,7 @@ from tkinter.filedialog import askopenfilenames
 from tkinter import ttk
 import math
 
-# TODO: 1.裁剪旋转功能合并 2. 保存图片 3. 修改与删除 4. 上传单项的entry 5. 编辑结果
+# TODO: 1.裁剪旋转功能合并（基本完成） 2. 保存图片 3. 修改与删除 4. 上传单项的entry 5. 编辑结果
 
 
 def path_to_list(input: str):
@@ -240,37 +239,7 @@ ocr_final_result = {}
 
 
 def confirm_single(name, parent, ocr_type: OCR):
-    def show_large_pic(name, parent):
-        pic_wd = Toplevel(parent)
-        '''
-        image = Image.open(name)
-        pic_size = 700
-
-        if image.size[0] > image.size[1]:
-            size_w = pic_size
-            size_h = int(image.size[1] * pic_size / image.size[0])
-            # img = img.resize((pic_size, int(img.size[1] * size / img.size[0])))
-        else:
-            size_w = int(image.size[0] * pic_size / image.size[1])
-            size_h = pic_size
-            # img = img.resize((int(img.size[0] * size / img.size[1]), size))
-
-        image = image.resize((size_w, size_h))
-        temp_photo = ImageTk.PhotoImage(image)
-        '''
-        # test_list.append(temp_photo)
-        if ocr_type == OCR.BUSINESS_CARD:
-            imageLabel = Label(pic_wd, image=business_list[-2])
-        elif ocr_type == OCR.BANKCARD:
-            imageLabel = Label(pic_wd, image=card_list[-2])
-        elif ocr_type == OCR.BUSINESS_LICENSE:
-            imageLabel = Label(pic_wd, image=license_list[-2])
-        elif ocr_type == OCR.INVOICE:
-            imageLabel = Label(pic_wd, image=invoice_list[-2])
-        elif ocr_type == OCR.GENERAL_BASIC:
-            imageLabel = Label(pic_wd, image=general_list[-2])
-        imageLabel.pack()
-        pic_wd.mainloop()
+    # TODO: show_large_pic 已删除
 
     fns = root.tk.splitlist(name)
     namelist = path_to_list(name)
@@ -397,7 +366,6 @@ def confirm_single(name, parent, ocr_type: OCR):
             ocr_final_result[item]['tel'] = entry_tel.get()
             ocr_final_result[item]['email'] = entry_email.get()
             ocr_final_result[item]['url'] = entry_url.get()
-            ocr_final_result[item]['pc'] = ""
 
             cf_wd.destroy()
 
@@ -519,8 +487,6 @@ def confirm_single(name, parent, ocr_type: OCR):
             ocr_final_result[item]['registered_capital'] = entry_registered_capital.get()
             ocr_final_result[item]['addr'] = entry_addr.get()
             ocr_final_result[item]['business_scope'] = entry_business_scope.get()
-            # ocr_final_result[item]['organization_form'] = ""
-            # ocr_final_result[item]['type'] = ""
 
             cf_wd.destroy()
 
@@ -714,39 +680,7 @@ def confirm_single(name, parent, ocr_type: OCR):
         btn_confirm = Button(cf_wd, text="确认信息", command=lambda: confirm_general_basic(), relief=GROOVE, font=myfont)
         btn_confirm.grid(row=40, column=5)
 
-    temp_image = put_image(name, 200)
-
-    if ocr_type == OCR.BUSINESS_CARD:
-        business_list.append(temp_image)
-
-        business_image_btn = Button(parent,
-                                    command=lambda: show_large_pic(name, parent),
-                                    image=business_list[-1])
-        business_image_btn.place(relx=0,rely=0)
-    elif ocr_type == OCR.BANKCARD:
-        card_list.append(temp_image)
-        business_image_btn = Button(parent,
-                                    command=lambda: show_large_pic(name, parent),
-                                    image=card_list[-1])
-        business_image_btn.place(relx=0,rely=0)
-    elif ocr_type == OCR.BUSINESS_LICENSE:
-        license_list.append(temp_image)
-        business_image_btn = Button(parent,
-                                    command=lambda: show_large_pic(name, parent),
-                                    image=license_list[-1])
-        business_image_btn.place(relx=0,rely=0)
-    elif ocr_type == OCR.INVOICE:
-        invoice_list.append(temp_image)
-        business_image_btn = Button(parent,
-                                    command=lambda: show_large_pic(name, parent),
-                                    image=invoice_list[-1])
-        business_image_btn.place(relx=0,rely=0)
-    elif ocr_type == OCR.GENERAL_BASIC:
-        general_list.append(temp_image)
-        business_image_btn = Button(parent,
-                                    command=lambda: show_large_pic(name, parent),
-                                    image=general_list[-1])
-        business_image_btn.place(relx=0,rely=0)
+    # TODO: 此函数下方的所有内容均已删除
 
 
 def confirm_window(num_photo, namelist, parent):

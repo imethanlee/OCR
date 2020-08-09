@@ -736,31 +736,31 @@ def confirm_single(name, parent, ocr_type: OCR):
         business_image_btn = Button(parent,
                                     command=lambda: show_large_pic(name, parent),
                                     image=business_list[-1])
-        business_image_btn.grid(row=0, column=0, rowspan=2)
+        business_image_btn.place(relx=0,rely=0)
     elif ocr_type == OCR.BANKCARD:
         card_list.append(temp_image)
         business_image_btn = Button(parent,
                                     command=lambda: show_large_pic(name, parent),
                                     image=card_list[-1])
-        business_image_btn.grid(row=0, column=0, rowspan=2)
+        business_image_btn.place(relx=0,rely=0)
     elif ocr_type == OCR.BUSINESS_LICENSE:
         license_list.append(temp_image)
         business_image_btn = Button(parent,
                                     command=lambda: show_large_pic(name, parent),
                                     image=license_list[-1])
-        business_image_btn.grid(row=0, column=0, rowspan=2)
+        business_image_btn.place(relx=0,rely=0)
     elif ocr_type == OCR.INVOICE:
         invoice_list.append(temp_image)
         business_image_btn = Button(parent,
                                     command=lambda: show_large_pic(name, parent),
                                     image=invoice_list[-1])
-        business_image_btn.grid(row=0, column=0, rowspan=2)
+        business_image_btn.place(relx=0,rely=0)
     elif ocr_type == OCR.GENERAL_BASIC:
         general_list.append(temp_image)
         business_image_btn = Button(parent,
                                     command=lambda: show_large_pic(name, parent),
                                     image=general_list[-1])
-        business_image_btn.grid(row=0, column=0, rowspan=2)
+        business_image_btn.place(relx=0,rely=0)
 
 
 def confirm_window(num_photo, namelist, parent):
@@ -1250,7 +1250,7 @@ icon_list.append(upload_photo)
 ui_list = []
 test_string = "周子昕 15902348495 500109199804060423 2020.08.07 这是地址"
 split_list = test_string.split(' ')
-
+print(handwriting_match(split_list))
 
 
 

@@ -477,7 +477,7 @@ def sql_query(ocr_type: OCR, content: str):
             res['id'].append(row[0])
             res['invoice_type'].append(row[1])
             res['invoice_code'].append(row[2])
-            res['invoice_date'].append(row[3])
+            res['invoice_num'].append(row[3])
             res['invoice_date'].append(row[4])
             res['purchaser_name'].append(row[5])
             res['purchaser_register_num'].append(row[6])

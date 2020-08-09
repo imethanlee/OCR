@@ -485,9 +485,9 @@ def sql_query(ocr_type: OCR, content: str):
             res['seller_register_num'].append(row[8])
             res['seller_addr'].append(row[9])
             res['seller_bank'].append(row[10])
-            res['amount_in_figures'].append(row[12])
-            res['transaction_id'].append(row[13])
-            res['picture'].append(row[14])
+            res['amount_in_figures'].append(row[11])
+            res['transaction_id'].append(row[12])
+            res['picture'].append(row[13])
         return res
 
 

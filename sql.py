@@ -451,7 +451,7 @@ def sql_query(ocr_type: OCR, content: str):
                 seller_addr LIKE '%{}%' OR 
                 seller_bank LIKE '%{}%' OR 
                 amount_in_figures LIKE '%{}%' OR
-                transaction_id LIKE '%{}%' OR
+                transaction_id LIKE '%{}%'
                 '''.format(content, content, content, content,
                            content, content, content, content,
                            content, content, content, content,

@@ -390,7 +390,7 @@ def sql_query(ocr_type: OCR, content: str):
             res['bank_card_type'].append(row[4])
             res['valid_date'].append(row[5])
             res['transaction_id'].append(row[6])
-            res['id'].append(row[7])
+            res['picture'].append(row[7])
         return res
     elif ocr_type == OCR.BUSINESS_LICENSE:
         cmd = '''SELECT * FROM t_business_license WHERE 

@@ -366,6 +366,9 @@ def confirm_single(name, parent, ocr_type: OCR):
             ocr_final_result[item]['tel'] = entry_tel.get()
             ocr_final_result[item]['email'] = entry_email.get()
             ocr_final_result[item]['url'] = entry_url.get()
+            with open(name, "rb") as f:
+                ocr_final_result[item]['picture'] = base64.b64encode(f.read())
+                print(ocr_final_result[item]['picture'])
 
             cf_wd.destroy()
 

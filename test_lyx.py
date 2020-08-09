@@ -368,7 +368,6 @@ def confirm_single(name, parent, ocr_type: OCR):
             ocr_final_result[item]['url'] = entry_url.get()
             with open(name, "rb") as f:
                 ocr_final_result[item]['picture'] = base64.b64encode(f.read())
-                print(ocr_final_result[item]['picture'])
 
             cf_wd.destroy()
 
@@ -412,6 +411,8 @@ def confirm_single(name, parent, ocr_type: OCR):
             ocr_final_result[item]['bank_name'] = entry_bank_name.get()
             ocr_final_result[item]['bank_card_type'] = entry_bank_card_type.get()
             ocr_final_result[item]['valid_date'] = entry_valid_date.get()
+            with open(name, "rb") as f:
+                ocr_final_result[item]['picture'] = base64.b64encode(f.read())
 
             cf_wd.destroy()
 
@@ -490,6 +491,8 @@ def confirm_single(name, parent, ocr_type: OCR):
             ocr_final_result[item]['registered_capital'] = entry_registered_capital.get()
             ocr_final_result[item]['addr'] = entry_addr.get()
             ocr_final_result[item]['business_scope'] = entry_business_scope.get()
+            with open(name, "rb") as f:
+                ocr_final_result[item]['picture'] = base64.b64encode(f.read())
 
             cf_wd.destroy()
 
@@ -631,6 +634,8 @@ def confirm_single(name, parent, ocr_type: OCR):
             ocr_final_result[item]['seller_addr'] = entry_seller_addr.get()
             ocr_final_result[item]['seller_bank'] = entry_seller_bank.get()
             ocr_final_result[item]['amount_in_figures'] = entry_amount_in_figures.get()
+            with open(name, "rb") as f:
+                ocr_final_result[item]['picture'] = base64.b64encode(f.read())
 
             ocr_final_result[item]['commodity'] = {}
             ocr_final_result[item]['commodity']['name'] = []
@@ -677,7 +682,9 @@ def confirm_single(name, parent, ocr_type: OCR):
             ocr_final_result[item] = {}
             ocr_final_result[item]['remark'] = entry_remark.get()
             ocr_final_result[item]['content'] = entry_content.get('0.0', 'end')
-            print(entry_content.get('0.0', 'end'))
+            with open(name, "rb") as f:
+                ocr_final_result[item]['picture'] = base64.b64encode(f.read())
+
             cf_wd.destroy()
 
         btn_confirm = Button(cf_wd, text="确认信息", command=lambda: confirm_general_basic(), relief=GROOVE, font=myfont)

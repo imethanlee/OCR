@@ -1,13 +1,14 @@
+
+import re
 from tkinter import *
+from util import *
 from PIL import Image, ImageTk
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilenames
 from tkinter import ttk
 import math
-from util import *
 
 # TODO: 1.裁剪旋转功能合并 2. 保存图片 3. 修改与删除 4. 上传单项的entry 5. 编辑结果
-''''''
 
 
 def path_to_list(input: str):
@@ -28,8 +29,59 @@ def path_to_list(input: str):
     return lst
 
 
-def func(event):
-    print(comb.get())
+def func(parent, value, tree):
+    search(parent, value, tree, '')
+
+
+def id_match(sid):
+    id_format = "(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}[0-9Xx]$)"
+    reg = re.compile(id_format)
+    if re.match(reg, sid):
+        return re.match(reg, sid)
+    return None
+
+
+def date_match(date):
+    date_format = "((((19|20)\d{2})[-.](0?[13578]|1[02])[-.](0?[1-9]|[12]\d|3[01]))|(((19|20)\d{2})[-.](0?[469]|11)[-.](0?[1-9]|[12]\d|30))|(((19|20)\d{2})[-.]0?2[-.](0?[1-9]|1\d|2[0-8])))"
+    reg = re.compile(date_format)
+    if re.match(reg, date):
+        return re.match(reg, date)
+    return None
+
+
+def phone_match(phone):
+    phone_format = "(13\d|14[579]|15[^4\D]|17[^49\D]|18\d)\d{8}"
+    reg = re.compile(phone_format)
+    if re.match(reg, phone):
+        return re.match(reg, phone)
+    return None
+
+
+def name_match(name):
+    name_format = "^[\u4e00-\u9fa5]+(·[\u4e00-\u9fa5]+)*$"
+    reg = re.compile(name_format)
+    if re.search(reg, name):
+        return re.search(reg, name)
+    return None
+
+
+def handwriting_match(tokens):
+    handwriting_result = {'name': None, 'phone': None, 'id': None, 'date': None, 'others': ''}
+    for token in tokens:
+        if handwriting_result['name'] is None and (not name_match(token) is None):
+            handwriting_result['name'] = name_match(token)
+            continue
+        elif handwriting_result['phone'] is None and not phone_match(token) is None:
+            handwriting_result['phone'] = phone_match(token)
+            continue
+        elif handwriting_result['id'] is None and not id_match(token) is None:
+            handwriting_result['id'] = id_match(token)
+            continue
+        elif handwriting_result['date'] is None and not date_match(token) is None:
+            handwriting_result['date'] = date_match(token)
+        else:
+            handwriting_result['others'] = handwriting_result['others'] + token
+    return handwriting_result
 
 
 def read_file(image_path):
@@ -46,22 +98,41 @@ def read_file(image_path):
             f.close()
 
 
-# 选择路径 + 生成按钮
-def select_path(path_name, btn: Button):
+# TODO: 交易选择路径（已完成未融合到test_zzx.py）
+business_card_img = None
+bankcard_img = None
+business_license_img = None
+invoice_img = None
+general_basic_img = None
+def select_path_for_trade(path_name, btn: Button, ocr_type: OCR):
     path = askopenfilenames(filetypes=[("all", "*.*")])
     path_name.set(path)
 
     # 处理图片
     name = path_to_list(path_name.get())[0]
-    lst = []
-    lst.append(put_image(name, 200))
-    print(lst)
-    # TODO: 显示图片（显示不了？？？）
-    btn.config(state=NORMAL)
-    # btn.config(image=temp)
 
-
-    return path
+    # TODO: 显示图片
+    size = 175
+    if ocr_type == OCR.BUSINESS_CARD:
+        global business_card_img
+        business_card_img = put_image(name, size)
+        btn.config(state=NORMAL, image=business_card_img, width=size, height=size)
+    elif ocr_type == OCR.BANKCARD:
+        global bankcard_img
+        bankcard_img = put_image(name, size)
+        btn.config(state=NORMAL, image=bankcard_img, width=size, height=size)
+    elif ocr_type == OCR.BUSINESS_LICENSE:
+        global business_license_img
+        business_license_img = put_image(name, size)
+        btn.config(state=NORMAL, image=business_license_img, width=size, height=size)
+    elif ocr_type == OCR.INVOICE:
+        global invoice_img
+        invoice_img = put_image(name, size)
+        btn.config(state=NORMAL, image=invoice_img, width=size, height=size)
+    elif ocr_type == OCR.GENERAL_BASIC:
+        global general_basic_img
+        general_basic_img = put_image(name, size)
+        btn.config(state=NORMAL, image=general_basic_img, width=size, height=size)
 
 
 def getName(fns):
@@ -87,7 +158,7 @@ small_imagelist = []
 resultlist = []
 
 
-def upload():
+def upload(photo_area, pathname, num_photo, comb_value):
     photo_area.delete(ALL)
     imagelist.clear()
     resultlist.clear()
@@ -97,16 +168,25 @@ def upload():
     # print(repr(fns))
     num_photo.set(len(path_to_list(pathname.get())))
     namelist = path_to_list(pathname.get())
-    # num_photo.set(len(fns))
+    if num_photo.get() == 0:
+        warning_box = messagebox.showwarning("提示", "图片不为空！")
+        return
+        # num_photo.set(len(fns))
     # namelist = getName(fns)
+
+    # TODO 先确认再存入
     count = 0
     for name in namelist:
         if comb_value.get() == "普通文本":
             result = ocr_general_basic(name)
         elif comb_value.get() == "名片":
             result = ocr_business_card(name)
-        elif comb_value.get() == "执照":
+        elif comb_value.get() == "营业执照":
             result = ocr_business_license(name)
+        elif comb_value.get() == "银行卡":
+            result = ocr_bankcard(name)
+        elif comb_value.get() == "发票":
+            result = ocr_invoice(name)
         resultlist.append(result)
 
         size = 200
@@ -135,10 +215,19 @@ def upload():
         # imageLabel.grid(row=int(count/2), column=count+1)  # 自动对齐
         # imageLabel.pack()
         count = count + 1
-    confirm_window(namelist, root)
+    confirm_window(num_photo, namelist, root)
+
     for result in resultlist:
         if comb_value.get() == "名片":
             sql_insert(OCR.BUSINESS_CARD, result)
+        elif comb_value.get() == "银行卡":
+            sql_insert(OCR.BANKCARD, result)
+        elif comb_value.get() == "发票":
+            sql_insert(OCR.INVOICE, result)
+        elif comb_value.get() == "营业执照":
+            sql_insert(OCR.BUSINESS_LICENSE, result)
+        elif comb_value.get() == "其他信息":
+            sql_insert(OCR.GENERAL_BASIC, result)
 
 
 business_list = []
@@ -151,23 +240,37 @@ ocr_final_result = {}
 
 
 def confirm_single(name, parent, ocr_type: OCR):
-    # def show_large_pic(name, parent):
-    #     pic_wd = Toplevel(parent)
-    #
-    #     # test_list.append(temp_photo)
-    #     if ocr_type == OCR.BUSINESS_CARD:
-    #         imageLabel = Label(pic_wd, image=business_list[-2])
-    #     elif ocr_type == OCR.BANKCARD:
-    #         imageLabel = Label(pic_wd, image=card_list[-2])
-    #     elif ocr_type == OCR.BUSINESS_LICENSE:
-    #         imageLabel = Label(pic_wd, image=license_list[-2])
-    #     elif ocr_type == OCR.INVOICE:
-    #         imageLabel = Label(pic_wd, image=invoice_list[-2])
-    #     elif ocr_type == OCR.GENERAL_BASIC:
-    #         imageLabel = Label(pic_wd, image=general_list[-2])
-    #     imageLabel.pack()
-    #     pic_wd.mainloop()
+    def show_large_pic(name, parent):
+        pic_wd = Toplevel(parent)
+        '''
+        image = Image.open(name)
+        pic_size = 700
 
+        if image.size[0] > image.size[1]:
+            size_w = pic_size
+            size_h = int(image.size[1] * pic_size / image.size[0])
+            # img = img.resize((pic_size, int(img.size[1] * size / img.size[0])))
+        else:
+            size_w = int(image.size[0] * pic_size / image.size[1])
+            size_h = pic_size
+            # img = img.resize((int(img.size[0] * size / img.size[1]), size))
+
+        image = image.resize((size_w, size_h))
+        temp_photo = ImageTk.PhotoImage(image)
+        '''
+        # test_list.append(temp_photo)
+        if ocr_type == OCR.BUSINESS_CARD:
+            imageLabel = Label(pic_wd, image=business_list[-2])
+        elif ocr_type == OCR.BANKCARD:
+            imageLabel = Label(pic_wd, image=card_list[-2])
+        elif ocr_type == OCR.BUSINESS_LICENSE:
+            imageLabel = Label(pic_wd, image=license_list[-2])
+        elif ocr_type == OCR.INVOICE:
+            imageLabel = Label(pic_wd, image=invoice_list[-2])
+        elif ocr_type == OCR.GENERAL_BASIC:
+            imageLabel = Label(pic_wd, image=general_list[-2])
+        imageLabel.pack()
+        pic_wd.mainloop()
 
     fns = root.tk.splitlist(name)
     namelist = path_to_list(name)
@@ -427,25 +530,25 @@ def confirm_single(name, parent, ocr_type: OCR):
     elif ocr_type == OCR.INVOICE:
         offset = 0
         result = ocr_invoice(name)
-        v_invoice_type = StringVar()            # 发票种类
+        v_invoice_type = StringVar()  # 发票种类
         v_invoice_type.set(result['invoice_type'])
-        v_invoice_code = StringVar()            # 发票代码
+        v_invoice_code = StringVar()  # 发票代码
         v_invoice_code.set(result['invoice_code'])
-        v_invoice_num = StringVar()             # 发票号码
+        v_invoice_num = StringVar()  # 发票号码
         v_invoice_num.set(result['invoice_num'])
-        v_invoice_date = StringVar()            # 开票日期
+        v_invoice_date = StringVar()  # 开票日期
         v_invoice_date.set(result['invoice_date'])
-        v_purchaser_name = StringVar()          # 购买方名称
+        v_purchaser_name = StringVar()  # 购买方名称
         v_purchaser_name.set(result['purchaser_name'])
         v_purchaser_register_num = StringVar()  # 购买方纳税人识别号
         v_purchaser_register_num.set(result['purchaser_register_num'])
-        v_seller_name = StringVar()             # 销售方名称
+        v_seller_name = StringVar()  # 销售方名称
         v_seller_name.set(result['seller_name'])
-        v_seller_register_num = StringVar()     # 销售方纳税人识别号
+        v_seller_register_num = StringVar()  # 销售方纳税人识别号
         v_seller_register_num.set(result['seller_register_num'])
-        v_seller_addr = StringVar()             # 销售方地址电话
+        v_seller_addr = StringVar()  # 销售方地址电话
         v_seller_addr.set(result['seller_addr'])
-        v_seller_bank = StringVar()             # 销售方开户行及账号
+        v_seller_bank = StringVar()  # 销售方开户行及账号
         v_seller_bank.set(result['seller_bank'])
         '''
         v_commodity_name = StringVar()          # 货物名称 多行
@@ -456,7 +559,7 @@ def confirm_single(name, parent, ocr_type: OCR):
         v_commodity_tax_rate = StringVar()      # 税率 多行
         v_commodity_tax = StringVar()           # 税额 多行
         '''
-        v_amount_in_figures = StringVar()       # 价格合计
+        v_amount_in_figures = StringVar()  # 价格合计
         v_amount_in_figures.set(result['amount_in_figures'])
 
         text_invoice_type = Label(cf_wd, text="发票种类:", font=myfont)
@@ -611,44 +714,42 @@ def confirm_single(name, parent, ocr_type: OCR):
         btn_confirm = Button(cf_wd, text="确认信息", command=lambda: confirm_general_basic(), relief=GROOVE, font=myfont)
         btn_confirm.grid(row=40, column=5)
 
-    # temp_image = put_image(name, 200)
-    #
-    # if ocr_type == OCR.BUSINESS_CARD:
-    #     business_list.append(temp_image)
-    #
-    #     business_image_btn = Button(parent,
-    #                                 command=lambda: show_large_pic(name, parent),
-    #                                 image=business_list[-1])
-    #     business_image_btn.grid(row=0, column=0, rowspan=2)
-    # elif ocr_type == OCR.BANKCARD:
-    #     card_list.append(temp_image)
-    #     business_image_btn = Button(parent,
-    #                                 command=lambda: show_large_pic(name, parent),
-    #                                 image=card_list[-1])
-    #     business_image_btn.grid(row=0, column=0, rowspan=2)
-    # elif ocr_type == OCR.BUSINESS_LICENSE:
-    #     license_list.append(temp_image)
-    #     business_image_btn = Button(parent,
-    #                                 command=lambda: show_large_pic(name, parent),
-    #                                 image=license_list[-1])
-    #     business_image_btn.grid(row=0, column=0, rowspan=2)
-    # elif ocr_type == OCR.INVOICE:
-    #     invoice_list.append(temp_image)
-    #     business_image_btn = Button(parent,
-    #                                 command=lambda: show_large_pic(name, parent),
-    #                                 image=invoice_list[-1])
-    #     business_image_btn.grid(row=0, column=0, rowspan=2)
-    # elif ocr_type == OCR.GENERAL_BASIC:
-    #     general_list.append(temp_image)
-    #     business_image_btn = Button(parent,
-    #                                 command=lambda: show_large_pic(name, parent),
-    #                                 image=general_list[-1])
-    #     business_image_btn.grid(row=0, column=0, rowspan=2)
+    temp_image = put_image(name, 200)
+
+    if ocr_type == OCR.BUSINESS_CARD:
+        business_list.append(temp_image)
+
+        business_image_btn = Button(parent,
+                                    command=lambda: show_large_pic(name, parent),
+                                    image=business_list[-1])
+        business_image_btn.place(relx=0,rely=0)
+    elif ocr_type == OCR.BANKCARD:
+        card_list.append(temp_image)
+        business_image_btn = Button(parent,
+                                    command=lambda: show_large_pic(name, parent),
+                                    image=card_list[-1])
+        business_image_btn.place(relx=0,rely=0)
+    elif ocr_type == OCR.BUSINESS_LICENSE:
+        license_list.append(temp_image)
+        business_image_btn = Button(parent,
+                                    command=lambda: show_large_pic(name, parent),
+                                    image=license_list[-1])
+        business_image_btn.place(relx=0,rely=0)
+    elif ocr_type == OCR.INVOICE:
+        invoice_list.append(temp_image)
+        business_image_btn = Button(parent,
+                                    command=lambda: show_large_pic(name, parent),
+                                    image=invoice_list[-1])
+        business_image_btn.place(relx=0,rely=0)
+    elif ocr_type == OCR.GENERAL_BASIC:
+        general_list.append(temp_image)
+        business_image_btn = Button(parent,
+                                    command=lambda: show_large_pic(name, parent),
+                                    image=general_list[-1])
+        business_image_btn.place(relx=0,rely=0)
 
 
-
-
-def confirm_window(namelist, parent):
+def confirm_window(num_photo, namelist, parent):
     cf_wd = Toplevel(parent)
     size = 650
     result = StringVar()
@@ -750,165 +851,212 @@ def put_image(name, size):
 
 
 def upload_trade():
-    trade_wd = Toplevel(root)
+    trade_wd = Toplevel(root, bg='#f8ffff', )
     size = 200
     results = StringVar()
+    button_list = []
+    upload_image = Image.open("上传.jpg")
+    upload_photo = ImageTk.PhotoImage(upload_image)
+    button_list.append(upload_photo)
+
+    edit_image = Image.open("编辑.jpg")
+    edit_photo = ImageTk.PhotoImage(edit_image)
+    button_list.append(edit_photo)
+
+    license_image = Image.open("执照.jpg")  # 2
+    license_photo = ImageTk.PhotoImage(license_image)
+    button_list.append(license_photo)
+
+    business_card_image = Image.open("名片.jpg")  # 3
+    business_card_photo = ImageTk.PhotoImage(business_card_image)
+    button_list.append(business_card_photo)
+
+    card_image = Image.open("银行卡.jpg")  # 4
+    card_photo = ImageTk.PhotoImage(card_image)
+    button_list.append(card_photo)
+
+    invoice_image = Image.open("发票.jpg")  # 5
+    invoice_photo = ImageTk.PhotoImage(invoice_image)
+    button_list.append(invoice_photo)
+
+    other_image = Image.open("其他.jpg")  # 6
+    other_photo = ImageTk.PhotoImage(other_image)
+    button_list.append(other_photo)
+
+    confirm_image = Image.open("确认.jpg")  # 7
+    confirm_photo = ImageTk.PhotoImage(confirm_image)
+    button_list.append(confirm_photo)
 
     business_path = StringVar()
 
-    frame_businesscard = Frame(trade_wd, height=200, width=500, bd=1, relief='groove')
+    frame_businesscard = Frame(trade_wd, bg='#f8ffff', height=208, width=635, bd=1, relief='groove')
     frame_businesscard.grid(row=0, column=0, columnspan=5)
 
-    businesscard_edit = Button(frame_businesscard, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
-    businesscard_edit.grid(row=1, column=1)
+    businesscard_edit = Button(frame_businesscard, bg='white', image=button_list[1], command=lambda: select_path(),
+                               relief=FLAT)
+    businesscard_edit.place(relx=0.34, rely=0.65)
 
-    businesscard_upload = Button(frame_businesscard, text="上传图片", width=11,
+    businesscard_upload = Button(frame_businesscard, bg='#f8ffff', image=button_list[0],
                                  command=lambda: confirm_single(business_path.get(), frame_businesscard,
                                                                 OCR.BUSINESS_CARD),
-                                 relief=GROOVE)
-    businesscard_upload.grid(row=1, column=2)
+                                 relief=FLAT)
+    businesscard_upload.place(relx=0.58, rely=0.65)
 
     business_entry = Entry(frame_businesscard, textvariable=business_path, width=25)
-    business_entry.grid(row=0, column=1)
+    business_entry.place(relx=0.41, rely=0.35)
 
-    business_canv = Canvas(frame_businesscard, bd=1, width=200, height=200)
-    business_canv.grid(row=0, column=0, rowspan=2)
+    business_canv = Canvas(frame_businesscard, bg='#f8ffff', bd=1, width=200, height=200)
+    business_canv.place(relx=0, rely=0)
 
-    businesscard_btn = Button(frame_businesscard, text="选择名片图片", width=13,
-                              command=lambda: select_path(business_path, btn_business_card_image), relief=GROOVE)
-    businesscard_btn.grid(row=0, column=3)
+    businesscard_btn = Button(frame_businesscard, bg='#f8ffff', image=button_list[3],
+                              command=lambda: select_path_for_trade(path_name=business_path,
+                                                                    btn=btn_business_card_image,
+                                                                    ocr_type=OCR.BUSINESS_CARD),
+                              relief=FLAT, font="宋体 12")
+    businesscard_btn.place(relx=0.74, rely=0.3)
 
     # -----------营业执照
     license_path = StringVar()
 
-    frame_license = Frame(trade_wd, height=200, width=500, bd=1, relief='groove')
+    frame_license = Frame(trade_wd, bg='#f8ffff', height=208, width=635, bd=1, relief='groove')
     frame_license.grid(row=1, column=0, columnspan=5)
 
-    license_edit = Button(frame_license, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
-    license_edit.grid(row=1, column=1)
+    license_edit = Button(frame_license, bg='#f8ffff', image=button_list[1], command=lambda: select_path(), relief=FLAT)
+    license_edit.place(relx=0.34, rely=0.65)
 
-    license_upload = Button(frame_license, text="上传图片", width=11,
+    license_upload = Button(frame_license, image=button_list[0], bg='#f8ffff',
                             command=lambda: confirm_single(license_path.get(), frame_license, OCR.BUSINESS_LICENSE),
-                            relief=GROOVE)
-    license_upload.grid(row=1, column=2)
+                            relief=FLAT)
+    license_upload.place(relx=0.58, rely=0.65)
 
     license_entry = Entry(frame_license, textvariable=license_path, width=25)
-    license_entry.grid(row=0, column=1)
+    license_entry.place(relx=0.41, rely=0.35)
 
-    license_canv = Canvas(frame_license, bd=1, width=200, height=200)
-    license_canv.grid(row=0, column=0, rowspan=2)
+    license_canv = Canvas(frame_license, bg='#f8ffff', bd=1, width=200, height=200)
+    license_canv.place(relx=0, rely=0)
 
-    license_btn = Button(frame_license, text="选择营业执照图片", width=13,
-                         command=lambda: select_path(license_path), relief=GROOVE)
-    license_btn.grid(row=0, column=3)
-
+    license_btn = Button(frame_license, image=button_list[2], bg='#f8ffff',
+                         command=lambda: select_path_for_trade(path_name=license_path,
+                                                               btn=btn_business_license_image,
+                                                               ocr_type=OCR.BUSINESS_LICENSE),
+                         relief=FLAT)
+    license_btn.place(relx=0.74, rely=0.3)
     # -----------通用文本
     general_path = StringVar()
 
-    frame_general = Frame(trade_wd, height=200, width=500, bd=1, relief='groove')
+    frame_general = Frame(trade_wd, bg='#f8ffff', height=208, width=635, bd=1, relief='groove')
     frame_general.grid(row=2, column=0, columnspan=5)
 
-    general_edit = Button(frame_general, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
-    general_edit.grid(row=1, column=1)
+    general_edit = Button(frame_general, bg='#f8ffff', image=button_list[1], command=lambda: select_path(), relief=FLAT)
+    general_edit.place(relx=0.34, rely=0.65)
 
-    general_upload = Button(frame_general, text="上传图片", width=11,
+    general_upload = Button(frame_general, bg='#f8ffff', image=button_list[0],
                             command=lambda: confirm_single(general_path.get(), frame_general, OCR.GENERAL_BASIC),
-                            relief=GROOVE)
-    general_upload.grid(row=1, column=2)
+                            relief=FLAT)
+    general_upload.place(relx=0.58, rely=0.65)
 
     general_entry = Entry(frame_general, textvariable=general_path, width=25)
-    general_entry.grid(row=0, column=1)
+    general_entry.place(relx=0.41, rely=0.35)
 
-    general_canv = Canvas(frame_general, bd=1, width=200, height=200)
-    general_canv.grid(row=0, column=0, rowspan=2)
+    general_canv = Canvas(frame_general, bg='#f8ffff', bd=1, width=200, height=200)
+    general_canv.place(relx=0, rely=0)
 
-    general_btn = Button(frame_general, text="选择其他信息图片", width=13,
-                         command=lambda: select_path(general_path), relief=GROOVE)
-    general_btn.grid(row=0, column=3)
+    general_btn = Button(frame_general, bg='#f8ffff', image=button_list[6],
+                         command=lambda: select_path_for_trade(path_name=general_path,
+                                                               btn=btn_general_basic_image,
+                                                               ocr_type=OCR.GENERAL_BASIC),
+                         relief=FLAT)
+    general_btn.place(relx=0.74, rely=0.3)
 
     # -----------银行卡
     card_path = StringVar()
 
-    frame_card = Frame(trade_wd, height=200, width=500, bd=1, relief='groove')
+    frame_card = Frame(trade_wd, bg='#f8ffff', height=208, width=635, bd=1, relief='groove')
     frame_card.grid(row=0, column=5, columnspan=5)
 
-    card_edit = Button(frame_card, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
-    card_edit.grid(row=1, column=1)
+    card_edit = Button(frame_card, bg='#f8ffff', image=button_list[1], command=lambda: select_path(), relief=FLAT)
+    card_edit.place(relx=0.34, rely=0.65)
 
-    card_upload = Button(frame_card, text="上传图片", width=11,
+    card_upload = Button(frame_card, bg='#f8ffff', image=button_list[0],
                          command=lambda: confirm_single(card_path.get(), frame_card, OCR.BANKCARD),
-                         relief=GROOVE)
-    card_upload.grid(row=1, column=2)
+                         relief=FLAT)
+    card_upload.place(relx=0.58, rely=0.65)
 
     card_entry = Entry(frame_card, textvariable=card_path, width=25)
-    card_entry.grid(row=0, column=1)
+    card_entry.place(relx=0.41, rely=0.35)
 
-    card_canv = Canvas(frame_card, bd=1, width=200, height=200)
-    card_canv.grid(row=0, column=0, rowspan=2)
+    card_canv = Canvas(frame_card, bg='#f8ffff', bd=1, width=200, height=200)
+    card_canv.place(relx=0, rely=0)
 
-    card_btn = Button(frame_card, text="选择银行卡图片", width=13,
-                      command=lambda: select_path(card_path, btn_bankcard_image), relief=GROOVE)
-    card_btn.grid(row=0, column=3)
+    card_btn = Button(frame_card, image=button_list[4], bg='#f8ffff',
+                      command=lambda: select_path_for_trade(path_name=card_path,
+                                                            btn=btn_bankcard_image,
+                                                            ocr_type=OCR.BANKCARD),
+                      relief=FLAT)
+    card_btn.place(relx=0.74, rely=0.3)
 
     # -----------发票
     invoice_path = StringVar()
 
-    frame_invoice = Frame(trade_wd, height=200, width=500, bd=1, relief='groove')
+    frame_invoice = Frame(trade_wd, bg='#f8ffff', height=208, width=635, bd=1, relief='groove')
     frame_invoice.grid(row=1, column=5, columnspan=5)
 
-    invoice_edit = Button(frame_invoice, text="编辑结果", width=11, command=lambda: select_path(), relief=GROOVE)
-    invoice_edit.grid(row=1, column=1)
+    invoice_edit = Button(frame_invoice, bg='#f8ffff', image=button_list[1], command=lambda: select_path(), relief=FLAT)
+    invoice_edit.place(relx=0.34, rely=0.65)
 
-    invoice_upload = Button(frame_invoice, text="上传图片", width=11,
+    invoice_upload = Button(frame_invoice, bg='#f8ffff', image=button_list[0],
                             command=lambda: confirm_single(invoice_path.get(), frame_invoice, OCR.INVOICE),
-                            relief=GROOVE)
-    invoice_upload.grid(row=1, column=2)
+                            relief=FLAT)
+    invoice_upload.place(relx=0.58, rely=0.65)
 
     invoice_entry = Entry(frame_invoice, textvariable=invoice_path, width=25)
-    invoice_entry.grid(row=0, column=1)
+    invoice_entry.place(relx=0.41, rely=0.35)
 
-    invoice_canv = Canvas(frame_invoice, bd=1, width=200, height=200)
-    invoice_canv.grid(row=0, column=0, rowspan=2)
+    invoice_canv = Canvas(frame_invoice, bg='#f8ffff', bd=1, width=200, height=200)
+    invoice_canv.place(relx=0, rely=0)
 
-    invoice_btn = Button(frame_invoice, text="选择发票图片", width=13,
-                         command=lambda: select_path(invoice_path), relief=GROOVE)
-    invoice_btn.grid(row=0, column=3)
+    invoice_btn = Button(frame_invoice, bg='#f8ffff', image=button_list[5],
+                         command=lambda: select_path_for_trade(path_name=invoice_path,
+                                                               btn=btn_invoice_image,
+                                                               ocr_type=OCR.INVOICE),
+                         relief=FLAT)
+    invoice_btn.place(relx=0.74, rely=0.3)
 
-    # TODO: 统一管理小图按钮
+    # TODO: 统一管理小图按钮（已完成，未融合至test_zzx）
     btn_business_card_image = Button(frame_businesscard, width=24, height=10,
-                                     command=lambda: ps(),
+                                     command=lambda: ps(business_entry),
                                      state=DISABLED, relief=GROOVE)
-    btn_business_card_image.grid(row=0, column=0, rowspan=2)
+    btn_business_card_image.place(relx=0.02, rely=0.05)
 
     btn_bankcard_image = Button(frame_card, width=24, height=10,
-                          command=lambda: ps(),
-                          image=None, state=DISABLED, relief=GROOVE)
-    btn_bankcard_image.grid(row=0, column=0, rowspan=2)
+                                command=lambda: ps(card_entry),
+                                image=None, state=DISABLED, relief=GROOVE)
+    btn_bankcard_image.place(relx=0.02, rely=0.05)
 
-    btn_business_license_image = Button(frame_license,  width=24, height=10,
-                                  command=lambda: ps(),
-                                  image=None, state=DISABLED, relief=GROOVE)
-    btn_business_license_image.grid(row=0, column=0, rowspan=2)
+    btn_business_license_image = Button(frame_license, width=24, height=10,
+                                        command=lambda: ps(license_entry),
+                                        image=None, state=DISABLED, relief=GROOVE)
+    btn_business_license_image.place(relx=0.02, rely=0.05)
 
-    btn_invoice_image = Button(frame_invoice,  width=24, height=10,
-                         command=lambda: ps(),
-                         image=None, state=DISABLED, relief=GROOVE)
-    btn_invoice_image.grid(row=0, column=0, rowspan=2)
-
-    btn_general_basic_image = Button(frame_general,  width=24, height=10,
-                               command=lambda: ps(),
+    btn_invoice_image = Button(frame_invoice, width=24, height=10,
+                               command=lambda: ps(invoice_entry),
                                image=None, state=DISABLED, relief=GROOVE)
-    btn_general_basic_image.grid(row=0, column=0, rowspan=2)
+    btn_invoice_image.place(relx=0.02, rely=0.05)
+
+    btn_general_basic_image = Button(frame_general, width=24, height=10,
+                                     command=lambda: ps(general_entry),
+                                     image=None, state=DISABLED, relief=GROOVE)
+    btn_general_basic_image.place(relx=0.02, rely=0.05)
 
 
-    # 确认信息
+
     v_transaction_name = StringVar()
 
-    frame_confirm = Frame(trade_wd, bd=1, height=200, width=5000, relief=FLAT)
+    frame_confirm = Frame(trade_wd, bg='#f8ffff', bd=1, height=200, width=5000, relief=FLAT)
     frame_confirm.grid(row=2, column=5, columnspan=5, rowspan=5)
 
-    label_transaction_name = Label(frame_confirm, text="交易名称:")
-    label_transaction_name.grid(row=3,column=2)
+    label_transaction_name = Label(frame_confirm, text="交易名称:", font="宋体 12", bg='#f8ffff')
+    label_transaction_name.grid(row=3, column=2)
 
     entry_transaction_name = Entry(frame_confirm, width=25, textvariable=v_transaction_name)
     entry_transaction_name.grid(row=3, column=3)
@@ -942,57 +1090,239 @@ def upload_trade():
         else:
             print("Transaction name CANNOT be empty")
 
-
-    btn_confirm = Button(frame_confirm, text="确认存入", width=13,
-                         command=lambda: store_confirm(), relief=GROOVE)
+    btn_confirm = Button(frame_confirm, bg='#f8ffff', image=button_list[7],
+                         command=lambda: store_confirm(), relief=FLAT)
     btn_confirm.grid(row=4, column=3)
 
     trade_wd.mainloop()
 
 
-def manage():
-    pass
+def delButton(tree):
+    x = tree.get_children()
+    for item in x:
+        tree.delete(item)
+    tree.heading('1', text='')
+    tree.heading('2', text='')
+    tree.heading('3', text='')
+    tree.heading('4', text='')
+    tree.heading('5', text='')
+    tree.heading('6', text='')
+    tree.heading('7', text='')
+    tree.heading('8', text='')
+    tree.heading('9', text='')
 
+
+def search(parent, manage_comb_value, result_tree, str):
+    delButton(result_tree)
+    # delButton(result_tree)
+    if manage_comb_value.get() == "交易":
+        result_tree.column('1', width=200, anchor='center')
+
+        result_tree.heading('1', text='交易名称')
+        result_tree.heading('2', text='交易时间')
+        result_dict = sql_query(OCR.TRANSACTION, str)
+
+    elif manage_comb_value.get() == "普通文本":
+        result_tree.column('1', width=200, anchor='center')
+        result_tree.heading('1', text='内容')
+        result_dict = sql_query(OCR.GENERAL_BASIC, str)
+
+    elif manage_comb_value.get() == "执照":
+        width = 100
+        result_tree.column('1', width=width, anchor='center')
+        result_tree.column('2', width=width, anchor='center')
+        result_tree.column('3', width=width, anchor='center')
+        result_tree.column('4', width=width, anchor='center')
+        result_tree.column('5', width=width, anchor='center')
+        result_tree.column('6', width=width, anchor='center')
+        result_tree.column('7', width=width, anchor='center')
+        result_tree.column('8', width=width, anchor='center')
+        result_tree.column('9', width=width, anchor='center')
+
+        result_tree.heading('1', text='公司名称')
+        result_tree.heading('2', text='法人')
+        result_tree.heading('3', text='证书号')
+        result_tree.heading('4', text='信用代码')
+        result_tree.heading('5', text='成立日期')
+        result_tree.heading('6', text='有效期')
+        result_tree.heading('7', text='注册资本')
+        result_tree.heading('8', text='地址')
+        result_tree.heading('9', text='经营范围')
+        result_dict = sql_query(OCR.BUSINESS_LICENSE, str)
+
+    elif manage_comb_value.get() == "名片":
+        width = 100
+        result_tree.column('1', width=width, anchor='center')
+        result_tree.column('2', width=width, anchor='center')
+        result_tree.column('3', width=width, anchor='center')
+        result_tree.column('4', width=width, anchor='center')
+        result_tree.column('5', width=width, anchor='center')
+        result_tree.column('6', width=width, anchor='center')
+        result_tree.column('7', width=width, anchor='center')
+        result_tree.column('8', width=width, anchor='center')
+        result_tree.column('9', width=width, anchor='center')
+
+        result_tree.heading('1', text='姓名')
+        result_tree.heading('2', text='职位')
+        result_tree.heading('3', text='公司')
+        result_tree.heading('4', text='地址')
+        result_tree.heading('5', text='手机')
+        result_tree.heading('6', text='固话')
+        result_tree.heading('7', text='传真')
+        result_tree.heading('8', text='Email')
+        result_tree.heading('9', text='网址')
+        result_dict = sql_query(OCR.BUSINESS_CARD, str)
+
+        # for result_values in result_dict.values():
+
+        # sql_conn()
+    count = 0
+    result_list = []
+    for id in result_dict['id']:
+        temp_list = []
+        for value in result_dict.values():
+            temp_list.append(value[count])
+        count = count + 1
+        result_list.append(temp_list[1:])
+        # result_list.append(result_values[2:])
+        # print(result_list)
+        result_tree.insert('', 'end', values=temp_list[1:])
+    result_tree.grid(row=1, rowspan=10, column=1, columnspan=6)
+
+
+# TODO 上传空图片
+def tree_click(tree):
+    detail_wd = Toplevel()
+    for item in tree.selection():
+        item_text = tree.item(item, "values")
+
+
+def manage():
+    manage_wd = Toplevel(root)
+    search_str = StringVar()
+    manage_comb_value = StringVar()  # 窗体自带的文本，新建一个值
+    manage_comb = ttk.Combobox(manage_wd, textvariable=manage_comb_value, state='readonly')  # 初始化
+    result_tree = ttk.Treeview(manage_wd, columns=['1', '2', '3', '4', '5', '6', '7', '8', '9'], show='headings')
+    result_tree.bind('<Double-1>', lambda event: tree_click(result_tree))
+
+    search_btn = Button(manage_wd, text="搜索", width=11,
+                        command=lambda: search(manage_wd, manage_comb_value, result_tree, search_str.get()),
+                        relief=GROOVE)
+    search_btn.grid(row=0, column=5)
+
+    type_lable = Label(manage_wd, text="类型", width=8)
+    type_lable.grid(row=0, column=1)
+
+    manage_comb["values"] = ("普通文本", "名片", "执照", '交易')
+    manage_comb.current(0)
+
+    manage_comb.bind("<<ComboboxSelected>>", lambda event: func(manage_wd, value=manage_comb_value, tree=result_tree))
+
+    manage_comb.grid(row=0, column=2),
+
+    manage_entry = Entry(manage_wd, textvariable=search_str, width=25)
+    manage_entry.grid(row=0, column=4)
+
+    manage_wd.mainloop()
+
+
+def upload_single():
+    single_wd = Toplevel(root,bg='#f8ffff',)
+    pathname = StringVar()
+
+    single_canv = Canvas(single_wd, bd=1, width=1000, height=640)
+    single_canv.pack()
+
+    single_canv.create_image(0, 0, image=single_bg, anchor=NW)
+
+    comb_value = StringVar()  # 窗体自带的文本，新建一个值
+    comb = ttk.Combobox(single_wd, textvariable=comb_value, state='readonly',font="宋体 12")  # 初始化
+    comb["values"] = ("普通文本", "名片", "营业执照", "银行卡", "发票")
+    comb.current(0)
+
+    upload_single_btn = Button(single_wd, bg='#e0f1ed',image=icon_list[0], command=lambda: select_path(pathname), relief=FLAT)
+    upload_single_btn.place(relx=0.615,rely=0.162)
+    # comb.bind("<<ComboboxSelected>>", func(manage_comb_value, result_tree))
+    comb.place(relx=0.4,rely=0.18)
+
+    scrollbar = Scrollbar(single_wd)
+    num_photo = IntVar()
+    photo_area = Canvas(single_wd, bd=1, width=500, height=300, relief=GROOVE, yscrollcommand=scrollbar.set,
+                        scrollregion=(0, 0, 500, math.ceil(num_photo.get() / 2) * 200 + 500),bg='#f0fffe')
+    photo_area.place(relx=0.25,rely=0.35)
+    # photo_area.config(width=300, height=200)
+    # photo_area.configure(scrollregion=photo_area.bbox('all'))
+
+    scrollbar.config(command=photo_area.yview)
+    scrollbar.place(relx=0.6,rely=0.4)
+
+    path_entry = Entry(single_wd, textvariable=pathname, width=25,bg='#e0f1ed',font="宋体 13",relief=FLAT)
+    path_entry.place(relx=0.38,rely=0.25)
+    upload_btn = Button(single_wd, image=icon_list[1], command=lambda: upload(photo_area, pathname, num_photo, comb_value),
+                        relief=FLAT,bg='#f8ffff')
+    upload_btn.place(relx=0.44,rely=0.85)
+    ''''''
 
 root = Tk()
+# root.overrideredirect(True)
 
-pathname = StringVar()
+icon_list = []
+select_image = Image.open("选择单项2.jpg")
+select_photo = ImageTk.PhotoImage(select_image) #0
+icon_list.append(select_photo)
 
-comb_value = StringVar()  # 窗体自带的文本，新建一个值
-comb = ttk.Combobox(root, textvariable=comb_value, state='readonly')  # 初始化
-comb["values"] = ("普通文本", "名片", "执照")
-comb.current(0)
+upload_image = Image.open("上传.jpg") #1
+upload_photo = ImageTk.PhotoImage(upload_image)
+icon_list.append(upload_photo)
 
-comb.bind("<<ComboboxSelected>>", func)
-comb.grid(row=0, column=2)
+ui_list = []
+test_string = "周子昕 15902348495 500109199804060423 2020.08.07 这是地址"
+split_list = test_string.split(' ')
+print(handwriting_match(split_list))
 
-scrollbar = Scrollbar(root)
-num_photo = IntVar()
-photo_area = Canvas(root, bd=1, width=500, height=200, relief=GROOVE, yscrollcommand=scrollbar.set,
-                    scrollregion=(0, 0, 500, math.ceil(num_photo.get() / 2) * 200 + 500))
-photo_area.grid(row=2, column=1, columnspan=3)
-# photo_area.config(width=300, height=200)
-# photo_area.configure(scrollregion=photo_area.bbox('all'))
+
+
+main_canv = Canvas(root, bd=1, width=1000, height=640)
+main_canv.pack()
+bg_image = Image.open("bg.jpg")
+bg = ImageTk.PhotoImage(bg_image)
+main_canv.create_image(0, 0, image=bg, anchor=NW)
+
+# 下右
+button_image = Image.open("管理长.jpg")
+button_image = button_image.resize((240, 200))
+button_photo = ImageTk.PhotoImage(button_image)
+ui_list.append(button_photo)
+manage_btn = Button(main_canv, image=ui_list[0], command=manage, relief=FLAT)
+manage_btn.place(relx=0.5, rely=0.55)
+
+# 下左
+button_image = Image.open("交易长.jpg")
+button_image = button_image.resize((240, 200))
+button_photo = ImageTk.PhotoImage(button_image)
+ui_list.append(button_photo)
+trade_btn = Button(main_canv, image=ui_list[1], command=upload_trade, relief=FLAT)
+trade_btn.place(relx=0.245, rely=0.55)
+
+# 上左
+button_image = Image.open("单项长2.jpg")
+button_image = button_image.resize((240, 200))
+button_photo = ImageTk.PhotoImage(button_image)
+ui_list.append(button_photo)
+single_btn = Button(main_canv, image=ui_list[2], command=upload_single, relief=FLAT)
+single_btn.place(relx=0.245, rely=0.218)
+
+single_image = Image.open("bg3.jpg")
+single_bg = ImageTk.PhotoImage(single_image)
+ui_list.append(single_bg)#3
+
 '''
-frame1 = Frame(root, height=200, width=500, bd=1, highlightbackground="black", relief='groove',
-               yscrollbarcommand=scrollbar)
-frame1.grid(row=2, column=1, columnspan=5)'''
-scrollbar.config(command=photo_area.yview)
-scrollbar.grid(row=2, column=5, sticky=S + W + E + N)
-
-single_btn = Button(root, text="上传单项", width=11, command=lambda: select_path(pathname), relief=GROOVE)
-single_btn.grid(row=0, column=0)
-
-trade_btn = Button(root, text="上传交易", width=11, command=upload_trade, relief=GROOVE)
-trade_btn.grid(row=1, column=0)
-
-trade_btn = Button(root, text="管理信息", width=11, command=manage, relief=GROOVE)
-trade_btn.grid(row=2, column=0)
-
-path_entry = Entry(root, textvariable=pathname, width=25)
-path_entry.grid(row=0, column=1)
-
-upload_btn = Button(root, text="上传图片", command=upload, relief=GROOVE)
-upload_btn.grid(row=4, column=1)
-
+size_w = 300
+size_h = 260
+main_canv.grid_columnconfigure(0, minsize=size_w)
+main_canv.grid_rowconfigure(0, minsize=size_h)
+main_canv.grid_columnconfigure(1, minsize=size_w)
+main_canv.grid_rowconfigure(1, minsize=size_h)
+#main_canv["background"] = '#c06f98'
+'''
 root.mainloop()

@@ -150,6 +150,8 @@ bankcard_img = None
 business_license_img = None
 invoice_img = None
 general_basic_img = None
+
+
 def select_path_for_trade(path_name, btn: Button, ocr_type: OCR):
     path = askopenfilenames(filetypes=[("all", "*.*")])
     path_name.set(path)
@@ -179,6 +181,7 @@ def select_path_for_trade(path_name, btn: Button, ocr_type: OCR):
         global general_basic_img
         general_basic_img = put_image(name, size)
         btn.config(state=NORMAL, image=general_basic_img, width=size, height=size)
+
 
 def select_path(path_name):
     path = askopenfilenames(filetypes=[("all", "*.*")])
@@ -228,7 +231,7 @@ def upload(photo_area, pathname, num_photo, comb_value):
     # TODO 先确认再存入
     count = 0
     for name in namelist:
-        if comb_value.get() == "普通文本":
+        if comb_value.get() == "其他信息":
             result = ocr_general_basic(name)
         elif comb_value.get() == "名片":
             result = ocr_business_card(name)
@@ -760,6 +763,7 @@ def confirm_single(name, parent, ocr_type: OCR):
         business_image_btn.place(relx=0, rely=0)
 '''
 
+
 def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
     # TODO: show_large_pic 已删除
 
@@ -1275,6 +1279,7 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
 
     # TODO: 此函数下方的所有内容均已删除
 
+
 def confirm_window(num_photo, namelist, parent):
     cf_wd = Toplevel(parent)
     size = 650
@@ -1374,6 +1379,7 @@ def put_image(name, size):
     temp_photo = ImageTk.PhotoImage(image)
 
     return temp_photo
+
 
 '''
 def upload_trade():
@@ -1581,6 +1587,7 @@ def upload_trade():
     trade_wd.mainloop()
 '''
 
+
 def upload_trade():
     trade_wd = Toplevel(root, bg='#f8ffff', )
     size = 200
@@ -1655,7 +1662,8 @@ def upload_trade():
     frame_license.grid(row=1, column=0, columnspan=5)
 
     license_edit = Button(frame_license, bg='#f8ffff', image=button_list[1],
-                          command=lambda: confirm_single(license_path.get(), frame_license, OCR.BUSINESS_LICENSE, "EDIT"),
+                          command=lambda: confirm_single(license_path.get(), frame_license, OCR.BUSINESS_LICENSE,
+                                                         "EDIT"),
                           relief=FLAT)
     license_edit.place(relx=0.34, rely=0.65)
 
@@ -1789,8 +1797,6 @@ def upload_trade():
                                      image=None, state=DISABLED, relief=GROOVE)
     btn_general_basic_image.place(relx=0.02, rely=0.05)
 
-
-
     v_transaction_name = StringVar()
 
     frame_confirm = Frame(trade_wd, bg='#f8ffff', bd=1, height=200, width=5000, relief=FLAT)
@@ -1837,6 +1843,7 @@ def upload_trade():
 
     trade_wd.mainloop()
 
+
 def delButton(tree):
     x = tree.get_children()
     for item in x:
@@ -1859,9 +1866,21 @@ def search(parent, manage_comb_value, result_tree, str):
     delButton(result_tree)
     # delButton(result_tree)
     # "交易", "名片","发票", "营业执照", "银行卡", "其他信息"
+    width_trade=150
     if manage_comb_value.get() == "交易":
-        result_tree.column('1', width=200, anchor='center')
-
+        result_tree.column('1', width=width_trade, anchor='center')
+        result_tree.column('2', width=width_trade, anchor='center')
+        result_tree.column('3', width=width_trade)
+        result_tree.column('4', width=width_trade)
+        result_tree.column('5', width=width_trade)
+        result_tree.column('6', width=0)
+        result_tree.column('7', width=0)
+        result_tree.column('8', width=0)
+        result_tree.column('9', width=0)
+        result_tree.column('10', width=0)
+        result_tree.column('11', width=0)
+        result_tree.column('12', width=0)
+        #concurency?
         result_tree.heading('1', text='交易名称')
         result_tree.heading('2', text='交易时间')
         result_dict = sql_query(OCR.TRANSACTION, str)
@@ -1876,7 +1895,9 @@ def search(parent, manage_comb_value, result_tree, str):
         result_tree.column('7', width=width, anchor='center')
         result_tree.column('8', width=width, anchor='center')
         result_tree.column('9', width=width, anchor='center')
-
+        result_tree.column('10', width=100)
+        result_tree.column('11', width=0)
+        result_tree.column('12', width=0)
         result_tree.heading('1', text='姓名')
         result_tree.heading('2', text='职位')
         result_tree.heading('3', text='公司')
@@ -1886,6 +1907,9 @@ def search(parent, manage_comb_value, result_tree, str):
         result_tree.heading('7', text='传真')
         result_tree.heading('8', text='Email')
         result_tree.heading('9', text='网址')
+        result_tree.column('10', width=100)
+        result_tree.column('11', width=0)
+        result_tree.column('12', width=0)
         result_dict = sql_query(OCR.BUSINESS_CARD, str)
 
         # for result_values in result_dict.values():
@@ -1925,6 +1949,17 @@ def search(parent, manage_comb_value, result_tree, str):
         # sql_conn()
     elif manage_comb_value.get() == "其他信息":
         result_tree.column('1', width=200, anchor='center')
+        result_tree.column('2', width=200)
+        result_tree.column('3', width=0)
+        result_tree.column('4', width=0)
+        result_tree.column('5', width=0)
+        result_tree.column('6', width=0)
+        result_tree.column('7', width=0)
+        result_tree.column('8', width=0)
+        result_tree.column('9', width=0)
+        result_tree.column('10', width=0)
+        result_tree.column('11', width=0)
+        result_tree.column('12', width=0)
         result_tree.heading('1', text='内容')
         result_dict = sql_query(OCR.GENERAL_BASIC, str)
     elif manage_comb_value.get() == "银行卡":
@@ -1948,10 +1983,9 @@ def search(parent, manage_comb_value, result_tree, str):
         result_tree.heading('4', text='银行卡类型')
         result_tree.heading('5', text='有效期')
         result_tree.heading('6', text='图片')
-
         result_dict = sql_query(OCR.BUSINESS_LICENSE, str)
     elif manage_comb_value.get() == "营业执照":
-        width = 100
+        width = 120
         result_tree.column('1', width=width, anchor='center')
         result_tree.column('2', width=width, anchor='center')
         result_tree.column('3', width=width, anchor='center')
@@ -1961,6 +1995,9 @@ def search(parent, manage_comb_value, result_tree, str):
         result_tree.column('7', width=width, anchor='center')
         result_tree.column('8', width=width, anchor='center')
         result_tree.column('9', width=width, anchor='center')
+        result_tree.column('10', width=50)
+        result_tree.column('11', width=0)
+        result_tree.column('12', width=0)
 
         result_tree.heading('1', text='公司名称')
         result_tree.heading('2', text='法人')
@@ -1984,7 +2021,7 @@ def search(parent, manage_comb_value, result_tree, str):
         # result_list.append(result_values[2:])
         # print(result_list)
         result_tree.insert('', 'end', values=temp_list[1:])
-    result_tree.grid(row=1, rowspan=10, column=1, columnspan=6)
+    result_tree.place(relx=0.1, rely=0.4)
 
 
 # TODO 上传空图片
@@ -1996,9 +2033,14 @@ def tree_click(tree):
 
 def manage():
     manage_wd = Toplevel(root)
+    manage_wd.geometry("1000x640")
+    manage_canv = Canvas(manage_wd, bd=1, width=1000, height=640)
+    manage_canv.pack()
+    manage_canv.create_image(0, 0, image=manage_bg, anchor=NW)
+
     search_str = StringVar()
     manage_comb_value = StringVar()  # 窗体自带的文本，新建一个值
-    manage_comb = ttk.Combobox(manage_wd, textvariable=manage_comb_value, state='readonly')  # 初始化
+    manage_comb = ttk.Combobox(manage_wd, textvariable=manage_comb_value, state='readonly', font=myfont)  # 初始化
     result_tree = ttk.Treeview(manage_wd, columns=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
                                show='headings')
     result_tree.bind('<Double-1>', lambda event: tree_click(result_tree))
@@ -2006,20 +2048,24 @@ def manage():
     search_btn = Button(manage_wd, text="搜索", width=11,
                         command=lambda: search(manage_wd, manage_comb_value, result_tree, search_str.get()),
                         relief=GROOVE)
-    search_btn.grid(row=0, column=5)
-
-    type_lable = Label(manage_wd, text="类型", width=8)
-    type_lable.grid(row=0, column=1)
+    search_btn.place(relx=0.7, rely=0.258)
 
     manage_comb["values"] = ("交易", "名片", "发票", "营业执照", "银行卡", "其他信息")
     manage_comb.current(0)
 
     manage_comb.bind("<<ComboboxSelected>>", lambda event: func(manage_wd, value=manage_comb_value, tree=result_tree))
 
-    manage_comb.grid(row=0, column=2),
+    manage_comb.place(relx=0.38, rely=0.18)
 
-    manage_entry = Entry(manage_wd, textvariable=search_str, width=25)
-    manage_entry.grid(row=0, column=4)
+    hbar = ttk.Scrollbar(manage_wd, orient=HORIZONTAL, command=result_tree.xview)
+    hbar.place(relx=0.1, rely=0.755,width=750)
+    result_tree.configure(xscrollcommand=hbar.set)
+
+    manage_entry = Entry(manage_wd, textvariable=search_str, width=35, bg='#e0f1ed', font="宋体 13", relief=FLAT)
+    manage_entry.place(relx=0.38, rely=0.26)
+
+
+    search(manage_wd, manage_comb, result_tree, '')
 
     manage_wd.mainloop()
 
@@ -2035,7 +2081,7 @@ def upload_single():
 
     comb_value = StringVar()  # 窗体自带的文本，新建一个值
     comb = ttk.Combobox(single_wd, textvariable=comb_value, state='readonly', font="宋体 12")  # 初始化
-    comb["values"] = ("普通文本", "名片", "营业执照", "银行卡", "发票")
+    comb["values"] = ("名片", "营业执照", "银行卡", "发票", "其他信息")
     comb.current(0)
 
     upload_single_btn = Button(single_wd, bg='#e0f1ed', image=icon_list[0], command=lambda: select_path(pathname),
@@ -2055,12 +2101,13 @@ def upload_single():
     scrollbar.config(command=photo_area.yview)
     scrollbar.place(relx=0.6, rely=0.4)
 
-    path_entry = Entry(single_wd, textvariable=pathname, width=25, bg='#e0f1ed', font="宋体 13", relief=FLAT)
+    path_entry = Entry(single_wd, textvariable=pathname, width=40, bg='#e0f1ed', font="宋体 12", relief=FLAT)
     path_entry.place(relx=0.38, rely=0.25)
     upload_btn = Button(single_wd, image=icon_list[1],
                         command=lambda: upload(photo_area, pathname, num_photo, comb_value),
                         relief=FLAT, bg='#f8ffff')
     upload_btn.place(relx=0.44, rely=0.85)
+    search()
     ''''''
 
 
@@ -2113,7 +2160,9 @@ single_btn.place(relx=0.245, rely=0.218)
 
 single_image = Image.open("bg3.jpg")
 single_bg = ImageTk.PhotoImage(single_image)
-ui_list.append(single_bg)  # 3
+
+manage_image = Image.open("管理bg.jpg")
+manage_bg = ImageTk.PhotoImage(manage_image)
 
 '''
 size_w = 300

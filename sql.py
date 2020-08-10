@@ -357,6 +357,7 @@ def sql_query(ocr_type: OCR, content: str):
             res['phone'].append(row[4])
             res['name'].append(row[5])
             res['transaction_id'].append(row[6])
+            res['picture'].append(row[7])
         return res
     elif ocr_type == OCR.BUSINESS_CARD:
         cmd = '''SELECT * FROM t_business_card WHERE 

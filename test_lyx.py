@@ -265,7 +265,7 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
     img_single = img_single.resize((size_w, size_h))
     photo_single = ImageTk.PhotoImage(img_single)
 
-    photo_canv = Canvas(cf_wd, bd=1, width=660, height=550, relief=GROOVE, scrollregion=(0, 0, 500, 500))
+    photo_canv = Canvas(cf_wd, bd=1, width=600, height=600, relief=GROOVE, scrollregion=(0, 0, 500, 500))
     photo_canv.grid(row=0, column=0, columnspan=3, rowspan=40)
 
     if ocr_type == OCR.BUSINESS_CARD:

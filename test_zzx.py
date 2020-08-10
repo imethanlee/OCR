@@ -1242,33 +1242,59 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
     elif ocr_type == OCR.GENERAL_BASIC:
         offset = 0
 
-        v_remark = StringVar()
-        content = None
+        v_name = StringVar()
+        v_phone = StringVar()
+        v_id_num = StringVar()
+        v_date = StringVar()
+        v_others = None
 
         if flag == "":
             result = ocr_general_basic(name)
-            content = result['content']
+            new_result = handwriting_match(result)
+            v_name.set(new_result['name'])
+            v_phone.set(new_result['phone'])
+            v_id_num.set(new_result['id'])
+            v_date.set(new_result['date'])
+            v_others = new_result['others']
         elif flag == "EDIT" and ocr_final_result.__contains__('general_basic'):
             item = 'general_basic'
-            v_remark.set(ocr_final_result[item]['remark'])
-            content = ocr_final_result[item]['content']
+            v_name.set(ocr_final_result[item]['name'])
+            v_phone.set(ocr_final_result[item]['phone'])
+            v_id_num.set(ocr_final_result[item]['id_num'])
+            v_date.set(ocr_final_result[item]['date'])
+            v_others = ocr_final_result[item]['others']
 
-        text_remark = Label(cf_wd, text="备注:", width=10, font=myfont)
-        text_remark.grid(row=0 + offset, column=4)
-        text_content = Label(cf_wd, text="内容:", width=10, font=myfont)
-        text_content.grid(row=1 + offset, column=4)
+        text_name = Label(cf_wd, text="姓名:", width=10, font=myfont)
+        text_name.grid(row=0 + offset, column=4)
+        text_phone = Label(cf_wd, text="电话:", width=10, font=myfont)
+        text_phone.grid(row=1 + offset, column=4)
+        text_id_num = Label(cf_wd, text="身份证:", width=10, font=myfont)
+        text_id_num.grid(row=2 + offset, column=4)
+        text_date = Label(cf_wd, text="日期:", width=10, font=myfont)
+        text_date.grid(row=3 + offset, column=4)
+        text_others = Label(cf_wd, text="其他信息:", width=10, font=myfont)
+        text_others.grid(row=4 + offset, column=4)
 
-        entry_remark = Entry(cf_wd, textvariable=v_remark, width=40, font=myfont)
-        entry_remark.grid(row=0 + offset, column=5, columnspan=4)
-        entry_content = Text(cf_wd, width=40, height=17, font=myfont)
-        entry_content.insert('end', content)
-        entry_content.grid(row=1 + offset, column=5, columnspan=4)
+        entry_name = Entry(cf_wd, textvariable=v_name, width=40, font=myfont)
+        entry_name.grid(row=0 + offset, column=5, columnspan=4)
+        entry_phone = Entry(cf_wd, textvariable=v_phone, width=40, font=myfont)
+        entry_phone.grid(row=1 + offset, column=5, columnspan=4)
+        entry_id_num = Entry(cf_wd, textvariable=v_id_num, width=40, font=myfont)
+        entry_id_num.grid(row=2 + offset, column=5, columnspan=4)
+        entry_date = Entry(cf_wd, textvariable=v_date, width=40, font=myfont)
+        entry_date.grid(row=3 + offset, column=5, columnspan=4)
+        entry_others = Text(cf_wd, width=40, height=17, font=myfont)
+        entry_others.insert('end', v_others)
+        entry_others.grid(row=4 + offset, column=5, columnspan=4)
 
         def confirm_general_basic():
             item = 'general_basic'
             ocr_final_result[item] = {}
-            ocr_final_result[item]['remark'] = entry_remark.get()
-            ocr_final_result[item]['content'] = entry_content.get('0.0', 'end')
+            ocr_final_result[item]['name'] = entry_name.get()
+            ocr_final_result[item]['phone'] = entry_phone.get()
+            ocr_final_result[item]['id_num'] = entry_id_num.get()
+            ocr_final_result[item]['date'] = entry_date.get()
+            ocr_final_result[item]['others'] = entry_others.get('0.0', 'end')
             with open(name, "rb") as f:
                 ocr_final_result[item]['picture'] = base64.b64encode(f.read())
 
@@ -1948,19 +1974,24 @@ def search(parent, manage_comb_value, result_tree, str):
 
         # sql_conn()
     elif manage_comb_value.get() == "其他信息":
-        result_tree.column('1', width=200, anchor='center')
-        result_tree.column('2', width=200)
-        result_tree.column('3', width=0)
-        result_tree.column('4', width=0)
-        result_tree.column('5', width=0)
-        result_tree.column('6', width=0)
+        width=150
+        result_tree.column('1', width=width, anchor='center')
+        result_tree.column('2', width=width, anchor='center')
+        result_tree.column('3', width=width, anchor='center')
+        result_tree.column('4', width=width)
+        result_tree.column('5', width=width)
+        result_tree.column('6', width=100)
         result_tree.column('7', width=0)
         result_tree.column('8', width=0)
         result_tree.column('9', width=0)
         result_tree.column('10', width=0)
         result_tree.column('11', width=0)
         result_tree.column('12', width=0)
-        result_tree.heading('1', text='内容')
+        result_tree.heading('1', text='姓名')
+        result_tree.heading('2', text='手机号')
+        result_tree.heading('3', text='身份证号')
+        result_tree.heading('4', text='交易日期')
+        result_tree.heading('5', text='其他')
         result_dict = sql_query(OCR.GENERAL_BASIC, str)
     elif manage_comb_value.get() == "银行卡":
         width = 100
@@ -2045,7 +2076,7 @@ def manage():
                                show='headings')
     result_tree.bind('<Double-1>', lambda event: tree_click(result_tree))
 
-    search_btn = Button(manage_wd, text="搜索", width=11,
+    search_btn = Button(manage_wd, text="搜索", width=11,font=myfont,bg='#e0f1ed',
                         command=lambda: search(manage_wd, manage_comb_value, result_tree, search_str.get()),
                         relief=GROOVE)
     search_btn.place(relx=0.7, rely=0.258)
@@ -2060,6 +2091,10 @@ def manage():
     hbar = ttk.Scrollbar(manage_wd, orient=HORIZONTAL, command=result_tree.xview)
     hbar.place(relx=0.1, rely=0.755,width=750)
     result_tree.configure(xscrollcommand=hbar.set)
+
+    vbar = ttk.Scrollbar(manage_wd, orient=VERTICAL, command=result_tree.yview)
+    vbar.place(relx=0.8532, rely=0.4,height=230)
+    result_tree.configure(xscrollcommand=vbar.set)
 
     manage_entry = Entry(manage_wd, textvariable=search_str, width=35, bg='#e0f1ed', font="宋体 13", relief=FLAT)
     manage_entry.place(relx=0.38, rely=0.26)
@@ -2107,7 +2142,6 @@ def upload_single():
                         command=lambda: upload(photo_area, pathname, num_photo, comb_value),
                         relief=FLAT, bg='#f8ffff')
     upload_btn.place(relx=0.44, rely=0.85)
-    search()
     ''''''
 
 

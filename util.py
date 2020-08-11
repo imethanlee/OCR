@@ -9,3 +9,5 @@ myfont = "宋体 12"
 def ps(entry: Entry):
     myps = PS(entry.get()[1:-1])
     myps.run()
+
+

@@ -217,9 +217,7 @@ def ocr_result_transform(ocr_type: OCR, origin: dict):
         new['expiration_date'] = origin['有效期']['words']
     elif ocr_type == OCR.GENERAL_BASIC:
         new['content'] = origin
-        new['remark '] ='???'
     else:
         print("Type Error")
         return
-    new['transaction_id'] = 0
     return new

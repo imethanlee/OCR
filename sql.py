@@ -214,7 +214,7 @@ def sql_insert(ocr_type: OCR, content: dict):
                 (bank_card_number, valid_date, bank_card_type, bank_name,
                  picture, transaction_id) 
             VALUES ("{}","{}","{}","{}",
-                    "{}",""{}")
+                    "{}",{})
             '''.format(content['bank_card_number'], content['valid_date'], content['bank_card_type'],content['bank_name'],
                        content['picture'], content['transaction_id'])
         sql_conn(cmd)
@@ -225,11 +225,12 @@ def sql_insert(ocr_type: OCR, content: dict):
                 url, tel, picture,
                 company, title, email, transaction_id)
             VALUES ("{}","{}","{}","{}",
-                    "{}","{}","{}"
+                    "{}","{}","{}",
                     "{}","{}","{}",{})
             '''.format(content['addr'], content['fax'], content['mobile'], content['name'],
                        content['url'], content['tel'], content['picture'],
                        content['company'], content['title'], content['email'], content['transaction_id'])
+
         sql_conn(cmd)
 
     elif ocr_type == OCR.BUSINESS_LICENSE:

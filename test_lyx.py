@@ -1722,6 +1722,7 @@ def search(parent, manage_comb_value, result_tree, str):
     # "交易", "名片","发票", "营业执照", "银行卡", "其他信息"
     width_trade = 150
     if manage_comb_value.get() == "交易":
+        result_tree.column('0', width=width_trade, anchor='center')
         result_tree.column('1', width=width_trade, anchor='center')
         result_tree.column('2', width=width_trade, anchor='center')
         result_tree.column('3', width=width_trade)
@@ -1734,12 +1735,15 @@ def search(parent, manage_comb_value, result_tree, str):
         result_tree.column('10', width=0)
         result_tree.column('11', width=0)
         result_tree.column('12', width=0)
+
         # concurency?
+        result_tree.heading('0', text='交易号')
         result_tree.heading('1', text='交易名称')
         result_tree.heading('2', text='交易时间')
         result_dict = sql_query(OCR.TRANSACTION, str)
     elif manage_comb_value.get() == "名片":
         width = 100
+        result_tree.column('0', width=width, anchor='center')
         result_tree.column('1', width=width, anchor='center')
         result_tree.column('2', width=width, anchor='center')
         result_tree.column('3', width=width, anchor='center')
@@ -1749,9 +1753,11 @@ def search(parent, manage_comb_value, result_tree, str):
         result_tree.column('7', width=width, anchor='center')
         result_tree.column('8', width=width, anchor='center')
         result_tree.column('9', width=width, anchor='center')
-        result_tree.column('10', width=100)
+        result_tree.column('10', width=width, anchor='center')
         result_tree.column('11', width=0)
         result_tree.column('12', width=0)
+
+        result_tree.heading('0', text='id')
         result_tree.heading('1', text='姓名')
         result_tree.heading('2', text='职位')
         result_tree.heading('3', text='公司')
@@ -1761,9 +1767,7 @@ def search(parent, manage_comb_value, result_tree, str):
         result_tree.heading('7', text='传真')
         result_tree.heading('8', text='Email')
         result_tree.heading('9', text='网址')
-        result_tree.column('10', width=100)
-        result_tree.column('11', width=0)
-        result_tree.column('12', width=0)
+        result_tree.heading('10', text='交易号')
         result_dict = sql_query(OCR.BUSINESS_CARD, str)
 
         # for result_values in result_dict.values():
@@ -1771,6 +1775,7 @@ def search(parent, manage_comb_value, result_tree, str):
         # sql_conn()
     elif manage_comb_value.get() == "发票":
         width = 100
+        result_tree.column('0', width=width, anchor='center')
         result_tree.column('1', width=width, anchor='center')
         result_tree.column('2', width=width, anchor='center')
         result_tree.column('3', width=width, anchor='center')
@@ -1784,6 +1789,7 @@ def search(parent, manage_comb_value, result_tree, str):
         result_tree.column('11', width=width, anchor='center')
         result_tree.column('12', width=width, anchor='center')
 
+        result_tree.heading('0', text='id')
         result_tree.heading('1', text='发票类型')
         result_tree.heading('2', text='编号')
         result_tree.heading('3', text='票号')
@@ -1803,26 +1809,31 @@ def search(parent, manage_comb_value, result_tree, str):
         # sql_conn()
     elif manage_comb_value.get() == "其他信息":
         width = 150
+        result_tree.column('0', width=width, anchor='center')
         result_tree.column('1', width=width, anchor='center')
         result_tree.column('2', width=width, anchor='center')
         result_tree.column('3', width=width, anchor='center')
         result_tree.column('4', width=width)
         result_tree.column('5', width=width)
-        result_tree.column('6', width=100)
-        result_tree.column('7', width=0)
+        result_tree.column('6', width=width)
+        result_tree.column('7', width=80)
         result_tree.column('8', width=0)
         result_tree.column('9', width=0)
         result_tree.column('10', width=0)
         result_tree.column('11', width=0)
         result_tree.column('12', width=0)
+
+        result_tree.heading('0', text='id')
         result_tree.heading('1', text='姓名')
         result_tree.heading('2', text='手机号')
         result_tree.heading('3', text='身份证号')
         result_tree.heading('4', text='交易日期')
         result_tree.heading('5', text='其他')
+        result_tree.heading('6', text='交易号')
         result_dict = sql_query(OCR.GENERAL_BASIC, str)
     elif manage_comb_value.get() == "银行卡":
         width = 100
+        result_tree.column('0', width=width, anchor='center')
         result_tree.column('1', width=width, anchor='center')
         result_tree.column('2', width=width, anchor='center')
         result_tree.column('3', width=width, anchor='center')
@@ -1836,15 +1847,16 @@ def search(parent, manage_comb_value, result_tree, str):
         result_tree.column('11', width=0)
         result_tree.column('12', width=0)
 
+        result_tree.heading('0', text='id')
         result_tree.heading('1', text='银行卡号')
         result_tree.heading('2', text='银行名称')
-        result_tree.heading('3', text='交易号')
-        result_tree.heading('4', text='银行卡类型')
-        result_tree.heading('5', text='有效期')
-        result_tree.heading('6', text='图片')
-        result_dict = sql_query(OCR.BUSINESS_LICENSE, str)
+        result_tree.heading('3', text='银行卡类型')
+        result_tree.heading('4', text='有效期')
+        result_tree.heading('5', text='交易号')
+        result_dict = sql_query(OCR.BANKCARD, str)
     elif manage_comb_value.get() == "营业执照":
         width = 120
+        result_tree.column('0', width=width, anchor='center')
         result_tree.column('1', width=width, anchor='center')
         result_tree.column('2', width=width, anchor='center')
         result_tree.column('3', width=width, anchor='center')
@@ -1854,10 +1866,11 @@ def search(parent, manage_comb_value, result_tree, str):
         result_tree.column('7', width=width, anchor='center')
         result_tree.column('8', width=width, anchor='center')
         result_tree.column('9', width=width, anchor='center')
-        result_tree.column('10', width=50)
-        result_tree.column('11', width=0)
+        result_tree.column('10', width=width, anchor='center')
+        result_tree.column('11', width=50, anchor='center')
         result_tree.column('12', width=0)
 
+        result_tree.heading('0', text='id')
         result_tree.heading('1', text='公司名称')
         result_tree.heading('2', text='法人')
         result_tree.heading('3', text='证书号')
@@ -1867,6 +1880,7 @@ def search(parent, manage_comb_value, result_tree, str):
         result_tree.heading('7', text='注册资本')
         result_tree.heading('8', text='地址')
         result_tree.heading('9', text='经营范围')
+        result_tree.heading('10', text='交易号')
         result_dict = sql_query(OCR.BUSINESS_LICENSE, str)
 
     count = 0
@@ -1876,11 +1890,17 @@ def search(parent, manage_comb_value, result_tree, str):
         for value in result_dict.values():
             temp_list.append(value[count])
         count = count + 1
-        result_list.append(temp_list[1:])
+        if manage_comb_value.get() == "交易":
+            result_list.append(temp_list)
+        else:
+            result_list.append(temp_list[:-1])
         # result_list.append(result_values[2:])
         # print(result_list)
-        result_tree.insert('', 'end', values=temp_list[1:])
-    result_tree.place(relx=0.1, rely=0.4)
+        if manage_comb_value.get() == "交易":
+            result_tree.insert('', 'end', values=temp_list)
+        else:
+            result_tree.insert('', 'end', values=temp_list[:-1])
+    result_tree.place(relx=0.05, rely=0.4)
 
 
 # TODO 上传空图片
@@ -1900,7 +1920,7 @@ def manage():
     search_str = StringVar()
     manage_comb_value = StringVar()  # 窗体自带的文本，新建一个值
     manage_comb = ttk.Combobox(manage_wd, textvariable=manage_comb_value, state='readonly', font=myfont)  # 初始化
-    result_tree = ttk.Treeview(manage_wd, columns=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+    result_tree = ttk.Treeview(manage_wd, columns=['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
                                show='headings')
     result_tree.bind('<Double-1>', lambda event: tree_click(result_tree))
 
@@ -1917,12 +1937,12 @@ def manage():
     manage_comb.place(relx=0.38, rely=0.18)
 
     hbar = ttk.Scrollbar(manage_wd, orient=HORIZONTAL, command=result_tree.xview)
-    hbar.place(relx=0.1, rely=0.755, width=750)
+    hbar.place(relx=0.05, rely=0.755, width=900)
     result_tree.configure(xscrollcommand=hbar.set)
 
     vbar = ttk.Scrollbar(manage_wd, orient=VERTICAL, command=result_tree.yview)
-    vbar.place(relx=0.8532, rely=0.4, height=230)
-    result_tree.configure(xscrollcommand=vbar.set)
+    vbar.place(relx=0.955, rely=0.4, height=230)
+    result_tree.configure(yscrollcommand=vbar.set)
 
     manage_entry = Entry(manage_wd, textvariable=search_str, width=35, bg='#e0f1ed', font="宋体 13", relief=FLAT)
     manage_entry.place(relx=0.38, rely=0.26)

@@ -2136,16 +2136,19 @@ def upload_single():
     # comb.bind("<<ComboboxSelected>>", func(manage_comb_value, result_tree))
     comb.place(relx=0.4, rely=0.18)
 
-    scrollbar = Scrollbar(single_wd)
+
+
+
+
     num_photo = IntVar()
-    photo_area = Canvas(single_wd, bd=1, width=500, height=300, relief=GROOVE, yscrollcommand=scrollbar.set,
-                        scrollregion=(0, 0, 500, math.ceil(num_photo.get() / 2) * 200 + 500), bg='#f0fffe')
+    photo_area = Canvas(single_wd, bd=1, width=500, height=300, relief=GROOVE,
+                        scrollregion=(0, 0, 600, math.ceil(num_photo.get() / 2) * 200 + 500), bg='#f0fffe')
+    scrollbar = ttk.Scrollbar(single_wd, orient=VERTICAL, command=photo_area.yview)
     photo_area.place(relx=0.25, rely=0.35)
     # photo_area.config(width=300, height=200)
     # photo_area.configure(scrollregion=photo_area.bbox('all'))
-
-    scrollbar.config(command=photo_area.yview)
-    scrollbar.place(relx=0.6, rely=0.4)
+    scrollbar.place(relx=0.752, rely=0.354,height=300)
+    photo_area.configure(yscrollcommand=scrollbar.set)
 
     path_entry = Entry(single_wd, textvariable=pathname, width=40, bg='#e0f1ed', font="宋体 12", relief=FLAT)
     path_entry.place(relx=0.38, rely=0.25)

@@ -30,7 +30,7 @@ def ocr_general_basic(img_path: str = './test_case/example.jpg'):
     :return: 识别结果
     '''
 
-    request_url = "https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic"
+    request_url = "https://aip.baidubce.com/rest/2.0/ocr/v1/handwriting"
     # 二进制方式打开图片文件
     f = open(img_path, 'rb')
     img = base64.b64encode(f.read())
@@ -46,7 +46,7 @@ def ocr_general_basic(img_path: str = './test_case/example.jpg'):
         words = response.json()['words_result']
         result = ""
         for i in range(num):
-            result += words[i]['words']
+            result += words[i]['words'] + " "
         res = ocr_result_transform(OCR.GENERAL_BASIC, result)
         return res
     else:

@@ -1697,6 +1697,7 @@ def upload_trade():
     trade_wd.mainloop()
 
 
+# TODO: ----------------------------------修改与删除↓
 def delButton(tree):
     x = tree.get_children()
     for item in x:
@@ -1930,7 +1931,7 @@ def manage():
 
     manage_wd.mainloop()
 
-# TODO: ---------------------------------------------------------------------------上传单项↓
+# TODO: ----------------------------------修改与删除↑
 '''
 def upload(photo_area, pathname, num_photo, comb_value):
     photo_area.delete(ALL)
@@ -2086,7 +2087,7 @@ def confirm_window(num_photo, namelist, parent):
 '''
 
 single_final_result = []
-def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, parent, ocr_type: OCR, flag: str = ""):
+def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, parent, ocr_type: OCR):
     curr = IntVar()
 
     def update_info():
@@ -2484,13 +2485,30 @@ def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, pare
                 single_final_result[-1]['commodity']['tax_rate'].append(single_final_result[-1]['commodity_tax_rate'][i]['word'])
                 single_final_result[-1]['commodity']['tax'].append(single_final_result[-1]['commodity_tax'][i]['word'])
         elif ocr_type == OCR.GENERAL_BASIC:
-            result = handwriting_match(ocr_general_basic(name)['content'])
+            result = handwriting_match(ocr_general_basic(name)['content'].split(' '))
+            print(ocr_general_basic(name)['content'])
+            print(handwriting_match(ocr_general_basic(name)['content']))
             new_result = {}
-            new_result['name'] = result['name']
-            new_result['phone'] = result['phone']
-            new_result['id_num'] = result['id']
-            new_result['date'] = result['date']
-            new_result['others'] = result['others']
+            if not result['name'] is None:
+                new_result['name'] = result['name'].group(0)
+            else:
+                new_result['name'] = ''
+            if not result['phone'] is None:
+                new_result['phone'] = result['phone'].group(0)
+            else:
+                new_result['phone'] = ''
+            if not result['id'] is None:
+                new_result['id_num'] = result['id'].group(0)
+            else:
+                new_result['id_num'] = ''
+            if not result['date'] is None:
+                new_result['date'] = result['date'].group(0)
+            else:
+                new_result['date'] = ''
+            if not result['others'] is None:
+                new_result['others'] = result['others']
+            else:
+                new_result['others'] = ''
             single_final_result.append(new_result)
 
     # 正常操作
@@ -2600,8 +2618,6 @@ def upload_single():
     upload_btn.place(relx=0.44, rely=0.85)
     ''''''
 
-# TODO: ---------------------------------------------------------------------------上传单项↑
-
 
 def helper():
     pass
@@ -2628,7 +2644,7 @@ csbg = ImageTk.PhotoImage(csbg_image)
 ui_list = []
 test_string = "周子昕 15902348495 500109199804060423 2020.08.07 这是地址"
 split_list = test_string.split(' ')
-print(handwriting_match(split_list))
+# print(handwriting_match(split_list))
 
 main_canv = Canvas(root, bd=1, width=1000, height=640)
 main_canv.pack()

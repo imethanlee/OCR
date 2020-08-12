@@ -257,6 +257,7 @@ def sql_delete(ocr_type: OCR, id: int):
             WHERE id = {}
         '''.format(id)
         sql_conn(cmd)
+
     elif ocr_type == OCR.GENERAL_BASIC:
         cmd = '''DELETE FROM t_general_basic
             WHERE id = {}
@@ -685,9 +686,10 @@ def sql_extract(ocr_type: OCR, id: int):
                 'amount_in_figures': row[11],
                 'transaction_id': row[12],
                 'picture': row[13],
+                'commodity': {}
             }
             invoice_id = id
-            cmd = '''SELECT * FROM t_invoice WHERE 
+            cmd = '''SELECT * FROM t_invoice_commodity WHERE 
                             invoice_id = {}
                             '''.format(invoice_id)
             data = sql_conn(cmd)
@@ -700,24 +702,61 @@ def sql_extract(ocr_type: OCR, id: int):
                 res['commodity']['tax_rate'] = []
                 res['commodity']['tax'] = []
                 for item in data:
-                    res['commodity']['name'].append(item[0])
-                    res['commodity']['type'].append(item[1])
-                    res['commodity']['num'].append(item[2])
-                    res['commodity']['price'].append(item[3])
-                    res['commodity']['amount'].append(item[4])
-                    res['commodity']['tax_rate'].append(item[5])
-                    res['commodity']['tax'].append(item[6])
+                    res['commodity']['name'].append(item[1])
+                    res['commodity']['type'].append(item[2])
+                    res['commodity']['num'].append(item[3])
+                    res['commodity']['price'].append(item[4])
+                    res['commodity']['amount'].append(item[5])
+                    res['commodity']['tax_rate'].append(item[6])
+                    res['commodity']['tax'].append(item[7])
             return res
 
+
+# 根据交易号提取小图
+def sql_small_extract(ocr_type: OCR, transaction_id: int):
+    if ocr_type == OCR.BUSINESS_CARD:
+        cmd = '''SELECT id, picture FROM t_business_card WHERE transaction_id = {}'''.format(transaction_id)
+        res = sql_conn(cmd)
+        if len(res) == 0:
+            return None, None
+        else:
+            return res[0][0], res[0][1]
+    elif ocr_type == OCR.BANKCARD:
+        cmd = '''SELECT id, picture FROM t_bankcard WHERE transaction_id = {}'''.format(transaction_id)
+        res = sql_conn(cmd)
+        if len(res) == 0:
+            return None, None
+        else:
+            return res[0][0], res[0][1]
+    elif ocr_type == OCR.INVOICE:
+        cmd = '''SELECT id, picture FROM t_invoice WHERE transaction_id = {}'''.format(transaction_id)
+        res = sql_conn(cmd)
+        if len(res) == 0:
+            return None, None
+        else:
+            return res[0][0], res[0][1]
+    elif ocr_type == OCR.GENERAL_BASIC:
+        cmd = '''SELECT id, picture FROM t_general_basic WHERE transaction_id = {}'''.format(transaction_id)
+        res = sql_conn(cmd)
+        if len(res) == 0:
+            return None, None
+        else:
+            return res[0][0], res[0][1]
+    elif ocr_type == OCR.BUSINESS_LICENSE:
+        cmd = '''SELECT id, picture FROM t_business_license WHERE transaction_id = {}'''.format(transaction_id)
+        res = sql_conn(cmd)
+        if len(res) == 0:
+            return None, None
+        else:
+            return res[0][0], res[0][1]
 
 # 改
 def sql_modify(ocr_type: OCR, id: int, content: dict):
     if ocr_type == OCR.TRANSACTION:
         cmd = '''UPDATE t_transaction SET
-            name = "{}",
-            create_time = "{}"
-        '''.format(content['name'],
-                   content['create_time'])
+            name = "{}"
+            WHERE id = {}
+        '''.format(content['name'], id)
         sql_conn(cmd)
     elif ocr_type == OCR.GENERAL_BASIC:
         # cmd = '''UPDATE t_general_basic SET
@@ -757,7 +796,7 @@ def sql_modify(ocr_type: OCR, id: int, content: dict):
                 seller_addr = "{}",           
                 seller_bank = "{}",      
                 amount_in_figures = "{}",    
-                transaction_id = {},              
+                transaction_id = {}              
             WHERE id = {}
                 '''.format(content['invoice_type'],
                            content['invoice_code'],
@@ -813,9 +852,7 @@ def sql_modify(ocr_type: OCR, id: int, content: dict):
                 fax = "{}",
                 mobile = "{}",
                 name = "{}",
-                pc = "{}",
                 url = "{}",
-                tel = "{}",
                 tel = "{}",
                 company = "{}", 
                 title = "{}", 
@@ -826,9 +863,7 @@ def sql_modify(ocr_type: OCR, id: int, content: dict):
                        content['fax'],
                        content['mobile'],
                        content['name'],
-                       content['pc'],
                        content['url'],
-                       content['tel'],
                        content['tel'],
                        content['company'],
                        content['title'],
@@ -843,11 +878,9 @@ def sql_modify(ocr_type: OCR, id: int, content: dict):
                 company_name = "{}", 
                 legal_person = "{}",
                 license_id = "{}", 
-                organization_form = "{}", 
                 establishment_date = "{}", 
                 addr = "{}", 
                 business_scope = "{}", 
-                type = "{}", 
                 expiration_date = "{}", 
                 transaction_id = {}
             WHERE id = {}
@@ -856,11 +889,9 @@ def sql_modify(ocr_type: OCR, id: int, content: dict):
                        content['company_name'],
                        content['legal_person'],
                        content['license_id'],
-                       content['organization_form'],
                        content['establishment_date'],
                        content['addr'],
                        content['business_scope'],
-                       content['type'],
                        content['expiration_date'],
                        content['transaction_id'],
                        id)

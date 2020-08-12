@@ -1733,7 +1733,7 @@ def upload_trade():
 
 
 # TODO: ----------------------------------修改与删除↓
-def delButton(tree):
+def delButton(tree, manage_comb_value):
     x = tree.get_children()
     for item in x:
         tree.delete(item)
@@ -1743,16 +1743,17 @@ def delButton(tree):
     tree.heading('4', text='')
     tree.heading('5', text='')
     tree.heading('6', text='')
-    tree.heading('7', text='')
-    tree.heading('8', text='')
-    tree.heading('9', text='')
-    tree.heading('10', text='')
-    tree.heading('11', text='')
-    tree.heading('12', text='')
+    if manage_comb_value != OCR.INVOICE:
+        tree.heading('7', text='')
+        tree.heading('8', text='')
+        tree.heading('9', text='')
+        tree.heading('10', text='')
+        tree.heading('11', text='')
+        tree.heading('12', text='')
 
 
 def search(manage_comb_value, result_tree, str):
-    delButton(result_tree)
+    delButton(result_tree, manage_comb_value)
     # delButton(result_tree)
     # "交易", "名片","发票", "营业执照", "银行卡", "其他信息"
     width_trade = 150
@@ -2160,11 +2161,11 @@ def tree_click_for_transaction(transaction_id: int, tree: ttk.Treeview = None, w
     trade_wd.mainloop()
 
 
-def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None, wd: Toplevel = None):
+def tree_click(ocr_type: OCR, selected_id: int, result_tree: ttk.Treeview = None, wd: Toplevel = None):
     res = sql_extract(ocr_type, selected_id)
 
     if ocr_type == OCR.TRANSACTION:
-        tree_click_for_transaction(selected_id, tree, wd)
+        tree_click_for_transaction(selected_id, result_tree, wd)
 
     else:
         cf_wd = Toplevel()
@@ -2305,7 +2306,7 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None, wd: T
                 #     res['picture'] = base64.b64encode(f.read())
                 if messagebox.askyesno("提示", "是否确认修改"):
                     sql_modify(OCR.BUSINESS_CARD, selected_id, res)
-                    search(OCR.BUSINESS_CARD, tree, '')
+                    search(OCR.BUSINESS_CARD, result_tree, '')
                     cf_wd.destroy()
                     wd.grab_set()
                     wd.focus_set()
@@ -2318,7 +2319,7 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None, wd: T
                 if messagebox.askyesno("提示", "是否确认删除"):
                     sql_delete(OCR.BUSINESS_CARD, selected_id)
                     cf_wd.destroy()
-                    search(OCR.BUSINESS_CARD, tree, '')
+                    search(OCR.BUSINESS_CARD, result_tree, '')
                     wd.grab_set()
                     wd.focus_set()
 
@@ -2367,7 +2368,7 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None, wd: T
                 #     res['picture'] = base64.b64encode(f.read())
                 if messagebox.askyesno("提示", "是否确认修改"):
                     sql_modify(OCR.BANKCARD, selected_id, res)
-                    search(OCR.BANKCARD, tree, '')
+                    search(OCR.BANKCARD, result_tree, '')
                     cf_wd.destroy()
                     wd.grab_set()
                     wd.focus_set()
@@ -2380,7 +2381,7 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None, wd: T
                 if messagebox.askyesno("提示", "是否确认删除"):
                     sql_delete(OCR.BANKCARD, selected_id)
                     cf_wd.destroy()
-                    search(OCR.BANKCARD, tree, '')
+                    search(OCR.BANKCARD, result_tree, '')
                     wd.grab_set()
                     wd.focus_set()
 
@@ -2464,7 +2465,7 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None, wd: T
                 #     res['picture'] = base64.b64encode(f.read())
                 if messagebox.askyesno("提示", "是否确认修改"):
                     sql_modify(OCR.BUSINESS_LICENSE, selected_id, res)
-                    search(OCR.BUSINESS_LICENSE, tree, '')
+                    search(OCR.BUSINESS_LICENSE, result_tree, '')
                     cf_wd.destroy()
                     wd.grab_set()
                     wd.focus_set()
@@ -2477,7 +2478,7 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None, wd: T
                 if messagebox.askyesno("提示", "是否确认删除"):
                     sql_delete(OCR.BUSINESS_LICENSE, selected_id)
                     cf_wd.destroy()
-                    search(OCR.BUSINESS_LICENSE, tree, '')
+                    search(OCR.BUSINESS_LICENSE, result_tree, '')
                     wd.grab_set()
                     wd.focus_set()
 
@@ -2632,12 +2633,13 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None, wd: T
                     res['commodity']['amount'].append(info[4])
                     res['commodity']['tax_rate'].append(info[5])
                     res['commodity']['tax'].append(info[6])
+
                 if messagebox.askyesno("提示", "是否确认修改"):
-                    sql_modify(OCR.INVOICE, selected_id, res)
-                    search(OCR.INVOICE, tree, '')
-                    cf_wd.destroy()
                     wd.grab_set()
                     wd.focus_set()
+                    sql_modify(OCR.INVOICE, selected_id, res)
+                    search(OCR.INVOICE, result_tree, '')
+                    cf_wd.destroy()
 
             btn_modify = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: mofidy_invoice(),
                                 relief=FLAT, font=myfont)
@@ -2646,8 +2648,8 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None, wd: T
             def delete_invoice():
                 if messagebox.askyesno("提示", "是否确认删除"):
                     sql_delete(OCR.INVOICE, selected_id)
+                    search(OCR.INVOICE, result_tree, '')
                     cf_wd.destroy()
-                    search(OCR.INVOICE, tree, '')
                     wd.grab_set()
                     wd.focus_set()
 
@@ -2704,7 +2706,7 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None, wd: T
                 #     res['picture'] = base64.b64encode(f.read())
                 if messagebox.askyesno("提示", "是否确认修改"):
                     sql_modify(OCR.GENERAL_BASIC, selected_id, res)
-                    search(OCR.GENERAL_BASIC, tree, '')
+                    search(OCR.GENERAL_BASIC, result_tree, '')
                     cf_wd.destroy()
                     wd.grab_set()
                     wd.focus_set()
@@ -2717,7 +2719,7 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None, wd: T
                 if messagebox.askyesno("提示", "是否确认删除"):
                     sql_delete(OCR.GENERAL_BASIC, selected_id)
                     cf_wd.destroy()
-                    search(OCR.GENERAL_BASIC, tree, '')
+                    search(OCR.GENERAL_BASIC, result_tree, '')
                     wd.grab_set()
                     wd.focus_set()
 

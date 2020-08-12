@@ -95,15 +95,18 @@ def read_file(image_path):
             f.close()
 
 
-# TODO: 交易选择路径（已完成未融合到test_zzx.py）
-
-
 def select_path_for_trade(path_name, btn: Button, ocr_type: OCR):
-    path = askopenfilenames(filetypes=[("all", "*.*")])
+    path = askopenfilenames(title="选择图片",
+                            filetypes=[('图片', 'jpg'), ('图片', 'png'), ('图片', 'jpeg'), ('图片', 'gif'), ('图片', 'bmp')])
     path_name.set(path)
 
     # 处理图片
     name = path_to_list(path_name.get())[0]
+    path_name.set(name)
+    if not file_check(path_name.get()):
+        path_name.set("")
+        messagebox.showwarning("提示", "文件不是图片")
+        return
 
     # TODO: 显示图片
     size = 175
@@ -130,9 +133,19 @@ def select_path_for_trade(path_name, btn: Button, ocr_type: OCR):
 
 
 def select_path_for_single(path_name, photo_area):
-    path = askopenfilenames(filetypes=[("all", "*.*")])
+    path = askopenfilenames(title="选择图片",
+                            filetypes=[('图片', 'jpg'), ('图片', 'png'), ('图片', 'jpeg'), ('图片', 'gif'), ('图片', 'bmp')])
     path_name.set(path)
     namelist = path_to_list(path_name.get())
+
+    # 检测文件
+    for name in namelist:
+        if not file_check(name):
+            path_name.set("")
+            small_imagelist.clear()
+            messagebox.showwarning("提示", "存在非图片文件")
+            return
+
     count = 0
     for name in namelist:
         size = 200
@@ -173,7 +186,6 @@ def getName(fns):
 imagelist = []
 small_imagelist = []
 resultlist = []
-
 
 business_list = []
 card_list = []
@@ -836,7 +848,7 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
             v_bank_card_type.set(ocr_final_result[item]['bank_card_type'])
             v_valid_date.set(ocr_final_result[item]['valid_date'])
 
-        text_bank_card_number = Label(cf_wd, text="银行卡号:", width=10, font=myfont,bg="#d5edea")
+        text_bank_card_number = Label(cf_wd, text="银行卡号:", width=10, font=myfont, bg="#d5edea")
         text_bank_card_number.place(x=0 + x_offset, y=0 + y_offset)
         text_bank_name = Label(cf_wd, text="银行名称:", width=10, font=myfont, bg="#ddefec")
         text_bank_name.place(x=0 + x_offset, y=40 + y_offset)
@@ -866,7 +878,8 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
 
             cf_wd.destroy()
 
-        btn_confirm = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: confirm_bankcard(), relief=FLAT, font=myfont)
+        btn_confirm = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: confirm_bankcard(),
+                             relief=FLAT, font=myfont)
         btn_confirm.place(x=850, y=580)
 
     elif ocr_type == OCR.BUSINESS_LICENSE:
@@ -908,21 +921,21 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
 
         text_company_name = Label(cf_wd, text="公司名称:", width=10, font=myfont, bg="#e4f2ee")
         text_company_name.place(x=0 + x_offset, y=0 + y_offset)
-        text_legal_person = Label(cf_wd, text="法人:", width=10, font=myfont,bg="#ddefec")
+        text_legal_person = Label(cf_wd, text="法人:", width=10, font=myfont, bg="#ddefec")
         text_legal_person.place(x=0 + x_offset, y=40 + y_offset)
-        text_license_id = Label(cf_wd, text="证书号:", width=10, font=myfont,bg="#ddefec")
+        text_license_id = Label(cf_wd, text="证书号:", width=10, font=myfont, bg="#ddefec")
         text_license_id.place(x=250 + x_offset, y=40 + y_offset)
-        text_social_credit_number = Label(cf_wd, text="信用代码:", width=10, font=myfont,bg="#d5edea")
+        text_social_credit_number = Label(cf_wd, text="信用代码:", width=10, font=myfont, bg="#d5edea")
         text_social_credit_number.place(x=0 + x_offset, y=80 + y_offset)
-        text_establishment_date = Label(cf_wd, text="成立日期:", width=10, font=myfont,bg="#d1ebea")
+        text_establishment_date = Label(cf_wd, text="成立日期:", width=10, font=myfont, bg="#d1ebea")
         text_establishment_date.place(x=0 + x_offset, y=120 + y_offset)
-        text_expiration_date = Label(cf_wd, text="有效期:", width=10, font=myfont,bg="#d1ebea")
+        text_expiration_date = Label(cf_wd, text="有效期:", width=10, font=myfont, bg="#d1ebea")
         text_expiration_date.place(x=250 + x_offset, y=120 + y_offset)
-        text_registered_capital = Label(cf_wd, text="注册资本:", width=10, font=myfont,bg="#cde9e9")
+        text_registered_capital = Label(cf_wd, text="注册资本:", width=10, font=myfont, bg="#cde9e9")
         text_registered_capital.place(x=0 + x_offset, y=160 + y_offset)
-        text_addr = Label(cf_wd, text="地址:", width=10, font=myfont,bg="#cae8e8")
+        text_addr = Label(cf_wd, text="地址:", width=10, font=myfont, bg="#cae8e8")
         text_addr.place(x=0 + x_offset, y=200 + y_offset)
-        text_business_scope = Label(cf_wd, text="经营范围:", width=10, font=myfont,bg="#c6e6e7")
+        text_business_scope = Label(cf_wd, text="经营范围:", width=10, font=myfont, bg="#c6e6e7")
         text_business_scope.place(x=0 + x_offset, y=240 + y_offset)
 
         entry_company_name = Entry(cf_wd, textvariable=v_company_name, width=51, font=myfont)
@@ -961,7 +974,8 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
 
             cf_wd.destroy()
 
-        btn_confirm = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: confirm_business_license(), relief=FLAT, font=myfont)
+        btn_confirm = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: confirm_business_license(),
+                             relief=FLAT, font=myfont)
         btn_confirm.place(x=850, y=580)
 
     elif ocr_type == OCR.INVOICE:
@@ -980,31 +994,31 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
         v_seller_bank = StringVar()  # 销售方开户行及账号
         v_amount_in_figures = StringVar()  # 价格合计
 
-        text_invoice_type = Label(cf_wd, text="发票种类:", font=myfont,bg="#e4f2ee")
+        text_invoice_type = Label(cf_wd, text="发票种类:", font=myfont, bg="#e4f2ee")
         text_invoice_type.place(x=0 + x_offset, y=0 + y_offset)
-        text_invoice_code = Label(cf_wd, text="发票代码:", font=myfont,bg="#e4f2ee")
+        text_invoice_code = Label(cf_wd, text="发票代码:", font=myfont, bg="#e4f2ee")
         text_invoice_code.place(x=250 + x_offset, y=0 + y_offset)
-        text_invoice_num = Label(cf_wd, text="发票号码:", font=myfont,bg="#e0f0ed")
+        text_invoice_num = Label(cf_wd, text="发票号码:", font=myfont, bg="#e0f0ed")
         text_invoice_num.place(x=0 + x_offset, y=40 + y_offset)
-        text_invoice_date = Label(cf_wd, text="开票日期:", font=myfont,bg="#e0f0ed")
+        text_invoice_date = Label(cf_wd, text="开票日期:", font=myfont, bg="#e0f0ed")
         text_invoice_date.place(x=250 + x_offset, y=40 + y_offset)
-        text_purchaser = Label(cf_wd, text="购买方信息:", font=myfont,bg="#deefec")
+        text_purchaser = Label(cf_wd, text="购买方信息:", font=myfont, bg="#deefec")
         text_purchaser.place(x=0 + x_offset, y=80 + y_offset)
-        text_purchaser_name = Label(cf_wd, text="名称:", font=myfont,bg="#ddf0ed")
+        text_purchaser_name = Label(cf_wd, text="名称:", font=myfont, bg="#ddf0ed")
         text_purchaser_name.place(x=0 + x_offset, y=120 + y_offset)
-        text_purchaser_register_num = Label(cf_wd, text="纳税人\n识别号:", font=myfont,bg="#ddf0ed")
+        text_purchaser_register_num = Label(cf_wd, text="纳税人\n识别号:", font=myfont, bg="#ddf0ed")
         text_purchaser_register_num.place(x=250 + x_offset, y=120 + y_offset)
-        text_seller = Label(cf_wd, text="销售方信息:", font=myfont,bg="#d7edeb")
+        text_seller = Label(cf_wd, text="销售方信息:", font=myfont, bg="#d7edeb")
         text_seller.place(x=0 + x_offset, y=160 + y_offset)
-        text_seller_name = Label(cf_wd, text="名称:", width=10, font=myfont,bg="#d1eaea")
+        text_seller_name = Label(cf_wd, text="名称:", width=10, font=myfont, bg="#d1eaea")
         text_seller_name.place(x=0 + x_offset, y=200 + y_offset)
-        text_seller_register_num = Label(cf_wd, text="纳税人\n识别号:", width=10, font=myfont,bg="#d1eaea")
+        text_seller_register_num = Label(cf_wd, text="纳税人\n识别号:", width=10, font=myfont, bg="#d1eaea")
         text_seller_register_num.place(x=250 + x_offset, y=200 + y_offset)
-        text_seller_addr = Label(cf_wd, text="地址:", width=10, font=myfont,bg="#cdeae8")
+        text_seller_addr = Label(cf_wd, text="地址:", width=10, font=myfont, bg="#cdeae8")
         text_seller_addr.place(x=0 + x_offset, y=240 + y_offset)
-        text_seller_bank = Label(cf_wd, text="银行:", width=10, font=myfont,bg="#cdeae8")
+        text_seller_bank = Label(cf_wd, text="银行:", width=10, font=myfont, bg="#cdeae8")
         text_seller_bank.place(x=250 + x_offset, y=240 + y_offset)
-        text_amount_in_figures = Label(cf_wd, text="价格合计(元):", font=myfont,bg="#a6d7e1")
+        text_amount_in_figures = Label(cf_wd, text="价格合计(元):", font=myfont, bg="#a6d7e1")
         text_amount_in_figures.place(x=0 + x_offset, y=420 + y_offset)
 
         entry_invoice_type = Entry(cf_wd, textvariable=v_invoice_type, font=myfont)
@@ -1140,7 +1154,8 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
 
             cf_wd.destroy()
 
-        btn_confirm = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: confirm_invoice(), relief=FLAT, font=myfont)
+        btn_confirm = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: confirm_invoice(),
+                             relief=FLAT, font=myfont)
         btn_confirm.place(x=840, y=560)
 
     elif ocr_type == OCR.GENERAL_BASIC:
@@ -1190,15 +1205,15 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
             v_date.set(ocr_final_result[item]['date'])
             v_others = ocr_final_result[item]['others']
 
-        text_name = Label(cf_wd, text="姓名:", width=10, font=myfont,bg="#e6f2ee")
+        text_name = Label(cf_wd, text="姓名:", width=10, font=myfont, bg="#e6f2ee")
         text_name.place(x=0 + x_offset, y=0 + y_offset)
-        text_phone = Label(cf_wd, text="电话:", width=10, font=myfont,bg="#e2f1ed")
+        text_phone = Label(cf_wd, text="电话:", width=10, font=myfont, bg="#e2f1ed")
         text_phone.place(x=0 + x_offset, y=40 + y_offset)
-        text_id_num = Label(cf_wd, text="身份证:", width=10, font=myfont,bg="#ddf0ec")
+        text_id_num = Label(cf_wd, text="身份证:", width=10, font=myfont, bg="#ddf0ec")
         text_id_num.place(x=0 + x_offset, y=80 + y_offset)
-        text_date = Label(cf_wd, text="日期:", width=10, font=myfont,bg="#dbeeec")
+        text_date = Label(cf_wd, text="日期:", width=10, font=myfont, bg="#dbeeec")
         text_date.place(x=0 + x_offset, y=120 + y_offset)
-        text_others = Label(cf_wd, text="其他信息:", width=10, font=myfont,bg="#d5ecea")
+        text_others = Label(cf_wd, text="其他信息:", width=10, font=myfont, bg="#d5ecea")
         text_others.place(x=0 + x_offset, y=160 + y_offset)
 
         entry_name = Entry(cf_wd, textvariable=v_name, width=51, font=myfont)
@@ -1226,7 +1241,8 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
 
             cf_wd.destroy()
 
-        btn_confirm = Button(cf_wd,  image=confirm_btn_photo, bg="#9fc2e2",command=lambda: confirm_general_basic(), relief=FLAT, font=myfont)
+        btn_confirm = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: confirm_general_basic(),
+                             relief=FLAT, font=myfont)
         btn_confirm.place(x=840, y=575)
 
     # TODO: 此函数下方的所有内容均已删除
@@ -1459,6 +1475,8 @@ def upload_trade():
 
 def upload_trade():
     trade_wd = Toplevel(root, bg='#f8ffff', )
+    trade_wd.grab_set()
+    trade_wd.focus_set()
     size = 200
     results = StringVar()
     button_list = []
@@ -1511,7 +1529,7 @@ def upload_trade():
                                  relief=FLAT)
     businesscard_upload.place(relx=0.58, rely=0.65)
 
-    business_entry = Entry(frame_businesscard, textvariable=business_path, width=25)
+    business_entry = Entry(frame_businesscard, textvariable=business_path, width=25, state=DISABLED)
     business_entry.place(relx=0.41, rely=0.35)
 
     business_canv = Canvas(frame_businesscard, bg='#f8ffff', bd=1, width=200, height=200)
@@ -1541,7 +1559,7 @@ def upload_trade():
                             relief=FLAT)
     license_upload.place(relx=0.58, rely=0.65)
 
-    license_entry = Entry(frame_license, textvariable=license_path, width=25)
+    license_entry = Entry(frame_license, textvariable=license_path, width=25, state=DISABLED)
     license_entry.place(relx=0.41, rely=0.35)
 
     license_canv = Canvas(frame_license, bg='#f8ffff', bd=1, width=200, height=200)
@@ -1569,7 +1587,7 @@ def upload_trade():
                             relief=FLAT)
     general_upload.place(relx=0.58, rely=0.65)
 
-    general_entry = Entry(frame_general, textvariable=general_path, width=25)
+    general_entry = Entry(frame_general, textvariable=general_path, width=25, state=DISABLED)
     general_entry.place(relx=0.41, rely=0.35)
 
     general_canv = Canvas(frame_general, bg='#f8ffff', bd=1, width=200, height=200)
@@ -1598,7 +1616,7 @@ def upload_trade():
                          relief=FLAT)
     card_upload.place(relx=0.58, rely=0.65)
 
-    card_entry = Entry(frame_card, textvariable=card_path, width=25)
+    card_entry = Entry(frame_card, textvariable=card_path, width=25, state=DISABLED)
     card_entry.place(relx=0.41, rely=0.35)
 
     card_canv = Canvas(frame_card, bg='#f8ffff', bd=1, width=200, height=200)
@@ -1627,7 +1645,7 @@ def upload_trade():
                             relief=FLAT)
     invoice_upload.place(relx=0.58, rely=0.65)
 
-    invoice_entry = Entry(frame_invoice, textvariable=invoice_path, width=25)
+    invoice_entry = Entry(frame_invoice, textvariable=invoice_path, width=25, state=DISABLED)
     invoice_entry.place(relx=0.41, rely=0.35)
 
     invoice_canv = Canvas(frame_invoice, bg='#f8ffff', bd=1, width=200, height=200)
@@ -1652,7 +1670,8 @@ def upload_trade():
     btn_bankcard_image.place(relx=0.02, rely=0.05)
 
     btn_business_license_image = Button(frame_license, width=24, height=10,
-                                        command=lambda: ps(license_entry, btn_business_license_image, OCR.BUSINESS_LICENSE),
+                                        command=lambda: ps(license_entry, btn_business_license_image,
+                                                           OCR.BUSINESS_LICENSE),
                                         image=None, state=DISABLED, relief=GROOVE)
     btn_business_license_image.place(relx=0.02, rely=0.05)
 
@@ -1701,10 +1720,10 @@ def upload_trade():
                 ocr_final_result['general_basic']['transaction_id'] = transaction_id
                 sql_insert(OCR.GENERAL_BASIC, ocr_final_result['general_basic'])
             ocr_final_result.clear()
-
+            messagebox.showinfo("提示", "存入成功")
             trade_wd.destroy()
         else:
-            print("Transaction name CANNOT be empty")
+            messagebox.showwarning("提示", "交易名称不能为空")
 
     btn_confirm = Button(frame_confirm, bg='#f8ffff', image=button_list[7],
                          command=lambda: store_confirm(), relief=FLAT)
@@ -1919,7 +1938,7 @@ def search(manage_comb_value, result_tree, str):
     result_tree.place(relx=0.05, rely=0.4)
 
 
-def tree_click_for_transaction(transaction_id: int, tree: ttk.Treeview = None):
+def tree_click_for_transaction(transaction_id: int, tree: ttk.Treeview = None, wd: Toplevel = None):
     trade_wd = Toplevel(root, bg='#f8ffff', )
     trade_wd.grab_set()
     trade_wd.focus_set()
@@ -2111,18 +2130,28 @@ def tree_click_for_transaction(transaction_id: int, tree: ttk.Treeview = None):
         if entry_transaction_name.get() != "":
             # 交易
             trans_content = {'name': entry_transaction_name.get()}
-            sql_modify(OCR.TRANSACTION, transaction_id, trans_content)
-            search(OCR.TRANSACTION, tree, '')
-            trade_wd.destroy()
+            if messagebox.askyesno("提示", "是否确认修改"):
+                sql_modify(OCR.TRANSACTION, transaction_id, trans_content)
+                search(OCR.TRANSACTION, tree, '')
+                trade_wd.destroy()
+                messagebox.showinfo("提示", "修改成功")
+                wd.grab_set()
+                wd.focus_set()
         else:
+            messagebox.showwarning("提示", "交易名称不能为空")
             print("Transaction name CANNOT be empty")
 
     def store_delete():
-        sql_delete(OCR.TRANSACTION, transaction_id)
-        trade_wd.destroy()
+        if messagebox.askyesno("提示", "是否确认删除"):
+            sql_delete(OCR.TRANSACTION, transaction_id)
+            search(OCR.TRANSACTION, tree, '')
+            trade_wd.destroy()
+            messagebox.showinfo("提示", "删除成功")
+            wd.grab_set()
+            wd.focus_set()
 
     btn_modify = Button(frame_confirm, bg='#f8ffff', image=button_list[7],
-                         command=lambda: store_modify(), relief=FLAT)
+                        command=lambda: store_modify(), relief=FLAT)
     btn_modify.grid(row=4, column=2)
     btn_delete = Button(frame_confirm, bg='#f8ffff', text="删除交易",
                         command=lambda: store_delete(), relief=FLAT)
@@ -2131,11 +2160,11 @@ def tree_click_for_transaction(transaction_id: int, tree: ttk.Treeview = None):
     trade_wd.mainloop()
 
 
-def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None):
+def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None, wd: Toplevel = None):
     res = sql_extract(ocr_type, selected_id)
 
     if ocr_type == OCR.TRANSACTION:
-        tree_click_for_transaction(selected_id, tree)
+        tree_click_for_transaction(selected_id, tree, wd)
 
     else:
         cf_wd = Toplevel()
@@ -2274,17 +2303,24 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None):
                 res['url'] = entry_url.get()
                 # with open(name, "rb") as f:
                 #     res['picture'] = base64.b64encode(f.read())
-                sql_modify(OCR.BUSINESS_CARD, selected_id, res)
-                search(OCR.BUSINESS_CARD, tree, '')
-                cf_wd.destroy()
+                if messagebox.askyesno("提示", "是否确认修改"):
+                    sql_modify(OCR.BUSINESS_CARD, selected_id, res)
+                    search(OCR.BUSINESS_CARD, tree, '')
+                    cf_wd.destroy()
+                    wd.grab_set()
+                    wd.focus_set()
 
             btn_modify = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: modify_business_card(),
-                                 relief=FLAT, font=myfont)
+                                relief=FLAT, font=myfont)
             btn_modify.place(x=720, y=580)
 
             def delete_business_card():
-                sql_delete(OCR.BUSINESS_CARD, selected_id)
-                cf_wd.destroy()
+                if messagebox.askyesno("提示", "是否确认删除"):
+                    sql_delete(OCR.BUSINESS_CARD, selected_id)
+                    cf_wd.destroy()
+                    search(OCR.BUSINESS_CARD, tree, '')
+                    wd.grab_set()
+                    wd.focus_set()
 
             btn_delete = Button(cf_wd, text="删除信息", bg="#9fc2e2", command=lambda: delete_business_card(),
                                 relief=FLAT, font=myfont)
@@ -2329,17 +2365,24 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None):
                 res['valid_date'] = entry_valid_date.get()
                 # with open(name, "rb") as f:
                 #     res['picture'] = base64.b64encode(f.read())
-                sql_modify(OCR.BANKCARD, selected_id, res)
-                search(OCR.BANKCARD, tree, '')
-                cf_wd.destroy()
+                if messagebox.askyesno("提示", "是否确认修改"):
+                    sql_modify(OCR.BANKCARD, selected_id, res)
+                    search(OCR.BANKCARD, tree, '')
+                    cf_wd.destroy()
+                    wd.grab_set()
+                    wd.focus_set()
 
             btn_modify = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: modify_bankcard(),
-                                 relief=FLAT, font=myfont)
+                                relief=FLAT, font=myfont)
             btn_modify.place(x=720, y=580)
 
             def delete_bankcard():
-                sql_delete(OCR.BANKCARD, selected_id)
-                cf_wd.destroy()
+                if messagebox.askyesno("提示", "是否确认删除"):
+                    sql_delete(OCR.BANKCARD, selected_id)
+                    cf_wd.destroy()
+                    search(OCR.BANKCARD, tree, '')
+                    wd.grab_set()
+                    wd.focus_set()
 
             btn_delete = Button(cf_wd, text="删除信息", bg="#9fc2e2", command=lambda: delete_bankcard(),
                                 relief=FLAT, font=myfont)
@@ -2419,17 +2462,24 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None):
                 res['business_scope'] = entry_business_scope.get()
                 # with open(name, "rb") as f:
                 #     res['picture'] = base64.b64encode(f.read())
-                sql_modify(OCR.BUSINESS_LICENSE, selected_id, res)
-                search(OCR.BUSINESS_LICENSE, tree, '')
-                cf_wd.destroy()
+                if messagebox.askyesno("提示", "是否确认修改"):
+                    sql_modify(OCR.BUSINESS_LICENSE, selected_id, res)
+                    search(OCR.BUSINESS_LICENSE, tree, '')
+                    cf_wd.destroy()
+                    wd.grab_set()
+                    wd.focus_set()
 
             btn_modify = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2",
-                                 command=lambda: modify_business_license(), relief=FLAT, font=myfont)
+                                command=lambda: modify_business_license(), relief=FLAT, font=myfont)
             btn_modify.place(x=720, y=580)
 
             def delete_business_license():
-                sql_delete(OCR.BUSINESS_LICENSE, selected_id)
-                cf_wd.destroy()
+                if messagebox.askyesno("提示", "是否确认删除"):
+                    sql_delete(OCR.BUSINESS_LICENSE, selected_id)
+                    cf_wd.destroy()
+                    search(OCR.BUSINESS_LICENSE, tree, '')
+                    wd.grab_set()
+                    wd.focus_set()
 
             btn_delete = Button(cf_wd, text="删除信息", bg="#9fc2e2", command=lambda: delete_business_license(),
                                 relief=FLAT, font=myfont)
@@ -2582,17 +2632,24 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None):
                     res['commodity']['amount'].append(info[4])
                     res['commodity']['tax_rate'].append(info[5])
                     res['commodity']['tax'].append(info[6])
-                sql_modify(OCR.INVOICE, selected_id, res)
-                search(OCR.INVOICE, tree, '')
-                cf_wd.destroy()
+                if messagebox.askyesno("提示", "是否确认修改"):
+                    sql_modify(OCR.INVOICE, selected_id, res)
+                    search(OCR.INVOICE, tree, '')
+                    cf_wd.destroy()
+                    wd.grab_set()
+                    wd.focus_set()
 
             btn_modify = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: mofidy_invoice(),
-                                 relief=FLAT, font=myfont)
+                                relief=FLAT, font=myfont)
             btn_modify.place(x=720, y=580)
 
             def delete_invoice():
-                sql_delete(OCR.INVOICE, selected_id)
-                cf_wd.destroy()
+                if messagebox.askyesno("提示", "是否确认删除"):
+                    sql_delete(OCR.INVOICE, selected_id)
+                    cf_wd.destroy()
+                    search(OCR.INVOICE, tree, '')
+                    wd.grab_set()
+                    wd.focus_set()
 
             btn_delete = Button(cf_wd, text="删除信息", bg="#9fc2e2", command=lambda: delete_invoice(),
                                 relief=FLAT, font=myfont)
@@ -2645,17 +2702,24 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None):
                 res['others'] = entry_others.get('0.0', 'end')
                 # with open(name, "rb") as f:
                 #     res['picture'] = base64.b64encode(f.read())
-                sql_modify(OCR.GENERAL_BASIC, selected_id, res)
-                search(OCR.GENERAL_BASIC, tree, '')
-                cf_wd.destroy()
+                if messagebox.askyesno("提示", "是否确认修改"):
+                    sql_modify(OCR.GENERAL_BASIC, selected_id, res)
+                    search(OCR.GENERAL_BASIC, tree, '')
+                    cf_wd.destroy()
+                    wd.grab_set()
+                    wd.focus_set()
 
             btn_modify = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: modify_general_basic(),
-                                 relief=FLAT, font=myfont)
+                                relief=FLAT, font=myfont)
             btn_modify.place(x=720, y=580)
 
             def delete_general_basic():
-                sql_delete(OCR.GENERAL_BASIC, selected_id)
-                cf_wd.destroy()
+                if messagebox.askyesno("提示", "是否确认删除"):
+                    sql_delete(OCR.GENERAL_BASIC, selected_id)
+                    cf_wd.destroy()
+                    search(OCR.GENERAL_BASIC, tree, '')
+                    wd.grab_set()
+                    wd.focus_set()
 
             btn_delete = Button(cf_wd, text="删除信息", bg="#9fc2e2", command=lambda: delete_general_basic(),
                                 relief=FLAT, font=myfont)
@@ -2688,7 +2752,7 @@ def manage():
                      lambda event: tree_click(
                          comb_value_map[manage_comb_value.get()],
                          result_tree.item(result_tree.selection()[0], "values")[0],
-                         result_tree))
+                         result_tree, manage_wd))
 
     search_btn = Button(manage_wd, text="搜索", width=11, font=myfont, bg='#e0f1ed',
                         command=lambda: search(comb_value_map[manage_comb_value.get()], result_tree, search_str.get()),
@@ -2698,7 +2762,8 @@ def manage():
     manage_comb["values"] = ("交易", "名片", "发票", "营业执照", "银行卡", "其他信息")
     manage_comb.current(0)
 
-    manage_comb.bind("<<ComboboxSelected>>", lambda event: func(value=comb_value_map[manage_comb_value.get()], tree=result_tree))
+    manage_comb.bind("<<ComboboxSelected>>",
+                     lambda event: func(value=comb_value_map[manage_comb_value.get()], tree=result_tree))
 
     manage_comb.place(relx=0.38, rely=0.18)
 
@@ -2716,6 +2781,7 @@ def manage():
     search(comb_value_map[manage_comb_value.get()], result_tree, '')
 
     manage_wd.mainloop()
+
 
 # TODO: ----------------------------------修改与删除↑
 '''
@@ -2873,6 +2939,8 @@ def confirm_window(num_photo, namelist, parent):
 '''
 
 single_final_result = []
+
+
 def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, parent, ocr_type: OCR):
     curr = IntVar()
 
@@ -3144,7 +3212,6 @@ def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, pare
                                            single_final_result[ptr]['commodity']['tax_rate'],
                                            single_final_result[ptr]['commodity']['tax']))
 
-
             tree.place(x=0 + x_offset, y=280 + y_offset)
 
             entry_amount_in_figures = Entry(cf_wd, textvariable=v_amount_in_figures, font=myfont)
@@ -3263,12 +3330,17 @@ def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, pare
             single_final_result[-1]['commodity']['tax_rate'] = []
             single_final_result[-1]['commodity']['tax'] = []
             for i in range(len(single_final_result[-1]['commodity_name'])):
-                single_final_result[-1]['commodity']['name'].append(single_final_result[-1]['commodity_name'][i]['word'])
-                single_final_result[-1]['commodity']['type'].append(single_final_result[-1]['commodity_type'][i]['word'])
+                single_final_result[-1]['commodity']['name'].append(
+                    single_final_result[-1]['commodity_name'][i]['word'])
+                single_final_result[-1]['commodity']['type'].append(
+                    single_final_result[-1]['commodity_type'][i]['word'])
                 single_final_result[-1]['commodity']['num'].append(single_final_result[-1]['commodity_num'][i]['word'])
-                single_final_result[-1]['commodity']['price'].append(single_final_result[-1]['commodity_price'][i]['word'])
-                single_final_result[-1]['commodity']['amount'].append(single_final_result[-1]['commodity_amount'][i]['word'])
-                single_final_result[-1]['commodity']['tax_rate'].append(single_final_result[-1]['commodity_tax_rate'][i]['word'])
+                single_final_result[-1]['commodity']['price'].append(
+                    single_final_result[-1]['commodity_price'][i]['word'])
+                single_final_result[-1]['commodity']['amount'].append(
+                    single_final_result[-1]['commodity_amount'][i]['word'])
+                single_final_result[-1]['commodity']['tax_rate'].append(
+                    single_final_result[-1]['commodity_tax_rate'][i]['word'])
                 single_final_result[-1]['commodity']['tax'].append(single_final_result[-1]['commodity_tax'][i]['word'])
         elif ocr_type == OCR.GENERAL_BASIC:
             result = handwriting_match(ocr_general_basic(name)['content'].split(' '))
@@ -3324,10 +3396,10 @@ def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, pare
     update_info()
 
     last_btn = Button(cf_wd, text="上一张", width=11, command=last_photo, relief=FLAT, bg="#9fc2e2")
-    last_btn.place(x=650+20, y=580)
+    last_btn.place(x=650 + 20, y=580)
 
     next_btn = Button(cf_wd, text="下一张", width=11, command=next_photo, relief=FLAT, bg="#9fc2e2")
-    next_btn.place(x=800+20, y=580)
+    next_btn.place(x=800 + 20, y=580)
 
     def confirm_all():
         for item, name in zip(single_final_result, namelist):
@@ -3345,20 +3417,23 @@ def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, pare
                 sql_insert(OCR.BUSINESS_LICENSE, item)
             elif ocr_type == OCR.INVOICE:
                 sql_insert(OCR.INVOICE, item)
+                print(item)
             elif ocr_type == OCR.GENERAL_BASIC:
                 sql_insert(OCR.GENERAL_BASIC, item)
 
-            parent.destroy()
+        messagebox.showinfo("提示", "存入成功")
+        parent.destroy()
 
     confirm_btn = Button(cf_wd, text="确认信息", command=confirm_all, relief=FLAT,
                          image=confirm_btn_photo, bg="#9fc2e2")
-    confirm_btn.place(x=950+20, y=580)
+    confirm_btn.place(x=950 + 20, y=580)
 
 
 def upload_single():
     single_wd = Toplevel(root, bg='#f8ffff', )
     single_wd.grab_set()
     single_wd.focus_set()
+    single_wd.focus_force()
     pathname = StringVar()
 
     single_canv = Canvas(single_wd, bd=1, width=1000, height=640)
@@ -3385,10 +3460,11 @@ def upload_single():
     photo_area.place(relx=0.25, rely=0.35)
     # photo_area.config(width=300, height=200)
     # photo_area.configure(scrollregion=photo_area.bbox('all'))
-    scrollbar.place(relx=0.752, rely=0.354,height=300)
+    scrollbar.place(relx=0.752, rely=0.354, height=300)
     photo_area.configure(yscrollcommand=scrollbar.set)
 
-    path_entry = Entry(single_wd, textvariable=pathname, width=40, bg='#e0f1ed', font="宋体 12", relief=FLAT)
+    path_entry = Entry(single_wd, textvariable=pathname, width=40, bg='#e0f1ed', font="宋体 12", relief=FLAT,
+                       state=DISABLED)
     path_entry.place(relx=0.38, rely=0.25)
     comb_value_map = {
         "名片": OCR.BUSINESS_CARD,
@@ -3401,7 +3477,8 @@ def upload_single():
     #                     command=lambda: upload(photo_area, pathname, num_photo, comb_value),
     #                     relief=FLAT, bg='#f8ffff')
     upload_btn = Button(single_wd, image=icon_list[1],
-                        command=lambda: confirm_single_in_upload_single(num_photo, pathname, single_wd, comb_value_map[comb_value.get()]),
+                        command=lambda: confirm_single_in_upload_single(num_photo, pathname, single_wd,
+                                                                        comb_value_map[comb_value.get()]),
                         relief=FLAT, bg='#f8ffff')
     upload_btn.place(relx=0.44, rely=0.85)
     ''''''

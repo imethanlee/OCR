@@ -15,7 +15,7 @@ general_basic_img = None
 
 
 def ps(entry: Entry, btn: Button, ocr_type: OCR):
-    name = entry.get()[1:-1]
+    name = entry.get()
     myps = PS(name)
     myps.run()
 
@@ -49,3 +49,11 @@ def ps(entry: Entry, btn: Button, ocr_type: OCR):
         global bankcard_img
         bankcard_img = ImageTk.PhotoImage(image)
         btn.config(image=bankcard_img)
+
+
+def file_check(file_name: str):
+    if file_name[-3:] == "jpg" or file_name[-3:] == "png" or file_name[-4:] == "jpeg" or\
+            file_name[-3:] == "bmp" or file_name[-3:] == "gif":
+        return True
+    else:
+        return False

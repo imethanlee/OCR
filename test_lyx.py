@@ -1142,7 +1142,6 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
         btn_confirm.place(x=840, y=560)
 
     elif ocr_type == OCR.GENERAL_BASIC:
-        offset = 0
         x_offset = 625
         y_offset = 80
 
@@ -1153,11 +1152,32 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
         v_others = None
 
         if flag == "":
-            result = ocr_general_basic(name)
-            new_result = handwriting_match(result['content'])
+            result = handwriting_match(ocr_general_basic(name)['content'].split(' '))
+            new_result = {}
+            if not result['name'] is None:
+                new_result['name'] = result['name'].group(0)
+            else:
+                new_result['name'] = ''
+            if not result['phone'] is None:
+                new_result['phone'] = result['phone'].group(0)
+            else:
+                new_result['phone'] = ''
+            if not result['id'] is None:
+                new_result['id_num'] = result['id'].group(0)
+            else:
+                new_result['id_num'] = ''
+            if not result['date'] is None:
+                new_result['date'] = result['date'].group(0)
+            else:
+                new_result['date'] = ''
+            if not result['others'] is None:
+                new_result['others'] = result['others']
+            else:
+                new_result['others'] = ''
+
             v_name.set(new_result['name'])
             v_phone.set(new_result['phone'])
-            v_id_num.set(new_result['id'])
+            v_id_num.set(new_result['id_num'])
             v_date.set(new_result['date'])
             v_others = new_result['others']
         elif flag == "EDIT" and ocr_final_result.__contains__('general_basic'):
@@ -3244,8 +3264,6 @@ def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, pare
                 single_final_result[-1]['commodity']['tax'].append(single_final_result[-1]['commodity_tax'][i]['word'])
         elif ocr_type == OCR.GENERAL_BASIC:
             result = handwriting_match(ocr_general_basic(name)['content'].split(' '))
-            print(ocr_general_basic(name)['content'])
-            print(handwriting_match(ocr_general_basic(name)['content']))
             new_result = {}
             if not result['name'] is None:
                 new_result['name'] = result['name'].group(0)

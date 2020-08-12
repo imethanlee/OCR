@@ -2151,7 +2151,7 @@ def tree_click_for_transaction(transaction_id: int, tree: ttk.Treeview = None, w
             wd.grab_set()
             wd.focus_set()
 
-    btn_modify = Button(frame_confirm, bg='#f8ffff', image=button_list[7],
+    btn_modify = Button(frame_confirm, bg='#f8ffff', text="修改信息",
                         command=lambda: store_modify(), relief=FLAT)
     btn_modify.grid(row=4, column=2)
     btn_delete = Button(frame_confirm, bg='#f8ffff', text="删除交易",
@@ -2311,7 +2311,7 @@ def tree_click(ocr_type: OCR, selected_id: int, result_tree: ttk.Treeview = None
                     wd.grab_set()
                     wd.focus_set()
 
-            btn_modify = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: modify_business_card(),
+            btn_modify = Button(cf_wd, text="修改信息", bg="#9fc2e2", command=lambda: modify_business_card(),
                                 relief=FLAT, font=myfont)
             btn_modify.place(x=720, y=580)
 
@@ -2373,7 +2373,7 @@ def tree_click(ocr_type: OCR, selected_id: int, result_tree: ttk.Treeview = None
                     wd.grab_set()
                     wd.focus_set()
 
-            btn_modify = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: modify_bankcard(),
+            btn_modify = Button(cf_wd, text="修改信息", bg="#9fc2e2", command=lambda: modify_bankcard(),
                                 relief=FLAT, font=myfont)
             btn_modify.place(x=720, y=580)
 
@@ -2470,7 +2470,7 @@ def tree_click(ocr_type: OCR, selected_id: int, result_tree: ttk.Treeview = None
                     wd.grab_set()
                     wd.focus_set()
 
-            btn_modify = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2",
+            btn_modify = Button(cf_wd, text="修改信息", bg="#9fc2e2",
                                 command=lambda: modify_business_license(), relief=FLAT, font=myfont)
             btn_modify.place(x=720, y=580)
 
@@ -2641,7 +2641,7 @@ def tree_click(ocr_type: OCR, selected_id: int, result_tree: ttk.Treeview = None
                     search(OCR.INVOICE, result_tree, '')
                     cf_wd.destroy()
 
-            btn_modify = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: mofidy_invoice(),
+            btn_modify = Button(cf_wd, text="修改信息", bg="#9fc2e2", command=lambda: mofidy_invoice(),
                                 relief=FLAT, font=myfont)
             btn_modify.place(x=720, y=580)
 
@@ -2711,7 +2711,7 @@ def tree_click(ocr_type: OCR, selected_id: int, result_tree: ttk.Treeview = None
                     wd.grab_set()
                     wd.focus_set()
 
-            btn_modify = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: modify_general_basic(),
+            btn_modify = Button(cf_wd, text="修改信息", bg="#9fc2e2", command=lambda: modify_general_basic(),
                                 relief=FLAT, font=myfont)
             btn_modify.place(x=720, y=580)
 

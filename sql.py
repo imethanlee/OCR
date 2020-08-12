@@ -41,7 +41,6 @@ def sql_init():
     cmd = '''CREATE TABLE t_general_basic(
                 id              INTEGER         PRIMARY KEY AUTOINCREMENT,      -- 主键
                 others          VARCHAR(5000)   NOT NULL DEFAULT '',            -- 其他内容
-                -- remark          VARCHAR(100)    NOT NULL DEFAULT '',            -- 备注
                 id_num          VARCHAR(100)    NOT NULL DEFAULT '',            -- 身份证
                 date            VARCHAR(100)    NOT NULL DEFAULT '',            -- 日期
                 phone           VARCHAR(100)    NOT NULL DEFAULT '',            -- 电话
@@ -110,27 +109,6 @@ def sql_init():
                 seller_addr             VARCHAR(100)    NOT NULL DEFAULT '',
                 seller_bank             VARCHAR(100)    NOT NULL DEFAULT '',
                 amount_in_figures       VARCHAR(100)    NOT NULL DEFAULT '',
-                
-                -- amount_in_words         VARCHAR(100)    NOT NULL DEFAULT '',           
-                -- commodity_price         VARCHAR(100)    NOT NULL DEFAULT '',        
-                -- note_drawer             VARCHAR(100)    NOT NULL DEFAULT '',           
-                -- commodity_num           VARCHAR(100)    NOT NULL DEFAULT '',         
-                -- remarks                 VARCHAR(100)    NOT NULL DEFAULT '',          
-                -- commodity_tax_rate      VARCHAR(100)    NOT NULL DEFAULT '',         
-                -- total_tax               VARCHAR(100)    NOT NULL DEFAULT '',            
-                -- check_code              VARCHAR(100)    NOT NULL DEFAULT '',           
-                -- invoice_type_org        VARCHAR(100)    NOT NULL DEFAULT '',
-                -- password                VARCHAR(100)    NOT NULL DEFAULT '',
-                -- purchaser_bank          VARCHAR(100)    NOT NULL DEFAULT '',
-                -- checker                 VARCHAR(100)    NOT NULL DEFAULT '',
-                -- totalAmount             VARCHAR(100)    NOT NULL DEFAULT '',
-                -- commodity_amount        VARCHAR(100)    NOT NULL DEFAULT '',  
-                -- commodity_type          VARCHAR(100)    NOT NULL DEFAULT '',
-                -- purchaser_addr          VARCHAR(100)    NOT NULL DEFAULT '',
-                -- commodity_tax           VARCHAR(100)    NOT NULL DEFAULT '',
-                -- commodity_unit          VARCHAR(100)    NOT NULL DEFAULT '',
-                -- payee                   VARCHAR(100)    NOT NULL DEFAULT '',
-                -- commodity_name          VARCHAR(100)    NOT NULL DEFAULT '',
                 transaction_id          INTEGER         NOT NULL,                       -- 外键
                 picture                 LONGBOLB        NOT NULL DEFAULT ''
                 )'''

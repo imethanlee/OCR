@@ -664,6 +664,8 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
 
     cf_wd = Toplevel(parent)
     cf_wd.geometry("1150x640")
+    cf_wd.grab_set()
+    cf_wd.focus_set()
     size = 600
 
     single_canv = Canvas(cf_wd, bd=1, width=1150, height=640)
@@ -1919,6 +1921,8 @@ def search(manage_comb_value, result_tree, str):
 
 def tree_click_for_transaction(transaction_id: int, tree: ttk.Treeview = None):
     trade_wd = Toplevel(root, bg='#f8ffff', )
+    trade_wd.grab_set()
+    trade_wd.focus_set()
 
     button_list = []
     upload_image = Image.open("上传.jpg")
@@ -2128,7 +2132,6 @@ def tree_click_for_transaction(transaction_id: int, tree: ttk.Treeview = None):
 
 
 def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None):
-    # selected_id = tree.item(tree.selection()[0], "values")[0]
     res = sql_extract(ocr_type, selected_id)
 
     if ocr_type == OCR.TRANSACTION:
@@ -2137,6 +2140,9 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None):
     else:
         cf_wd = Toplevel()
         cf_wd.geometry("1150x640")
+        cf_wd.grab_set()
+        cf_wd.focus_set()
+
         size = 600
 
         single_canv = Canvas(cf_wd, bd=1, width=1150, height=640)
@@ -2659,6 +2665,8 @@ def tree_click(ocr_type: OCR, selected_id: int, tree: ttk.Treeview = None):
 def manage():
     manage_wd = Toplevel(root)
     manage_wd.geometry("1000x640")
+    manage_wd.grab_set()
+    manage_wd.focus_set()
     manage_canv = Canvas(manage_wd, bd=1, width=1000, height=640)
     manage_canv.pack()
     manage_canv.create_image(0, 0, image=manage_bg, anchor=NW)
@@ -3290,6 +3298,8 @@ def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, pare
     # 正常操作
     cf_wd = Toplevel(parent)
     cf_wd.geometry("1150x640")
+    cf_wd.grab_set()
+    cf_wd.focus_set()
     size = 600
 
     single_canv = Canvas(cf_wd, bd=1, width=1150, height=640)
@@ -3347,6 +3357,8 @@ def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, pare
 
 def upload_single():
     single_wd = Toplevel(root, bg='#f8ffff', )
+    single_wd.grab_set()
+    single_wd.focus_set()
     pathname = StringVar()
 
     single_canv = Canvas(single_wd, bd=1, width=1000, height=640)

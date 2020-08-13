@@ -30,7 +30,7 @@ class PS:
             height = abs(self.point1[1] - self.point2[1])
             cut_img = self.rotated_img[min_y:min_y + height, min_x:min_x + width]
             # cv2.imwrite("temp.jpg", cut_img)
-            # cv2.imwrite(self.file_name, cut_img)
+            cv2.imwrite(self.file_name, cut_img)
         elif event == cv2.EVENT_RBUTTONDOWN:
             self.origin_x = x
         elif event == cv2.EVENT_MOUSEMOVE and (flags & cv2.EVENT_FLAG_RBUTTON):

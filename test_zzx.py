@@ -180,6 +180,7 @@ imagelist = []
 small_imagelist = []
 resultlist = []
 
+
 business_list = []
 card_list = []
 license_list = []
@@ -839,7 +840,7 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
             v_bank_card_type.set(ocr_final_result[item]['bank_card_type'])
             v_valid_date.set(ocr_final_result[item]['valid_date'])
 
-        text_bank_card_number = Label(cf_wd, text="银行卡号:", width=10, font=myfont, bg="#d5edea")
+        text_bank_card_number = Label(cf_wd, text="银行卡号:", width=10, font=myfont,bg="#d5edea")
         text_bank_card_number.place(x=0 + x_offset, y=0 + y_offset)
         text_bank_name = Label(cf_wd, text="银行名称:", width=10, font=myfont, bg="#ddefec")
         text_bank_name.place(x=0 + x_offset, y=40 + y_offset)
@@ -869,8 +870,7 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
 
             cf_wd.destroy()
 
-        btn_confirm = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: confirm_bankcard(),
-                             relief=FLAT, font=myfont)
+        btn_confirm = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: confirm_bankcard(), relief=FLAT, font=myfont)
         btn_confirm.place(x=850, y=580)
 
     elif ocr_type == OCR.BUSINESS_LICENSE:
@@ -912,21 +912,21 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
 
         text_company_name = Label(cf_wd, text="公司名称:", width=10, font=myfont, bg="#e4f2ee")
         text_company_name.place(x=0 + x_offset, y=0 + y_offset)
-        text_legal_person = Label(cf_wd, text="法人:", width=10, font=myfont, bg="#ddefec")
+        text_legal_person = Label(cf_wd, text="法人:", width=10, font=myfont,bg="#ddefec")
         text_legal_person.place(x=0 + x_offset, y=40 + y_offset)
-        text_license_id = Label(cf_wd, text="证书号:", width=10, font=myfont, bg="#ddefec")
+        text_license_id = Label(cf_wd, text="证书号:", width=10, font=myfont,bg="#ddefec")
         text_license_id.place(x=250 + x_offset, y=40 + y_offset)
-        text_social_credit_number = Label(cf_wd, text="信用代码:", width=10, font=myfont, bg="#d5edea")
+        text_social_credit_number = Label(cf_wd, text="信用代码:", width=10, font=myfont,bg="#d5edea")
         text_social_credit_number.place(x=0 + x_offset, y=80 + y_offset)
-        text_establishment_date = Label(cf_wd, text="成立日期:", width=10, font=myfont, bg="#d1ebea")
+        text_establishment_date = Label(cf_wd, text="成立日期:", width=10, font=myfont,bg="#d1ebea")
         text_establishment_date.place(x=0 + x_offset, y=120 + y_offset)
-        text_expiration_date = Label(cf_wd, text="有效期:", width=10, font=myfont, bg="#d1ebea")
+        text_expiration_date = Label(cf_wd, text="有效期:", width=10, font=myfont,bg="#d1ebea")
         text_expiration_date.place(x=250 + x_offset, y=120 + y_offset)
-        text_registered_capital = Label(cf_wd, text="注册资本:", width=10, font=myfont, bg="#cde9e9")
+        text_registered_capital = Label(cf_wd, text="注册资本:", width=10, font=myfont,bg="#cde9e9")
         text_registered_capital.place(x=0 + x_offset, y=160 + y_offset)
-        text_addr = Label(cf_wd, text="地址:", width=10, font=myfont, bg="#cae8e8")
+        text_addr = Label(cf_wd, text="地址:", width=10, font=myfont,bg="#cae8e8")
         text_addr.place(x=0 + x_offset, y=200 + y_offset)
-        text_business_scope = Label(cf_wd, text="经营范围:", width=10, font=myfont, bg="#c6e6e7")
+        text_business_scope = Label(cf_wd, text="经营范围:", width=10, font=myfont,bg="#c6e6e7")
         text_business_scope.place(x=0 + x_offset, y=240 + y_offset)
 
         entry_company_name = Entry(cf_wd, textvariable=v_company_name, width=51, font=myfont)
@@ -965,8 +965,7 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
 
             cf_wd.destroy()
 
-        btn_confirm = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: confirm_business_license(),
-                             relief=FLAT, font=myfont)
+        btn_confirm = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: confirm_business_license(), relief=FLAT, font=myfont)
         btn_confirm.place(x=850, y=580)
 
     elif ocr_type == OCR.INVOICE:
@@ -985,31 +984,31 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
         v_seller_bank = StringVar()  # 销售方开户行及账号
         v_amount_in_figures = StringVar()  # 价格合计
 
-        text_invoice_type = Label(cf_wd, text="发票种类:", font=myfont, bg="#e4f2ee")
+        text_invoice_type = Label(cf_wd, text="发票种类:", font=myfont,bg="#e4f2ee")
         text_invoice_type.place(x=0 + x_offset, y=0 + y_offset)
-        text_invoice_code = Label(cf_wd, text="发票代码:", font=myfont, bg="#e4f2ee")
+        text_invoice_code = Label(cf_wd, text="发票代码:", font=myfont,bg="#e4f2ee")
         text_invoice_code.place(x=250 + x_offset, y=0 + y_offset)
-        text_invoice_num = Label(cf_wd, text="发票号码:", font=myfont, bg="#e0f0ed")
+        text_invoice_num = Label(cf_wd, text="发票号码:", font=myfont,bg="#e0f0ed")
         text_invoice_num.place(x=0 + x_offset, y=40 + y_offset)
-        text_invoice_date = Label(cf_wd, text="开票日期:", font=myfont, bg="#e0f0ed")
+        text_invoice_date = Label(cf_wd, text="开票日期:", font=myfont,bg="#e0f0ed")
         text_invoice_date.place(x=250 + x_offset, y=40 + y_offset)
-        text_purchaser = Label(cf_wd, text="购买方信息:", font=myfont, bg="#deefec")
+        text_purchaser = Label(cf_wd, text="购买方信息:", font=myfont,bg="#deefec")
         text_purchaser.place(x=0 + x_offset, y=80 + y_offset)
-        text_purchaser_name = Label(cf_wd, text="名称:", font=myfont, bg="#ddf0ed")
+        text_purchaser_name = Label(cf_wd, text="名称:", font=myfont,bg="#ddf0ed")
         text_purchaser_name.place(x=0 + x_offset, y=120 + y_offset)
-        text_purchaser_register_num = Label(cf_wd, text="纳税人\n识别号:", font=myfont, bg="#ddf0ed")
+        text_purchaser_register_num = Label(cf_wd, text="纳税人\n识别号:", font=myfont,bg="#ddf0ed")
         text_purchaser_register_num.place(x=250 + x_offset, y=120 + y_offset)
-        text_seller = Label(cf_wd, text="销售方信息:", font=myfont, bg="#d7edeb")
+        text_seller = Label(cf_wd, text="销售方信息:", font=myfont,bg="#d7edeb")
         text_seller.place(x=0 + x_offset, y=160 + y_offset)
-        text_seller_name = Label(cf_wd, text="名称:", width=10, font=myfont, bg="#d1eaea")
+        text_seller_name = Label(cf_wd, text="名称:", width=10, font=myfont,bg="#d1eaea")
         text_seller_name.place(x=0 + x_offset, y=200 + y_offset)
-        text_seller_register_num = Label(cf_wd, text="纳税人\n识别号:", width=10, font=myfont, bg="#d1eaea")
+        text_seller_register_num = Label(cf_wd, text="纳税人\n识别号:", width=10, font=myfont,bg="#d1eaea")
         text_seller_register_num.place(x=250 + x_offset, y=200 + y_offset)
-        text_seller_addr = Label(cf_wd, text="地址:", width=10, font=myfont, bg="#cdeae8")
+        text_seller_addr = Label(cf_wd, text="地址:", width=10, font=myfont,bg="#cdeae8")
         text_seller_addr.place(x=0 + x_offset, y=240 + y_offset)
-        text_seller_bank = Label(cf_wd, text="银行:", width=10, font=myfont, bg="#cdeae8")
+        text_seller_bank = Label(cf_wd, text="银行:", width=10, font=myfont,bg="#cdeae8")
         text_seller_bank.place(x=250 + x_offset, y=240 + y_offset)
-        text_amount_in_figures = Label(cf_wd, text="价格合计(元):", font=myfont, bg="#a6d7e1")
+        text_amount_in_figures = Label(cf_wd, text="价格合计(元):", font=myfont,bg="#a6d7e1")
         text_amount_in_figures.place(x=0 + x_offset, y=420 + y_offset)
 
         entry_invoice_type = Entry(cf_wd, textvariable=v_invoice_type, font=myfont)
@@ -1145,8 +1144,7 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
 
             cf_wd.destroy()
 
-        btn_confirm = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: confirm_invoice(),
-                             relief=FLAT, font=myfont)
+        btn_confirm = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: confirm_invoice(), relief=FLAT, font=myfont)
         btn_confirm.place(x=840, y=560)
 
     elif ocr_type == OCR.GENERAL_BASIC:
@@ -1176,15 +1174,15 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
             v_date.set(ocr_final_result[item]['date'])
             v_others = ocr_final_result[item]['others']
 
-        text_name = Label(cf_wd, text="姓名:", width=10, font=myfont, bg="#e6f2ee")
+        text_name = Label(cf_wd, text="姓名:", width=10, font=myfont,bg="#e6f2ee")
         text_name.place(x=0 + x_offset, y=0 + y_offset)
-        text_phone = Label(cf_wd, text="电话:", width=10, font=myfont, bg="#e2f1ed")
+        text_phone = Label(cf_wd, text="电话:", width=10, font=myfont,bg="#e2f1ed")
         text_phone.place(x=0 + x_offset, y=40 + y_offset)
-        text_id_num = Label(cf_wd, text="身份证:", width=10, font=myfont, bg="#ddf0ec")
+        text_id_num = Label(cf_wd, text="身份证:", width=10, font=myfont,bg="#ddf0ec")
         text_id_num.place(x=0 + x_offset, y=80 + y_offset)
-        text_date = Label(cf_wd, text="日期:", width=10, font=myfont, bg="#dbeeec")
+        text_date = Label(cf_wd, text="日期:", width=10, font=myfont,bg="#dbeeec")
         text_date.place(x=0 + x_offset, y=120 + y_offset)
-        text_others = Label(cf_wd, text="其他信息:", width=10, font=myfont, bg="#d5ecea")
+        text_others = Label(cf_wd, text="其他信息:", width=10, font=myfont,bg="#d5ecea")
         text_others.place(x=0 + x_offset, y=160 + y_offset)
 
         entry_name = Entry(cf_wd, textvariable=v_name, width=51, font=myfont)
@@ -1212,8 +1210,7 @@ def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
 
             cf_wd.destroy()
 
-        btn_confirm = Button(cf_wd, image=confirm_btn_photo, bg="#9fc2e2", command=lambda: confirm_general_basic(),
-                             relief=FLAT, font=myfont)
+        btn_confirm = Button(cf_wd,  image=confirm_btn_photo, bg="#9fc2e2",command=lambda: confirm_general_basic(), relief=FLAT, font=myfont)
         btn_confirm.place(x=840, y=575)
 
     # TODO: 此函数下方的所有内容均已删除
@@ -1705,7 +1702,6 @@ def delButton(tree):
     x = tree.get_children()
     for item in x:
         tree.delete(item)
-    tree.heading('0', text='')
     tree.heading('1', text='')
     tree.heading('2', text='')
     tree.heading('3', text='')
@@ -1955,7 +1951,6 @@ def manage():
 
     manage_wd.mainloop()
 
-
 # TODO: ----------------------------------修改与删除↑
 '''
 def upload(photo_area, pathname, num_photo, comb_value):
@@ -2112,8 +2107,6 @@ def confirm_window(num_photo, namelist, parent):
 '''
 
 single_final_result = []
-
-
 def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, parent, ocr_type: OCR):
     curr = IntVar()
 
@@ -2385,6 +2378,7 @@ def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, pare
                                            single_final_result[ptr]['commodity']['tax_rate'],
                                            single_final_result[ptr]['commodity']['tax']))
 
+
             tree.place(x=0 + x_offset, y=280 + y_offset)
 
             entry_amount_in_figures = Entry(cf_wd, textvariable=v_amount_in_figures, font=myfont)
@@ -2503,17 +2497,12 @@ def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, pare
             single_final_result[-1]['commodity']['tax_rate'] = []
             single_final_result[-1]['commodity']['tax'] = []
             for i in range(len(single_final_result[-1]['commodity_name'])):
-                single_final_result[-1]['commodity']['name'].append(
-                    single_final_result[-1]['commodity_name'][i]['word'])
-                single_final_result[-1]['commodity']['type'].append(
-                    single_final_result[-1]['commodity_type'][i]['word'])
+                single_final_result[-1]['commodity']['name'].append(single_final_result[-1]['commodity_name'][i]['word'])
+                single_final_result[-1]['commodity']['type'].append(single_final_result[-1]['commodity_type'][i]['word'])
                 single_final_result[-1]['commodity']['num'].append(single_final_result[-1]['commodity_num'][i]['word'])
-                single_final_result[-1]['commodity']['price'].append(
-                    single_final_result[-1]['commodity_price'][i]['word'])
-                single_final_result[-1]['commodity']['amount'].append(
-                    single_final_result[-1]['commodity_amount'][i]['word'])
-                single_final_result[-1]['commodity']['tax_rate'].append(
-                    single_final_result[-1]['commodity_tax_rate'][i]['word'])
+                single_final_result[-1]['commodity']['price'].append(single_final_result[-1]['commodity_price'][i]['word'])
+                single_final_result[-1]['commodity']['amount'].append(single_final_result[-1]['commodity_amount'][i]['word'])
+                single_final_result[-1]['commodity']['tax_rate'].append(single_final_result[-1]['commodity_tax_rate'][i]['word'])
                 single_final_result[-1]['commodity']['tax'].append(single_final_result[-1]['commodity_tax'][i]['word'])
         elif ocr_type == OCR.GENERAL_BASIC:
             result = handwriting_match(ocr_general_basic(name)['content'].split(' '))
@@ -2569,10 +2558,10 @@ def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, pare
     update_info()
 
     last_btn = Button(cf_wd, text="上一张", width=11, command=last_photo, relief=FLAT, bg="#9fc2e2")
-    last_btn.place(x=650 + 20, y=580)
+    last_btn.place(x=650+20, y=580)
 
     next_btn = Button(cf_wd, text="下一张", width=11, command=next_photo, relief=FLAT, bg="#9fc2e2")
-    next_btn.place(x=800 + 20, y=580)
+    next_btn.place(x=800+20, y=580)
 
     def confirm_all():
         for item, name in zip(single_final_result, namelist):
@@ -2597,7 +2586,7 @@ def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, pare
 
     confirm_btn = Button(cf_wd, text="确认信息", command=confirm_all, relief=FLAT,
                          image=confirm_btn_photo, bg="#9fc2e2")
-    confirm_btn.place(x=950 + 20, y=580)
+    confirm_btn.place(x=950+20, y=580)
 
 
 def upload_single():
@@ -2628,7 +2617,7 @@ def upload_single():
     photo_area.place(relx=0.25, rely=0.35)
     # photo_area.config(width=300, height=200)
     # photo_area.configure(scrollregion=photo_area.bbox('all'))
-    scrollbar.place(relx=0.752, rely=0.354, height=300)
+    scrollbar.place(relx=0.752, rely=0.354,height=300)
     photo_area.configure(yscrollcommand=scrollbar.set)
 
     path_entry = Entry(single_wd, textvariable=pathname, width=40, bg='#e0f1ed', font="宋体 12", relief=FLAT)
@@ -2644,8 +2633,7 @@ def upload_single():
     #                     command=lambda: upload(photo_area, pathname, num_photo, comb_value),
     #                     relief=FLAT, bg='#f8ffff')
     upload_btn = Button(single_wd, image=icon_list[1],
-                        command=lambda: confirm_single_in_upload_single(num_photo, pathname, single_wd,
-                                                                        comb_value_map[comb_value.get()]),
+                        command=lambda: confirm_single_in_upload_single(num_photo, pathname, single_wd, comb_value_map[comb_value.get()]),
                         relief=FLAT, bg='#f8ffff')
     upload_btn.place(relx=0.44, rely=0.85)
     ''''''

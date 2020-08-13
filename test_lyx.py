@@ -3424,6 +3424,7 @@ def confirm_single_in_upload_single(num_photo: IntVar, pathname: StringVar, pare
                 sql_insert(OCR.GENERAL_BASIC, item)
 
         messagebox.showinfo("提示", "存入成功")
+        single_final_result.clear()
         parent.destroy()
 
     confirm_btn = Button(cf_wd, text="确认信息", command=confirm_all, relief=FLAT,
@@ -3487,7 +3488,15 @@ def upload_single():
 
 
 def helper():
-    pass
+    helper_wd = Toplevel(root)
+    helper_wd.geometry("1000x640")
+    helper_canv = Canvas(helper_wd, bd=1, width=1000, height=640,scrollregion=(0, 0, 500, 3000))
+    helper_canv.pack()
+
+    helper_canv.create_image(0, 0, image=helper_bg, anchor=NW)
+    vbar = ttk.Scrollbar(helper_wd, orient=VERTICAL, command=helper_canv.yview)
+    vbar.place(x=980, y=0, height=640)
+    helper_canv.configure(yscrollcommand=vbar.set)
 
 
 root = Tk()
@@ -3561,6 +3570,9 @@ manage_bg = ImageTk.PhotoImage(manage_image)
 
 confirm_btn_image = Image.open("确认信息.jpg")
 confirm_btn_photo = ImageTk.PhotoImage(confirm_btn_image)
+
+helper_bg_image = Image.open("guidebg.jpg")
+helper_bg = ImageTk.PhotoImage(helper_bg_image)
 '''
 size_w = 300
 size_h = 260

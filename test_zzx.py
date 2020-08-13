@@ -3489,7 +3489,7 @@ def upload_single():
 def helper():
     helper_wd = Toplevel(root)
     helper_wd.geometry("1000x640")
-    helper_canv = Canvas(helper_wd, bd=1, width=1000, height=640,scrollregion=(0, 0, 500, 2000))
+    helper_canv = Canvas(helper_wd, bd=1, width=1000, height=640,scrollregion=(0, 0, 500, 3000))
     helper_canv.pack()
 
     helper_canv.create_image(0, 0, image=helper_bg, anchor=NW)

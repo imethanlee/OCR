@@ -669,10 +669,10 @@ def confirm_single(name, parent, ocr_type: OCR):
 
 def confirm_single(name, parent, ocr_type: OCR, flag: str = ""):
     # TODO: show_large_pic 已删除
-
+    print(name)
     fns = root.tk.splitlist(name)
     namelist = path_to_list(name)
-    name = namelist[0]
+    # name = namelist[0]
 
     cf_wd = Toplevel(parent)
     cf_wd.geometry("1150x640")
